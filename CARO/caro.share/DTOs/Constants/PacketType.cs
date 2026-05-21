@@ -8,5 +8,19 @@ namespace caro.share.DTOs.Constants
     {
         LoginRequest =1,
         LoginResponse =2,
+
+        ChallengeRequest = 10,      
+        ChallengeNotify = 11,       
+        ChallengeResponse = 12,     
+        ChallengeResult = 13,      
+        OnlinePlayerList = 14,      
+
+        ChatSend = 20,             
+        ChatReceive = 21,           
+   
+        TimerUpdate = 30,           
+        TimerExpired = 31,          
+  
+        GameStartNotify = 40
     }
 }
