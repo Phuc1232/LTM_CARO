@@ -11,7 +11,7 @@ namespace caro.server.network
     public class TCPServerManager
     {
         // tao danh sach luu truu nguoi choi online
-        public static ConcurrentDictionary<string, ClientHandle> onlineplayer = new();
+        public static readonly ConcurrentDictionary<string, ClientHandle> onlineplayer = new();
         public async Task StartServerAsync()
         {
             // tao server lang nghe ket noi
