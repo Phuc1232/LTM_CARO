@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace caro.server
+namespace caro.server.form
 {
     internal static class Program
     {
@@ -19,7 +19,7 @@ namespace caro.server
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             //ApplicationConfiguration.Initialize(); 
-           //Application.Run(new Form1());
+           Application.Run(new Form1());
            //khoi dong server
             TCPServerManager server = new TCPServerManager();
             await server.StartServerAsync();
