@@ -1,14 +1,18 @@
-using caro.server.network;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace caro.server
+namespace caro.client
 {
-    internal class Program
+    internal static class Program
     {
-        static async Task Main(string[] args)
+        /// <summary>
+        ///  The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
         {
-            TcpServerManager server = new();
-
-            await server.Start(5000);
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+           
         }
     }
 }

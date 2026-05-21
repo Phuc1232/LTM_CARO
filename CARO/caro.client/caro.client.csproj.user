@@ -4,5 +4,11 @@
     <Compile Update="form\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="ui_components\Board.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="ui_components\GameBoard.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

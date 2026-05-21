@@ -1,20 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using CaroGame.Client.Network;
 
-namespace caro.client.form
+namespace caro.client
 {
-    public partial class Form1 : Form
+    public class Form1 : Form
     {
+        private TcpClientManager _network = new TcpClientManager();
+
         public Form1()
         {
-            InitializeComponent();
+            Text = "TCP Client Test";
+
+            Width = 400;
+
+            Height = 300;
+
+            Load += Form1_Load;
+        }
+
+        private async void Form1_Load(object? sender, EventArgs e)
+        {
+            _network.OnConnected += () =>
+            {
+                MessageBox.Show("Connected");
+            };
+
+            _network.OnMessageReceived += (msg) =>
+            {
+                MessageBox.Show($"Server: {msg}");
+            };
+
+            await _network.Connect("127.0.0.1", 5000);
+
+            await _network.Send("HELLO SERVER");
         }
     }
 }
