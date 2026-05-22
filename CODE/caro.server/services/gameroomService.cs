@@ -14,11 +14,13 @@ namespace caro.server.services
     {
         private static readonly Lazy<gameroomService> _instance = new Lazy<gameroomService>(() => new gameroomService());
 
+        public static gameroomService Instance => _instance.Value;
+
         private static readonly ConcurrentDictionary<string, gameroom> _activeroom = new();
 
         private gameroomService() { }
 
-        public async Task<gameroomService> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons =300)
+        public async Task<gameroom> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons =300)
         {
             var room = new gameroom
             {
@@ -54,6 +56,7 @@ namespace caro.server.services
             Task task2 = SendToPlayerAsync(player2,packet);
 
             await Task.WhenAll(task1, task2);
+            return room;
         }
         public async Task SendToPlayerAsync(ClientHandle player, BasePacket packet)
         {
