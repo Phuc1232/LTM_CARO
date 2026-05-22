@@ -14,12 +14,19 @@ namespace caro.server.network
         private TcpClient _client;
         private NetworkStream _stream;
         public string username { get;  private set; }
+        public string CurrentRoomID { get; set; }
+
 
         public ClientHandle(TcpClient client)
         {
             _client = client;
             _stream = _client.GetStream();
             username = "";
+            CurrentRoomID = "";
+        }
+        public async Task SendPacketAsync(BasePacket packet)
+        {
+            await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
         }
         public async Task HandleClientAsync()
         {
