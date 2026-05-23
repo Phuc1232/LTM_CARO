@@ -162,6 +162,20 @@ namespace caro.server.services
             if (_activeroom.TryGetValue(RoomID, out var room))
             {
                 ClientHandle receiver = (sender.username == room.player1.username) ? room.player2 : room.player1;
+
+                var chatrecevie = new ChatReceiveDTO
+                {
+                    fromUsername = sender.username,
+                    message = message,
+                    timestamp = DateTime.Now
+                };
+                var packet = new BasePacket
+                {
+                    Type = PacketType.ChatReceive,
+                    payload = JsonSerializer.Serialize(chatrecevie)
+                };
+                await SendToPlayerAsync(receiver, packet);
+                Console.WriteLine($"[Service - Chat Room {RoomID}] {sender.username}: {message}");
             }
         }
         public async Task SendToPlayerAsync(ClientHandle player, BasePacket packet)
