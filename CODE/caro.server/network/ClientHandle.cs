@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks.Sources;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace caro.server.network
 {
@@ -13,10 +14,10 @@ namespace caro.server.network
     {
         private TcpClient _client;
         private NetworkStream _stream;
-        public string username { get;  private set; }
+        public string username { get;   set; }
         public string CurrentRoomID { get; set; }
 
-        
+
         public ClientHandle(TcpClient client)
         {
             _client = client;
@@ -24,9 +25,26 @@ namespace caro.server.network
             username = "";
             CurrentRoomID = "";
         }
-        public async Task SendPacketAsync(BasePacket packet)
+        
+        /*public void OnMockSend(BasePacket packet)
         {
-            await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
+            if (packet.Type == PacketType.TimerUpdate)
+            {
+                var timer = JsonSerializer.Deserialize<TimerUpdateDTO>(packet.payload);
+                Console.WriteLine($"=> [MOCK NET]Cập nhật thời gian:P1={timer.RemainingTimePlayer1}, P2={timer.RemainingTimePlayer2}, CurrentUser={timer.CurrentTurnUseName}");
+            }
+            else if (packet.Type == PacketType.GameStartNotify)
+            {
+                Console.WriteLine("=> [MOCK NET] Nhận thông báo khởi động trận đấu!");
+            }
+            else if (packet.Type == PacketType.TimerExpired)
+            {
+                Console.WriteLine("=> [MOCK NET] Nhận thông báo kết thúc trận đấu (Hết giờ)!");
+            }
+        }*/
+        public async  Task SendPacketAsync(BasePacket packet)
+        {
+           await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
         }
         public async Task HandleClientAsync()
         {
@@ -108,6 +126,45 @@ namespace caro.server.network
 
             if (request == null) return;
 
+            if (request.targetUsername == username)
+            {
+                await SendResultToSelf("Không Thể Thách đấu chính mình!!!", false);
+                return;
+            }
+
+            else if (!TCPServerManager.onlineplayer.TryGetValue(request.targetUsername, out ClientHandle target))
+            {
+                await SendResultToSelf($"{request.targetUsername} dang trong tran dau khac!", false);
+                return;
+            }
+            else if (!string.IsNullOrEmpty(target.CurrentRoomID))
+            {
+                await SendResultToSelf($"{request.targetUsername} dang trong tran dau khac!", false);
+                return;
+            }
+            else if (!string.IsNullOrEmpty(CurrentRoomID))
+            {
+                await SendResultToSelf("Ban dang trong tran dau!", false);
+                return;
+            }
+
+        }
+        // hàm SendResultToSelf
+        public async Task SendResultToSelf(string message,bool accepted)
+        {
+            var result = new ChallengeResultDTO
+            {
+                isAccepted = accepted,
+                message = message,
+                roomId = "",
+                opponentName = "",
+            };
+            var packet = new BasePacket
+            {
+                Type = PacketType.ChallengeResult,
+                payload = JsonSerializer.Serialize(result)
+            };
+            await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
         }
     }
 }
