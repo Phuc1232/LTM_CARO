@@ -60,6 +60,8 @@ namespace caro.server.services
             await Task.WhenAll(task1, task2);
             Console.WriteLine($"[Service] Game bat dau: {player1.username} vs {player2.username} (Room: {room.RoomID})");
             _ = Task.Run(() => RunTimerLoopAsync(room, room.cts.Token));
+
+            return room;
         }
         public async Task RunTimerLoopAsync(GameRoom room, CancellationToken ct)
         {
