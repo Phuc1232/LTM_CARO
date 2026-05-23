@@ -89,6 +89,12 @@ namespace caro.server.network
                 case PacketType.ChallengeRequest:
                     await ProccessChallengeRequestAsync(packet.payload);
                     break;
+                case PacketType.ChallengeResponse:
+                    await ProccessChallengeResponseAsync(packet.payload);
+                    break;
+                case PacketType.ChatSend:
+                    await ProccessChatSendAsync(packet.payload);
+                    break;
             }
         }
         private async Task ProccessLoginAsync(string payload)
@@ -148,6 +154,14 @@ namespace caro.server.network
                 return;
             }
 
+        }
+        public async Task ProccessChallengeResponseAsync(string payload)
+        {
+            
+        }
+        public async Task ProccessChatSendAsync(string payload)
+        {
+            
         }
         // hàm SendResultToSelf
         public async Task SendResultToSelfAsync(string message,bool accepted)
