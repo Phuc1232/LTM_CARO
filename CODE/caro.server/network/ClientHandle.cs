@@ -16,7 +16,7 @@ namespace caro.server.network
         public string username { get;  private set; }
         public string CurrentRoomID { get; set; }
 
-
+        
         public ClientHandle(TcpClient client)
         {
             _client = client;
@@ -35,19 +35,19 @@ namespace caro.server.network
             {
                 while (true)
                 {
-                    var packet = await PacketHelper.ReceivePacketAsync<BasePacket>(_stream);
-                    await ProccessPacketAsync(packet);
+                   var packet = await PacketHelper.ReceivePacketAsync<BasePacket>(_stream);
+                   await ProccessPacketAsync(packet);
                 }
             }
             // bat loi 
             catch (SocketException)
             {
-                Console.WriteLine($"[Mang] mat ket noi voi nguoi choi {username ?? "nguoi choi an danh"}\n");
+                Console.WriteLine($"[Mang] mat ket noi voi nguoi choi {username ?? "nguoi choi an danh"}");
 
             }
             catch( Exception ex)
             {
-                Console.WriteLine($"[Loi] xu ly du lieu: {ex.Message}\n");
+                Console.WriteLine($"[Loi] xu ly du lieu: {ex.Message}");
             }
             // co loi hay khong du thuc thi dong nay
             finally
@@ -67,6 +67,9 @@ namespace caro.server.network
             {
                 case PacketType.LoginRequest:
                     await ProccessLogin(packet.payload);
+                    break;
+                case PacketType.ChallengeRequest:
+                    await ProccessChallengeRequest(packet.payload);
                     break;
             }
         }
@@ -98,6 +101,13 @@ namespace caro.server.network
             };
 
             await PacketHelper.SendPacketAsync<BasePacket>(_stream, responsePacket);
+        }
+        public async Task ProccessChallengeRequest(string payload)
+        {
+            var request = JsonSerializer.Deserialize<ChallengeRequestDTO>(payload);
+
+            if (request == null) return;
+
         }
     }
 }
