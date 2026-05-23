@@ -19,8 +19,8 @@ namespace caro.share.DTOs
     }
     public class TimerExpiredDTO
     {
-        public string loser { get; set; }
-        public string winner { get; set; }
+        public string loser_name { get; set; }
+        public string winner_name { get; set; }
         public string message { get; set; }
     }
 }
