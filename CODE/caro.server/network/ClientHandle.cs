@@ -1,4 +1,5 @@
-﻿using caro.share.DTOs;
+﻿using caro.server.services;
+using caro.share.DTOs;
 using caro.share.DTOs.Constants;
 using System;
 using System.Collections.Generic;
@@ -161,7 +162,16 @@ namespace caro.server.network
         }
         public async Task ProccessChatSendAsync(string payload)
         {
-            
+            var ChatData = JsonSerializer.Deserialize<ChatSendDTO>(payload);
+
+            if (ChatData == null) return;
+
+            if (string.IsNullOrEmpty(CurrentRoomID))
+            {
+                Console.WriteLine($"[Chat] {username} gửi tin nhắn nhưng không ở phòng nào!!!");
+                return;
+            }
+            await GameRoomServices.Instance.HandleChatAsync(CurrentRoomID, this, ChatData.message);
         }
         // hàm SendResultToSelf
         public async Task SendResultToSelfAsync(string message,bool accepted)
