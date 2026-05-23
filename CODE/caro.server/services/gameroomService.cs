@@ -77,14 +77,14 @@ namespace caro.server.services
                         room.RemainingTimeP2--;
                     }
                 }
-                // chuan bi goi tin
+                // Chuẩn bị payload 
                 var timeUpdate = new TimerUpdateDTO
                 {
                     RemainingTimePlayer1 = room.RemainingTimeP1,
                     RemainingTimePlayer2 = room.RemainingTimeP2,
                     CurrentTurnUseName = room.CurrentTurn
                 };
-
+                // Chuẩn bị gói tin: [type][payload]
                 var packet = new BasePacket
                 {
                     Type = PacketType.TimerUpdate,
@@ -104,12 +104,34 @@ namespace caro.server.services
                     return;
                 }
             }
-            catch 
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"[Service - Room {room.RoomID}] Loi timer: {ex.Message}");
             }
         }
-        // định nghĩa hàm HandleTimerExpiredAsync(GameRoom room, ClientHandle p1, ClientHanlde p2)
+        // định nghĩa hàm HandleTimerExpiredAsync(GameRoom room, ClientHandle loser, ClientHanlde winner)
+        public async Task HandleTimerExpiredAsync(GameRoom room, ClientHandle loser, ClientHandle winner)
+        {
+            room.IsGameActive = false;
+
+            var timerexpried = new TimerExpiredDTO
+            {
+                loser_name = loser.username,
+                winner_name = winner.username,
+                message= $"{loser.username} da het gio {winner.username} thang!"
+            };
+            var packet = new BasePacket
+            {
+                Type = PacketType.TimerExpired,
+                payload = JsonSerializer.Serialize(timerexpried)
+            };
+            _ = SendToPlayerAsync(room.player1, packet);
+            _ = SendToPlayerAsync(room.player2, packet);
+
+            Console.WriteLine($"[Service - Room {room.RoomID}] {loser.username} het gio. {winner.username} thang!");
+            CleanupRoom(room.RoomID);// hàm dọn rác khi phòng bị hủy
+        }
+        // định nghĩa CleanupRoom
         public async Task SendToPlayerAsync(ClientHandle player, BasePacket packet)
         {
             try
@@ -124,9 +146,9 @@ namespace caro.server.services
                 Console.WriteLine($"[Lỗi mạng] Không thể gửi gói tin tới {player?.username}. Kết nối đã bị đứt.");
 
                 // Tự động giải phóng phòng đấu ngay lập tức
-                if (player != null && !string.IsNullOrEmpty(player.CurrentRoomId))
+                if (player != null && !string.IsNullOrEmpty(player.CurrentRoomID))
                 {
-                    CleanupRoom(player.CurrentRoomId);
+                    CleanupRoom(player.CurrentRoomID);
                 }
             }
             catch (Exception ex)
