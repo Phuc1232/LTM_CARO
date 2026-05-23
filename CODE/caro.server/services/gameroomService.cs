@@ -79,33 +79,34 @@ namespace caro.server.services
                     {
                         room.RemainingTimeP2--;
                     }
-                }
-                // Chuẩn bị payload 
-                var timeUpdate = new TimerUpdateDTO
-                {
-                    RemainingTimePlayer1 = room.RemainingTimeP1,
-                    RemainingTimePlayer2 = room.RemainingTimeP2,
-                    CurrentTurnUseName = room.CurrentTurn
-                };
-                // Chuẩn bị gói tin: [type][payload]
-                var packet = new BasePacket
-                {
-                    Type = PacketType.TimerUpdate,
-                    payload = JsonSerializer.Serialize(timeUpdate)
-                };
-                _ = SendToPlayerAsync(room.player1, packet);
-                _ = SendToPlayerAsync(room.player2, packet);
+                     // Chuẩn bị payload 
+                    var timeUpdate = new TimerUpdateDTO
+                    {
+                        RemainingTimePlayer1 = room.RemainingTimeP1,
+                        RemainingTimePlayer2 = room.RemainingTimeP2,
+                        CurrentTurnUseName = room.CurrentTurn
+                    };
+                    // Chuẩn bị gói tin: [type][payload]
+                    var packet = new BasePacket
+                    {
+                        Type = PacketType.TimerUpdate,
+                        payload = JsonSerializer.Serialize(timeUpdate)
+                    };
+                    _ = SendToPlayerAsync(room.player1, packet);
+                    _ = SendToPlayerAsync(room.player2, packet);
 
-                if (room.RemainingTimeP1 <= 0)
-                {
-                    await HandleTimerExpiredAsync(room, room.player1, room.player2); // Hàm xử lý thời gian khi hết ngườ chơi hết thời gian
-                    return;
+                    if (room.RemainingTimeP1 <= 0)
+                    {
+                        await HandleTimerExpiredAsync(room, room.player1, room.player2); // Hàm xử lý thời gian khi hết ngườ chơi hết thời gian
+                        return;
+                    }
+                    else if (room.RemainingTimeP2 <= 0)
+                    {
+                        await HandleTimerExpiredAsync(room, room.player2, room.player1);
+                        return;
+                    }
                 }
-                else if (room.RemainingTimeP2 <= 0)
-                {
-                    await HandleTimerExpiredAsync(room, room.player2, room.player1);
-                    return;
-                }
+               
             }
             catch (Exception ex)
             {
