@@ -5,24 +5,25 @@ using caro.share.DTOs.Constants;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 
 namespace caro.server.services
 {
-    public class gameroomService
+    public class GameRoomService
     {
-        private static readonly Lazy<gameroomService> _instance = new Lazy<gameroomService>(() => new gameroomService());
+        private static readonly Lazy<GameRoomService> _instance = new Lazy<GameRoomService>(() => new GameRoomService());
 
-        public static gameroomService Instance => _instance.Value;
+        public static GameRoomService Instance => _instance.Value;
 
-        private static readonly ConcurrentDictionary<string, gameroom> _activeroom = new();
+        private static readonly ConcurrentDictionary<string, GameRoom> _activeroom = new();
 
-        private gameroomService() { }
+        private GameRoomService() { }
 
-        public async Task<gameroom> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons =300)
+        public async Task<GameRoom> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons =300)
         {
-            var room = new gameroom
+            var room = new GameRoom
             {
                 RoomID = Guid.NewGuid().ToString("N").Substring(0, 8),
                 player1 = player1,
@@ -40,7 +41,7 @@ namespace caro.server.services
 
             _activeroom.TryAdd(room.RoomID, room);
 
-            var startnotify = new GameStartNotify
+            var startnotify = new GameStartNotifyDTO
             {
                 roomid = room.RoomID,
                 name_player1 = player1.username,
@@ -56,8 +57,59 @@ namespace caro.server.services
             Task task2 = SendToPlayerAsync(player2,packet);
 
             await Task.WhenAll(task1, task2);
-            return room;
+            Console.WriteLine($"[Service] Game bat dau: {player1.username} vs {player2.username} (Room: {room.RoomID})");
+            _ = Task.Run(() => RunTimerLoopAsync(room, room.cts.Token));
         }
+        public async Task RunTimerLoopAsync(GameRoom room, CancellationToken ct)
+        {
+            try
+            {
+                while (room.IsGameActive && !ct.IsCancellationRequested)
+                {
+                    await Task.Delay(1000, ct);
+
+                    if (room.CurrentTurn == room.player1.username)
+                    {
+                        room.RemainingTimeP1--;
+                    }
+                    else
+                    {
+                        room.RemainingTimeP2--;
+                    }
+                }
+                // chuan bi goi tin
+                var timeUpdate = new TimerUpdateDTO
+                {
+                    RemainingTimePlayer1 = room.RemainingTimeP1,
+                    RemainingTimePlayer2 = room.RemainingTimeP2,
+                    CurrentTurnUseName = room.CurrentTurn
+                };
+
+                var packet = new BasePacket
+                {
+                    Type = PacketType.TimerUpdate,
+                    payload = JsonSerializer.Serialize(timeUpdate)
+                };
+                _ = SendToPlayerAsync(room.player1, packet);
+                _ = SendToPlayerAsync(room.player2, packet);
+
+                if (room.RemainingTimeP1 <= 0)
+                {
+                    await HandleTimerExpiredAsync(room, room.player1, room.player2); // Hàm xử lý thời gian khi hết ngườ chơi hết thời gian
+                    return;
+                }
+                else if (room.RemainingTimeP2 <= 0)
+                {
+                    await HandleTimerExpiredAsync(room, room.player2, room.player1);
+                    return;
+                }
+            }
+            catch 
+            {
+
+            }
+        }
+        // định nghĩa hàm HandleTimerExpiredAsync(GameRoom room, ClientHandle p1, ClientHanlde p2)
         public async Task SendToPlayerAsync(ClientHandle player, BasePacket packet)
         {
             try
@@ -67,9 +119,19 @@ namespace caro.server.services
                     await player.SendPacketAsync(packet);
                 }
             }
-            catch(Exception ex)
+            catch (SocketException)
             {
-                Console.WriteLine($"[Service] Loi gui tin toi {player?.username}: {ex.Message}");
+                Console.WriteLine($"[Lỗi mạng] Không thể gửi gói tin tới {player?.username}. Kết nối đã bị đứt.");
+
+                // Tự động giải phóng phòng đấu ngay lập tức
+                if (player != null && !string.IsNullOrEmpty(player.CurrentRoomId))
+                {
+                    CleanupRoom(player.CurrentRoomId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Lỗi hệ thống] Sự cố khi gửi dữ liệu tới {player?.username}: {ex.Message}");
             }
         }
     }
