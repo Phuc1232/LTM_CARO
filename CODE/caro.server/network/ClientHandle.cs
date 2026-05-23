@@ -84,14 +84,14 @@ namespace caro.server.network
             switch (packet.Type)
             {
                 case PacketType.LoginRequest:
-                    await ProccessLogin(packet.payload);
+                    await ProccessLoginAsync(packet.payload);
                     break;
                 case PacketType.ChallengeRequest:
-                    await ProccessChallengeRequest(packet.payload);
+                    await ProccessChallengeRequestAsync(packet.payload);
                     break;
             }
         }
-        private async Task ProccessLogin(string payload)
+        private async Task ProccessLoginAsync(string payload)
         {
             var loginRequest = JsonSerializer.Deserialize<LoginRequestDTO>(payload);
             if (loginRequest == null) return;
@@ -120,7 +120,7 @@ namespace caro.server.network
 
             await PacketHelper.SendPacketAsync<BasePacket>(_stream, responsePacket);
         }
-        public async Task ProccessChallengeRequest(string payload)
+        public async Task ProccessChallengeRequestAsync(string payload)
         {
             var request = JsonSerializer.Deserialize<ChallengeRequestDTO>(payload);
 
@@ -128,29 +128,29 @@ namespace caro.server.network
 
             if (request.targetUsername == username)
             {
-                await SendResultToSelf("Không Thể Thách đấu chính mình!!!", false);
+                await SendResultToSelfAsync("Không Thể Thách đấu chính mình!!!", false);
                 return;
             }
 
             else if (!TCPServerManager.onlineplayer.TryGetValue(request.targetUsername, out ClientHandle target))
             {
-                await SendResultToSelf($"{request.targetUsername} dang trong tran dau khac!", false);
+                await SendResultToSelfAsync($"{request.targetUsername} dang trong tran dau khac!", false);
                 return;
             }
             else if (!string.IsNullOrEmpty(target.CurrentRoomID))
             {
-                await SendResultToSelf($"{request.targetUsername} dang trong tran dau khac!", false);
+                await SendResultToSelfAsync($"{request.targetUsername} dang trong tran dau khac!", false);
                 return;
             }
             else if (!string.IsNullOrEmpty(CurrentRoomID))
             {
-                await SendResultToSelf("Ban dang trong tran dau!", false);
+                await SendResultToSelfAsync("Ban dang trong tran dau!", false);
                 return;
             }
 
         }
         // hàm SendResultToSelf
-        public async Task SendResultToSelf(string message,bool accepted)
+        public async Task SendResultToSelfAsync(string message,bool accepted)
         {
             var result = new ChallengeResultDTO
             {
