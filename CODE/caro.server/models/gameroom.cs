@@ -6,7 +6,7 @@ using System.Text;
 
 namespace caro.server.models
 {
-    public class gameroom
+    public class GameRoom
     {
         public string RoomID { get; set; }
         public ClientHandle player1 { get; set; }
