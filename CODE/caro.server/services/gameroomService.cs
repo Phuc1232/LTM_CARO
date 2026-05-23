@@ -5,6 +5,7 @@ using caro.share.DTOs.Constants;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
@@ -132,6 +133,19 @@ namespace caro.server.services
             CleanupRoom(room.RoomID);// hàm dọn rác khi phòng bị hủy
         }
         // định nghĩa CleanupRoom
+        public void CleanupRoom(string RoomID)
+        {
+            if (_activeroom.TryRemove(RoomID, out var room))
+            {
+                room.IsGameActive = false;
+                room.cts?.Cancel();
+
+                if (room.player1 != null) room.player1.CurrentRoomID = null;
+                if (room.player2 != null) room.player2.CurrentRoomID = null;
+
+                Console.WriteLine($"[Service] Phong {RoomID} da duoc giai phong.");
+            }
+        }
         public async Task SendToPlayerAsync(ClientHandle player, BasePacket packet)
         {
             try
