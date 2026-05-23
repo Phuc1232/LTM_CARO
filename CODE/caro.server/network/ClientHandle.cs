@@ -2,8 +2,10 @@
 using caro.share.DTOs;
 using caro.share.DTOs.Constants;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks.Sources;
@@ -18,6 +20,7 @@ namespace caro.server.network
         public string username { get;   set; }
         public string CurrentRoomID { get; set; }
 
+        public static readonly ConcurrentDictionary<string, PendingChallenge> PendingChallenges = new();
 
         public ClientHandle(TcpClient client)
         {
@@ -25,6 +28,7 @@ namespace caro.server.network
             _stream = _client.GetStream();
             username = "";
             CurrentRoomID = "";
+
         }
         
         /*public void OnMockSend(BasePacket packet)
@@ -131,6 +135,7 @@ namespace caro.server.network
         {
             var request = JsonSerializer.Deserialize<ChallengeRequestDTO>(payload);
 
+            ClientHandle target = null;
             if (request == null) return;
 
             if (request.targetUsername == username)
@@ -139,7 +144,7 @@ namespace caro.server.network
                 return;
             }
 
-            else if (!TCPServerManager.onlineplayer.TryGetValue(request.targetUsername, out ClientHandle target))
+            else if (!TCPServerManager.onlineplayer.TryGetValue(request.targetUsername, out target))
             {
                 await SendResultToSelfAsync($"{request.targetUsername} dang trong tran dau khac!", false);
                 return;
@@ -154,10 +159,25 @@ namespace caro.server.network
                 await SendResultToSelfAsync("Ban dang trong tran dau!", false);
                 return;
             }
+            // Tạo mã ký tự dành cho mỗi lời thách đấu
+            string ChallengeID = Guid.NewGuid().ToString("N").Substring(0, 8);
+            // Tạo lời thách đấu
+            var pending = new PendingChallenge
+            {
+                ChallengeId = ChallengeID,
+                Challenger = this,
+                Target = target
+            };
+            PendingChallenges.TryAdd(ChallengeID, pending);
+
 
         }
         public async Task ProccessChallengeResponseAsync(string payload)
         {
+            var responseData = JsonSerializer.Deserialize<BasePacket>(payload);
+
+            if (responseData == null) return;
+
             
         }
         public async Task ProccessChatSendAsync(string payload)
@@ -190,5 +210,11 @@ namespace caro.server.network
             };
             await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
         }
+    }
+    public class PendingChallenge
+    {
+        public string ChallengeId { get; set; }
+        public ClientHandle Challenger { get; set; }
+        public ClientHandle Target { get; set; }
     }
 }
