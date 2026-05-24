@@ -169,8 +169,19 @@ namespace caro.server.network
                 Target = target
             };
             PendingChallenges.TryAdd(ChallengeID, pending);
+            var notify = new ChallengeNotifyDTO
+            {
+                fromUsername = username,
+                roomId = ChallengeID
+            };
+            var packet = new BasePacket
+            {
+                Type = PacketType.ChallengeNotify,
+                payload = JsonSerializer.Serialize(notify)
+            };
 
-
+            await target.SendPacketAsync(packet);
+            Console.WriteLine($"[Thach dau] {username} thach dau {request.targetUsername} (ID: {ChallengeID})");
         }
         public async Task ProccessChallengeResponseAsync(string payload)
         {
