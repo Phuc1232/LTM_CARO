@@ -9,5 +9,5 @@ public class MoveMessage : BaseMessage {
 }
 
 public class ChatMessage : BaseMessage {
-    public string Content { get; set; }
+    public string Message { get; set; }
 }
