@@ -185,12 +185,54 @@ namespace caro.server.network
         }
         public async Task ProccessChallengeResponseAsync(string payload)
         {
-            var responseData = JsonSerializer.Deserialize<BasePacket>(payload);
+            var responseData = JsonSerializer.Deserialize<ChallengeResponseDTO>(payload);
+            PendingChallenge pending = null;
 
             if (responseData == null) return;
 
-            
+            if (!PendingChallenges.TryRemove(responseData.roomId, out pending))
+            {
+                Console.WriteLine($"[Thach dau] Khong tim thay loi thach dau {responseData.roomId}");
+                return;
+            }
+
+            if (responseData.isAccepted)
+            {
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(pending.Challenger, pending.Target, timesecons: 300);
+                var result = new ChallengeResultDTO
+                {
+                    isAccepted = true,
+                    message = $"{username} da chap nhan thach dau!",
+                    roomId = room.RoomID,
+                    opponentName = username
+                };
+                var resultPacket = new BasePacket
+                {
+                    Type = PacketType.ChallengeResult,
+                    payload = JsonSerializer.Serialize(result)
+                };
+                await pending.Challenger.SendPacketAsync(resultPacket);
+                Console.WriteLine($"[Thach dau] {username} CHAP NHAN thach dau cua {pending.Challenger.username}");
+            }
+            else
+            {
+                var resultDTO = new ChallengeResultDTO
+                {
+                    isAccepted = false,
+                    message = $"{username} da tu choi thach dau!",
+                    roomId = "",
+                    opponentName = username
+                };
+                var resultPacket = new BasePacket
+                {
+                    Type = PacketType.ChallengeResult,
+                    payload = JsonSerializer.Serialize(resultDTO)
+                };
+                await pending.Challenger.SendPacketAsync(resultPacket);
+                Console.WriteLine($"[Thach dau] {username} TU CHOI thach dau cua {pending.Challenger.username}");
+            }
         }
+        
         public async Task ProccessChatSendAsync(string payload)
         {
             var ChatData = JsonSerializer.Deserialize<ChatSendDTO>(payload);
