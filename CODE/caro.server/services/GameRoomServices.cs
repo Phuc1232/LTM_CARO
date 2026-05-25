@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Net.Sockets;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
 
@@ -212,8 +213,61 @@ namespace caro.server.services
             if (room.board[row, col] != 0) return; 
 
             int TurnPlayer = (room.CurrentTurn == room.player1.username) ? 1 : 2;
+            room.board[row, col] = TurnPlayer;
+            Console.WriteLine($"[Service - Room {RoomID}] Nguoi choi {player.username} danh o [{row}, {col}]");
 
-            
+            if (CheckWin(room.board, row, col, TurnPlayer))
+            {
+                var MoveNotify = new MoveNotifyDTO
+                {
+                    player = player.username,
+                    row = row,
+                    col = col,
+                    nextTurn = ""
+                };
+                var MovePacket = new BasePacket
+                {
+                    Type = PacketType.MoveRequest,
+                    payload = JsonSerializer.Serialize(MoveNotify)
+                };
+                _ = SendToPlayerAsync(room.player1, MovePacket);
+                _ = SendToPlayerAsync(room.player2, MovePacket);
+
+
+                var EndGame = new GameEndNotifyDTO
+                {
+                    WinnerName = player.username,
+                    reason = "Đủ 5 quân liên tiếp!!!"
+                };
+
+                var packet = new BasePacket
+                {
+                    Type = PacketType.GameEndNotify,
+                    payload = JsonSerializer.Serialize(EndGame)
+                };
+
+                _ = SendToPlayerAsync(room.player1, packet);
+                _ = SendToPlayerAsync(room.player2, packet);
+            }
+            else
+            {
+                room.CurrentTurn = (room.CurrentTurn == room.player1.username) ? room.player1.username : room.player2.username;
+                var moveNotify = new MoveNotifyDTO
+                {
+                    player = player.username,
+                    row = row,
+                    col = col,
+                    nextTurn = room.CurrentTurn
+                };
+                var movePacket = new BasePacket
+                {
+                    Type = PacketType.MoveNotiFy,
+                    payload = JsonSerializer.Serialize(moveNotify)
+                };
+                _ = SendToPlayerAsync(room.player1, movePacket);
+                _ = SendToPlayerAsync(room.player2, movePacket);
+            }
+
         }
         public async Task HandleChatAsync(string RoomID, ClientHandle sender, string message)
         {
