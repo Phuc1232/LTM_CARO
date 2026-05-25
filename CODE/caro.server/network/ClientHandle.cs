@@ -100,6 +100,10 @@ namespace caro.server.network
                 case PacketType.ChatSend:
                     await ProccessChatSendAsync(packet.payload);
                     break;
+                case PacketType.MoveRequest:
+                    await ProccessMoveRequestAsync(packet.payload);
+                    break;
+
             }
         }
         private async Task ProccessLoginAsync(string payload)
@@ -245,6 +249,15 @@ namespace caro.server.network
                 return;
             }
             await GameRoomServices.Instance.HandleChatAsync(CurrentRoomID, this, ChatData.message);
+        }
+        private async Task ProccessMoveRequestAsync(string payload)
+        {
+            var moveData = JsonSerializer.Deserialize<MoveRequestDTO>(payload);
+            if (moveData == null) return;
+            if (string.IsNullOrEmpty(CurrentRoomID)) return;
+
+            // Chuyển toàn bộ dữ liệu nước đi cho Service xử lý
+            await GameRoomServices.Instance.MoveValid(CurrentRoomID, this, moveData.row, moveData.col);
         }
         // hàm SendResultToSelf
         public async Task SendResultToSelfAsync(string message,bool accepted)
