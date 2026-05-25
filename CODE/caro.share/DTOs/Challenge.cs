@@ -29,4 +29,5 @@ namespace caro.share.DTOs
     {
         public List<string> players { get; set; } = new List<string>();
     }
+    
 }
