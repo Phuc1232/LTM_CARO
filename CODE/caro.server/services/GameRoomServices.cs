@@ -35,7 +35,6 @@ namespace caro.server.services
                 CurrentTurn = player1.username, // để tạm sẽ td random sau
                 IsGameActive = true,
                 cts = new CancellationTokenSource()
-
             };
             player1.CurrentRoomID = room.RoomID;
             player2.CurrentRoomID = room.RoomID;
@@ -156,6 +155,49 @@ namespace caro.server.services
                 room.CurrentTurn = (room.CurrentTurn == room.player1.username) ? room.player2.username : room.player1.username;
             }
 
+        }
+        public bool CheckWin(int[,] board, int row, int col, int player)
+        {
+            int[][] directions = new int[4][]
+            {
+                new int [] {0,1},
+                new int [] {1,0},
+                new int [] {1,1},
+                new int [] {1,-1}
+            };
+            foreach (var dir in directions)
+            {
+                int count = 1;
+                int drow = dir[0];
+                int dcol = dir[1];
+
+                int r = row + drow;
+                int c = row + dcol;
+
+                while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
+                {
+                    count++;
+                    r += drow;
+                    c += dcol;
+                }
+
+                r = row - drow;
+                c = col - dcol;
+                while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
+                {
+                    count++;
+                    r -= drow;
+                    c -= dcol;
+                }
+
+                if (count == 5)
+                {
+                    return true;
+                }
+
+
+            }
+            return false;
         }
         public async Task HandleChatAsync(string RoomID, ClientHandle sender, string message)
         {
