@@ -21,6 +21,10 @@ namespace caro.share.DTOs.Constants
         TimerUpdate = 30,           
         TimerExpired = 31,          
   
-        GameStartNotify = 40
+        GameStartNotify = 40,
+
+        MoveRequest = 50,
+        MoveNotiFy =51,
+        GameEndNotify =52
     }
 }
