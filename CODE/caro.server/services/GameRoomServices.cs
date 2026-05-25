@@ -199,6 +199,22 @@ namespace caro.server.services
             }
             return false;
         }
+
+        public async Task MoveValid(string RoomID, ClientHandle player, int row, int col)
+        {
+
+            GameRoom room = null;
+
+            if (!_activeroom.TryGetValue(RoomID, out room)) return;
+            if (!room.IsGameActive) return;
+            if (room.CurrentTurn != player.username) return; 
+            if (row < 0 || row >= 15 || col < 0 || col >= 15) return; 
+            if (room.board[row, col] != 0) return; 
+
+            int TurnPlayer = (room.CurrentTurn == room.player1.username) ? 1 : 2;
+
+            
+        }
         public async Task HandleChatAsync(string RoomID, ClientHandle sender, string message)
         {
             if (_activeroom.TryGetValue(RoomID, out var room))
