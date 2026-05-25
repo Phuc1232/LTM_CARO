@@ -18,6 +18,6 @@ namespace caro.server.models
         public CancellationTokenSource cts { get; set; } // quan ly thoi gian ket thuc
         public bool IsGameActive { get; set; }
 
-        public int[,] board { get; set; } = new int[15, 15]; 
+        public int[,] board { get; set; }
     }
 }
