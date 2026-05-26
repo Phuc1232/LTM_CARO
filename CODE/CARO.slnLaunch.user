@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "caro.client\\caro.client.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "caro.server\\caro.server.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
