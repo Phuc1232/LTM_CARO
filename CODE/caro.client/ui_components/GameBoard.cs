@@ -1,5 +1,4 @@
 ﻿using CaroGame.Client.Network;
-using CaroGame.Client.Network;
 using CaroGame.Client.UI_Components;
 using System;
 using System.Drawing;
@@ -9,59 +8,120 @@ namespace CaroGame.Client.Forms
 {
     public class GameBoard : Form
     {
-        private CaroBoard _board = new CaroBoard();
+        private CaroBoard _board =
+            new CaroBoard();
 
-        private TcpClientManager _network = new TcpClientManager();
+        private TcpClientManager _network =
+            new TcpClientManager();
 
-        private int _currentPlayer = 1; // 1 = X, 2 = O
+        // Player hiện tại
+        private int _currentPlayer = 1;
 
         public GameBoard()
         {
-            this.Text = "Caro Game - Lượt của X";
+            this.Text =
+                "Caro Game - Lượt của X";
 
-            this.Size = new Size(500, 550);
+            this.Size =
+                new Size(500, 550);
 
             // Setup board
-            _board.Location = new Point(10, 10);
+            _board.Location =
+                new Point(10, 10);
 
-            _board.CellClicked += OnCellClicked;
+            _board.CellClicked +=
+                OnCellClicked;
 
             this.Controls.Add(_board);
 
-            // Network events
+            // Connected
             _network.OnConnected += () =>
             {
-                MessageBox.Show("Connected to server");
+                MessageBox.Show(
+                    "Connected to server");
             };
 
+            // Disconnected
             _network.OnDisconnected += () =>
             {
-                MessageBox.Show("Disconnected from server");
+                MessageBox.Show(
+                    "Disconnected from server");
             };
 
-            _network.OnMessageReceived += (msg) =>
-            {
-                MessageBox.Show($"Server: {msg}");
-            };
+            // Receive move từ server
+            _network.OnMoveReceived +=
+                (move) =>
+                {
+                    this.Invoke(() =>
+                    {
+                        // Draw quân đối thủ
+                        _board.UpdateCell(
+                            move.X,
+                            move.Y,
+                            2);
+
+                        MessageBox.Show(
+                            $"Move received: X={move.X}, Y={move.Y}");
+                    });
+                };
+
+            // Receive chat
+            _network.OnChatReceived +=
+                (chat) =>
+                {
+                    MessageBox.Show(
+                        $"Chat: {chat.Message}");
+                };
+
+            // Receive status
+            _network.OnStatusReceived +=
+                (status) =>
+                {
+                    MessageBox.Show(
+                        $"Status: {status.Status}");
+                };
+
+            // Raw message
+            _network.OnMessageReceived +=
+                (msg) =>
+                {
+                    Console.WriteLine(
+                        $"RAW: {msg}");
+                };
 
             // Connect server
-            _ = _network.Connect("127.0.0.1", 5000);
+            _ = _network.Connect(
+                "127.0.0.1",
+                5000);
         }
 
-        private async void OnCellClicked(object? sender, Point e)
+        private async void OnCellClicked(
+            object? sender,
+            Point e)
         {
-            // Update local board
-            _board.UpdateCell(e.X, e.Y, _currentPlayer);
+            // Draw local move
+            _board.UpdateCell(
+                e.X,
+                e.Y,
+                1);
 
-            // Send move to server
-            await _network.Send($"{e.X},{e.Y}");
+            // Create move message
+            MoveMessage move =
+                new MoveMessage
+                {
+                    X = e.X,
+                    Y = e.Y
+                };
 
-            // Change turn
-            _currentPlayer = (_currentPlayer == 1) ? 2 : 1;
+            // Send move
+            await _network.SendMove(move);
 
-            this.Text = (_currentPlayer == 1)
-                ? "Caro Game - Lượt của X"
-                : "Caro Game - Lượt của O";
+            Console.WriteLine(
+                $"SEND: X={e.X}, Y={e.Y}");
+
+            // Change title
+            this.Text =
+                "Caro Game - Đã gửi nước đi";
         }
     }
 }
