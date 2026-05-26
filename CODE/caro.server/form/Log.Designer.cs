@@ -1,6 +1,6 @@
 ﻿namespace caro.server.form
 {
-    partial class Form2
+    partial class Log
     {
         /// <summary>
         /// Required designer variable.

@@ -10,9 +10,11 @@ using System.Windows.Forms;
 
 namespace caro.server.form
 {
-    public partial class Form2 : Form
+    public partial class Log : Form
     {
-        public Form2()
+        // Thuộc tính lưu trữ tham chiếu tới Form1 cha
+        public Home ParentForm1 { get; set; }
+        public Log()
         {
             InitializeComponent();
         }
@@ -84,7 +86,13 @@ namespace caro.server.form
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            // 1. Gọi hàm hiển thị lại Form1 và dừng server từ bên Form1
+            if (ParentForm1 != null)
+            {
+                ParentForm1.StopServerAndShow();
+            }
+            // 2. Ẩn Form2 đi (không dùng Close để tránh kích hoạt Application.Exit)
+            this.Hide();
         }
     }
 }
