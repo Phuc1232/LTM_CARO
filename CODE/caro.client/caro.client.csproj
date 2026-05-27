@@ -8,4 +8,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\caro.server\caro.server.csproj" />
+    <ProjectReference Include="..\caro.share\caro.share.csproj" />
+  </ItemGroup>
+
 </Project>
