@@ -190,7 +190,7 @@ namespace caro.server.network
         public async Task ProccessChallengeResponseAsync(string payload)
         {
             var responseData = JsonSerializer.Deserialize<ChallengeResponseDTO>(payload);
-            PendingChallenge pending = null;
+            PendingChallenge? pending = null;
 
             if (responseData == null) return;
 

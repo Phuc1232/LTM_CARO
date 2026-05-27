@@ -34,7 +34,7 @@ namespace caro.server.network
             int bodylength = BitConverter.ToInt32(headerbuffer, 0);
             if (bodylength <= 0)
             {
-                throw new InvalidOperationException("Kich thuc goi tin khong hop le!!!\n");
+                throw new InvalidOperationException("Kich thuc goi tin khong hop le!!!");
             }
             byte[] bodybuffer = await ReadfullpacketAsync(stream, bodylength);
             string json = Encoding.UTF8.GetString(bodybuffer);
