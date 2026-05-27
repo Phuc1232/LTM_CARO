@@ -1,4 +1,4 @@
-﻿namespace caro.client
+﻿namespace caro.server
 {
     partial class Form1
     {
