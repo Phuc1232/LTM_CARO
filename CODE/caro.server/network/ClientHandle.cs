@@ -1,15 +1,13 @@
-﻿using caro.server.services;
+using caro.server.services;
 using caro.share.DTOs;
 using caro.share.DTOs.Constants;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks.Sources;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.Threading.Tasks;
 
 namespace caro.server.network
 {
@@ -17,7 +15,7 @@ namespace caro.server.network
     {
         private TcpClient _client;
         private NetworkStream _stream;
-        public string username { get;   set; }
+        public string username { get; set; }
         public string CurrentRoomID { get; set; }
 
         public static readonly ConcurrentDictionary<string, PendingChallenge> PendingChallenges = new();
@@ -28,62 +26,60 @@ namespace caro.server.network
             _stream = _client.GetStream();
             username = "";
             CurrentRoomID = "";
+        }
 
-        }
-        
-        /*public void OnMockSend(BasePacket packet)
+        /// <summary>
+        /// Đóng kết nối socket chủ động từ phía Server
+        /// </summary>
+        public void CloseConnection()
         {
-            if (packet.Type == PacketType.TimerUpdate)
-            {
-                var timer = JsonSerializer.Deserialize<TimerUpdateDTO>(packet.payload);
-                Console.WriteLine($"=> [MOCK NET]Cập nhật thời gian:P1={timer.RemainingTimePlayer1}, P2={timer.RemainingTimePlayer2}, CurrentUser={timer.CurrentTurnUseName}");
-            }
-            else if (packet.Type == PacketType.GameStartNotify)
-            {
-                Console.WriteLine("=> [MOCK NET] Nhận thông báo khởi động trận đấu!");
-            }
-            else if (packet.Type == PacketType.TimerExpired)
-            {
-                Console.WriteLine("=> [MOCK NET] Nhận thông báo kết thúc trận đấu (Hết giờ)!");
-            }
-        }*/
-        public async  Task SendPacketAsync(BasePacket packet)
-        {
-           await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
-        }
-        public async Task HandleClientAsync()
-        {
-            // hung byte tu mang
             try
             {
+                _client?.Close();
+            }
+            catch {}
+        }
+
+        public async Task SendPacketAsync(BasePacket packet)
+        {
+            await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
+        }
+
+        public async Task HandleClientAsync()
+        {
+            try
+            {
+                // Ghi nhận log khi Client vừa kết nối thô thành công
+                string clientEndPoint = _client.Client.RemoteEndPoint?.ToString() ?? "Không rõ IP";
+                TCPServerManager.Log($"[Mạng] Client kết nối thành công từ địa chỉ: {clientEndPoint}");
+
                 while (true)
                 {
-                   var packet = await PacketHelper.ReceivePacketAsync<BasePacket>(_stream);
-                   await ProccessPacketAsync(packet);
+                    var packet = await PacketHelper.ReceivePacketAsync<BasePacket>(_stream);
+                    await ProccessPacketAsync(packet);
                 }
             }
-            // bat loi 
             catch (SocketException)
             {
-                Console.WriteLine($"[Mang] mat ket noi voi nguoi choi {username ?? "nguoi choi an danh"}");
-
+                TCPServerManager.Log($"[Mạng] Mất kết nối đột ngột với người chơi: '{(string.IsNullOrEmpty(username) ? "Người chơi ẩn danh" : username)}'");
             }
-            catch( Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine($"[Loi] xu ly du lieu: {ex.Message}");
+                TCPServerManager.Log($"[Lỗi mạng] Sự cố xử lý dữ liệu của người chơi '{(string.IsNullOrEmpty(username) ? "Người chơi ẩn danh" : username)}': {ex.Message}");
             }
-            // co loi hay khong du thuc thi dong nay
             finally
             {
+                // Xử lý khi người chơi offline (dọn dẹp danh sách và báo về UI)
                 if (!string.IsNullOrEmpty(username))
                 {
                     TCPServerManager.onlineplayer.TryRemove(username, out _);
-                    Console.WriteLine($"nguoi choi {username} da offline");
+                    TCPServerManager.ChangePlayerStatus(username, false); // Báo về UI xóa khỏi danh sách Online
+                    TCPServerManager.Log($"[Mạng] Người chơi '{username}' đã offline.");
                 }
                 _client.Close();
             }
-            
         }
+
         private async Task ProccessPacketAsync(BasePacket packet)
         {
             switch (packet.Type)
@@ -103,9 +99,9 @@ namespace caro.server.network
                 case PacketType.MoveRequest:
                     await ProccessMoveRequestAsync(packet.payload);
                     break;
-
             }
         }
+
         private async Task ProccessLoginAsync(string payload)
         {
             var loginRequest = JsonSerializer.Deserialize<LoginRequestDTO>(payload);
@@ -116,17 +112,20 @@ namespace caro.server.network
             if (string.IsNullOrWhiteSpace(reqName) || TCPServerManager.onlineplayer.ContainsKey(reqName))
             {
                 responseDTO.isSuccess = false;
-                responseDTO.message = string.IsNullOrWhiteSpace(reqName) ? "Ten khong hop le!!" : "Ten da ton tai!!";
+                responseDTO.message = string.IsNullOrWhiteSpace(reqName) ? "Tên đăng nhập trống!" : "Tên này đã tồn tại trong máy chủ!";
             }
             else 
             {
                 username = reqName;
                 TCPServerManager.onlineplayer.TryAdd(username, this);
                 responseDTO.isSuccess = true;
-                responseDTO.message = "Dang nhap thanh cong !!!\n";
-                Console.WriteLine($"Xac nhan {username} da dang nhap vao may chu!!!\n");
-
+                responseDTO.message = "Đăng nhập thành công !!!\n";
+                
+                // Đẩy thông báo đăng nhập và danh sách online về UI Server
+                TCPServerManager.Log($"[Đăng nhập] Xác nhận người chơi '{username}' đăng nhập thành công vào máy chủ.");
+                TCPServerManager.ChangePlayerStatus(username, true); // Báo về UI để thêm vào danh sách Online
             }
+
             var responsePacket = new BasePacket
             {
                 Type = PacketType.LoginResponse,
@@ -135,37 +134,35 @@ namespace caro.server.network
 
             await PacketHelper.SendPacketAsync<BasePacket>(_stream, responsePacket);
         }
+
         public async Task ProccessChallengeRequestAsync(string payload)
         {
             var request = JsonSerializer.Deserialize<ChallengeRequestDTO>(payload);
-
             ClientHandle target = null;
             if (request == null) return;
 
             if (request.targetUsername == username)
             {
-                await SendResultToSelfAsync("Không Thể Thách đấu chính mình!!!", false);
+                await SendResultToSelfAsync("Không thể thách đấu chính mình!!!", false);
                 return;
             }
-
             else if (!TCPServerManager.onlineplayer.TryGetValue(request.targetUsername, out target))
             {
-                await SendResultToSelfAsync($"{request.targetUsername} dang trong tran dau khac!", false);
+                await SendResultToSelfAsync($"{request.targetUsername} đang không online!", false);
                 return;
             }
             else if (!string.IsNullOrEmpty(target.CurrentRoomID))
             {
-                await SendResultToSelfAsync($"{request.targetUsername} dang trong tran dau khac!", false);
+                await SendResultToSelfAsync($"{request.targetUsername} đang trong trận đấu khác!", false);
                 return;
             }
             else if (!string.IsNullOrEmpty(CurrentRoomID))
             {
-                await SendResultToSelfAsync("Ban dang trong tran dau!", false);
+                await SendResultToSelfAsync("Bạn đang trong trận đấu!", false);
                 return;
             }
-            // Tạo mã ký tự dành cho mỗi lời thách đấu
+
             string ChallengeID = Guid.NewGuid().ToString("N").Substring(0, 8);
-            // Tạo lời thách đấu
             var pending = new PendingChallenge
             {
                 ChallengeId = ChallengeID,
@@ -173,6 +170,7 @@ namespace caro.server.network
                 Target = target
             };
             PendingChallenges.TryAdd(ChallengeID, pending);
+            
             var notify = new ChallengeNotifyDTO
             {
                 fromUsername = username,
@@ -185,8 +183,9 @@ namespace caro.server.network
             };
 
             await target.SendPacketAsync(packet);
-            Console.WriteLine($"[Thach dau] {username} thach dau {request.targetUsername} (ID: {ChallengeID})");
+            TCPServerManager.Log($"[Thách đấu] Người chơi '{username}' đã thách đấu '{request.targetUsername}' (Mã thách đấu: {ChallengeID})");
         }
+
         public async Task ProccessChallengeResponseAsync(string payload)
         {
             var responseData = JsonSerializer.Deserialize<ChallengeResponseDTO>(payload);
@@ -196,7 +195,7 @@ namespace caro.server.network
 
             if (!PendingChallenges.TryRemove(responseData.roomId, out pending))
             {
-                Console.WriteLine($"[Thach dau] Khong tim thay loi thach dau {responseData.roomId}");
+                TCPServerManager.Log($"[Thách đấu] Không tìm thấy lời thách đấu tương ứng với ID: {responseData.roomId}");
                 return;
             }
 
@@ -206,7 +205,7 @@ namespace caro.server.network
                 var result = new ChallengeResultDTO
                 {
                     isAccepted = true,
-                    message = $"{username} da chap nhan thach dau!",
+                    message = $"{username} đã chấp nhận thách đấu!",
                     roomId = room.RoomID,
                     opponentName = username
                 };
@@ -216,14 +215,14 @@ namespace caro.server.network
                     payload = JsonSerializer.Serialize(result)
                 };
                 await pending.Challenger.SendPacketAsync(resultPacket);
-                Console.WriteLine($"[Thach dau] {username} CHAP NHAN thach dau cua {pending.Challenger.username}");
+                TCPServerManager.Log($"[Thách đấu] '{username}' đã CHẤP NHẬN thách đấu từ '{pending.Challenger.username}' (Bắt đầu trận đấu!)");
             }
             else
             {
                 var resultDTO = new ChallengeResultDTO
                 {
                     isAccepted = false,
-                    message = $"{username} da tu choi thach dau!",
+                    message = $"{username} đã từ chối thách đấu!",
                     roomId = "",
                     opponentName = username
                 };
@@ -233,34 +232,33 @@ namespace caro.server.network
                     payload = JsonSerializer.Serialize(resultDTO)
                 };
                 await pending.Challenger.SendPacketAsync(resultPacket);
-                Console.WriteLine($"[Thach dau] {username} TU CHOI thach dau cua {pending.Challenger.username}");
+                TCPServerManager.Log($"[Thách đấu] '{username}' đã TỪ CHỐI thách đấu từ '{pending.Challenger.username}'");
             }
         }
-        
+
         public async Task ProccessChatSendAsync(string payload)
         {
             var ChatData = JsonSerializer.Deserialize<ChatSendDTO>(payload);
-
             if (ChatData == null) return;
 
             if (string.IsNullOrEmpty(CurrentRoomID))
             {
-                Console.WriteLine($"[Chat] {username} gửi tin nhắn nhưng không ở phòng nào!!!");
+                TCPServerManager.Log($"[Chat] Người chơi '{username}' gửi tin nhắn nhưng không nằm trong phòng đấu nào!");
                 return;
             }
             await GameRoomServices.Instance.HandleChatAsync(CurrentRoomID, this, ChatData.message);
         }
+
         private async Task ProccessMoveRequestAsync(string payload)
         {
             var moveData = JsonSerializer.Deserialize<MoveRequestDTO>(payload);
             if (moveData == null) return;
             if (string.IsNullOrEmpty(CurrentRoomID)) return;
 
-            // Chuyển toàn bộ dữ liệu nước đi cho Service xử lý
             await GameRoomServices.Instance.MoveValid(CurrentRoomID, this, moveData.row, moveData.col);
         }
-        // hàm SendResultToSelf
-        public async Task SendResultToSelfAsync(string message,bool accepted)
+
+        public async Task SendResultToSelfAsync(string message, bool accepted)
         {
             var result = new ChallengeResultDTO
             {
@@ -277,6 +275,7 @@ namespace caro.server.network
             await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
         }
     }
+
     public class PendingChallenge
     {
         public string ChallengeId { get; set; }

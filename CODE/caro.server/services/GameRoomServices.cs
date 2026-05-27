@@ -1,4 +1,4 @@
-﻿using caro.server.models;
+using caro.server.models;
 using caro.server.network;
 using caro.share.DTOs;
 using caro.share.DTOs.Constants;
@@ -10,6 +10,8 @@ using System.Net.Sockets;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace caro.server.services
 {
@@ -23,7 +25,7 @@ namespace caro.server.services
 
         private GameRoomServices() { }
 
-        public async Task<GameRoom> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons =300)
+        public async Task<GameRoom> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons = 300)
         {
             var room = new GameRoom
             {
@@ -33,7 +35,7 @@ namespace caro.server.services
                 TimeSecondPerPlayer = timesecons,
                 RemainingTimeP1 = timesecons,
                 RemainingTimeP2 = timesecons,
-                CurrentTurn = player1.username, // để tạm sẽ td random sau
+                CurrentTurn = player1.username, // mặc định đi trước
                 IsGameActive = true,
                 cts = new CancellationTokenSource()
             };
@@ -47,22 +49,24 @@ namespace caro.server.services
                 roomid = room.RoomID,
                 name_player1 = player1.username,
                 name_player2 = player2.username,
-                timeSeconds= timesecons
+                timeSeconds = timesecons
             };
             var packet = new BasePacket
             {
                 Type = PacketType.GameStartNotify,
                 payload = JsonSerializer.Serialize(startnotify)
             };
-            Task task1 = SendToPlayerAsync(player1,packet);
-            Task task2 = SendToPlayerAsync(player2,packet);
+            Task task1 = SendToPlayerAsync(player1, packet);
+            Task task2 = SendToPlayerAsync(player2, packet);
 
             await Task.WhenAll(task1, task2);
-            Console.WriteLine($"[Service] Game bat dau: {player1.username} vs {player2.username} (Room: {room.RoomID})");
+            
+            TCPServerManager.Log($"[Dịch vụ Phòng] Trận đấu bắt đầu: '{player1.username}' VS '{player2.username}' (Phòng: {room.RoomID})");
             _ = Task.Run(() => RunTimerLoopAsync(room, room.cts.Token));
 
             return room;
         }
+
         public async Task RunTimerLoopAsync(GameRoom room, CancellationToken ct)
         {
             try
@@ -79,14 +83,15 @@ namespace caro.server.services
                     {
                         room.RemainingTimeP2--;
                     }
-                     // Chuẩn bị payload 
+                    
+                    // Chuẩn bị payload 
                     var timeUpdate = new TimerUpdateDTO
                     {
                         RemainingTimePlayer1 = room.RemainingTimeP1,
                         RemainingTimePlayer2 = room.RemainingTimeP2,
                         CurrentTurnUseName = room.CurrentTurn
                     };
-                    // Chuẩn bị gói tin: [type][payload]
+                    
                     var packet = new BasePacket
                     {
                         Type = PacketType.TimerUpdate,
@@ -97,7 +102,7 @@ namespace caro.server.services
 
                     if (room.RemainingTimeP1 <= 0)
                     {
-                        await HandleTimerExpiredAsync(room, room.player1, room.player2); // Hàm xử lý thời gian khi hết ngườ chơi hết thời gian
+                        await HandleTimerExpiredAsync(room, room.player1, room.player2);
                         return;
                     }
                     else if (room.RemainingTimeP2 <= 0)
@@ -106,14 +111,13 @@ namespace caro.server.services
                         return;
                     }
                 }
-               
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Service - Room {room.RoomID}] Loi timer: {ex.Message}");
+                TCPServerManager.Log($"[Trận đấu - Phòng {room.RoomID}] Lỗi đồng hồ đếm ngược: {ex.Message}");
             }
         }
-        // định nghĩa hàm HandleTimerExpiredAsync(GameRoom room, ClientHandle loser, ClientHanlde winner)
+
         public async Task HandleTimerExpiredAsync(GameRoom room, ClientHandle loser, ClientHandle winner)
         {
             room.IsGameActive = false;
@@ -122,7 +126,7 @@ namespace caro.server.services
             {
                 loser_name = loser.username,
                 winner_name = winner.username,
-                message= $"{loser.username} da het gio {winner.username} thang!"
+                message = $"{loser.username} đã hết thời gian đi. {winner.username} giành chiến thắng!"
             };
             var packet = new BasePacket
             {
@@ -132,10 +136,10 @@ namespace caro.server.services
             _ = SendToPlayerAsync(room.player1, packet);
             _ = SendToPlayerAsync(room.player2, packet);
 
-            Console.WriteLine($"[Service - Room {room.RoomID}] {loser.username} het gio. {winner.username} thang!");
-            CleanupRoom(room.RoomID);// hàm dọn rác khi phòng bị hủy
+            TCPServerManager.Log($"[Trận đấu - Phòng {room.RoomID}] Hết giờ! Người chơi '{loser.username}' đã thua cuộc. Người chơi '{winner.username}' thắng cuộc!");
+            CleanupRoom(room.RoomID);
         }
-        // định nghĩa CleanupRoom
+
         public void CleanupRoom(string RoomID)
         {
             if (_activeroom.TryRemove(RoomID, out var room))
@@ -146,26 +150,28 @@ namespace caro.server.services
                 if (room.player1 != null) room.player1.CurrentRoomID = null;
                 if (room.player2 != null) room.player2.CurrentRoomID = null;
 
-                Console.WriteLine($"[Service] Phòng {RoomID} đã được giải phóng.");
+                TCPServerManager.Log($"[Hệ thống phòng] Phòng đấu '{RoomID}' đã được dọn dẹp và giải phóng.");
             }
         }
+
         public void SwitchTurn(string RoomID)
         {
             if (_activeroom.TryGetValue(RoomID, out var room))
             {
                 room.CurrentTurn = (room.CurrentTurn == room.player1.username) ? room.player2.username : room.player1.username;
             }
-
         }
+
         public bool CheckWin(int[,] board, int row, int col, int player)
         {
             int[][] directions = new int[4][]
             {
-                new int [] {0,1},
-                new int [] {1,0},
-                new int [] {1,1},
-                new int [] {1,-1}
+                new int [] {0, 1},
+                new int [] {1, 0},
+                new int [] {1, 1},
+                new int [] {1, -1}
             };
+            
             foreach (var dir in directions)
             {
                 int count = 1;
@@ -173,7 +179,7 @@ namespace caro.server.services
                 int dcol = dir[1];
 
                 int r = row + drow;
-                int c = row + dcol;
+                int c = col + dcol; // Sửa lỗi index bug ở đây: đổi từ row + dcol thành col + dcol
 
                 while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
                 {
@@ -191,19 +197,16 @@ namespace caro.server.services
                     c -= dcol;
                 }
 
-                if (count == 5)
+                if (count >= 5)
                 {
                     return true;
                 }
-
-
             }
             return false;
         }
 
         public async Task MoveValid(string RoomID, ClientHandle player, int row, int col)
         {
-
             GameRoom room = null;
 
             if (!_activeroom.TryGetValue(RoomID, out room)) return;
@@ -214,7 +217,8 @@ namespace caro.server.services
 
             int TurnPlayer = (room.CurrentTurn == room.player1.username) ? 1 : 2;
             room.board[row, col] = TurnPlayer;
-            Console.WriteLine($"[Service - Room {RoomID}] Nguoi choi {player.username} danh o [{row}, {col}]");
+            
+            TCPServerManager.Log($"[Trận đấu - Phòng {RoomID}] Người chơi '{player.username}' đánh quân cờ tại tọa độ [{row}, {col}]");
 
             if (CheckWin(room.board, row, col, TurnPlayer))
             {
@@ -233,11 +237,10 @@ namespace caro.server.services
                 _ = SendToPlayerAsync(room.player1, MovePacket);
                 _ = SendToPlayerAsync(room.player2, MovePacket);
 
-
                 var EndGame = new GameEndNotifyDTO
                 {
                     WinnerName = player.username,
-                    reason = "Đủ 5 quân liên tiếp!!!"
+                    reason = "Đạt đủ 5 quân liên tiếp!!!"
                 };
 
                 var packet = new BasePacket
@@ -248,10 +251,13 @@ namespace caro.server.services
 
                 _ = SendToPlayerAsync(room.player1, packet);
                 _ = SendToPlayerAsync(room.player2, packet);
+                
+                TCPServerManager.Log($"[Trận đấu - Phòng {RoomID}] Trận đấu kết thúc! '{player.username}' chiến thắng do đạt đủ 5 quân liên tiếp.");
+                CleanupRoom(RoomID);
             }
             else
             {
-                room.CurrentTurn = (room.CurrentTurn == room.player1.username) ? room.player1.username : room.player2.username;
+                room.CurrentTurn = (room.CurrentTurn == room.player1.username) ? room.player2.username : room.player1.username;
                 var moveNotify = new MoveNotifyDTO
                 {
                     player = player.username,
@@ -267,8 +273,8 @@ namespace caro.server.services
                 _ = SendToPlayerAsync(room.player1, movePacket);
                 _ = SendToPlayerAsync(room.player2, movePacket);
             }
-
         }
+
         public async Task HandleChatAsync(string RoomID, ClientHandle sender, string message)
         {
             if (_activeroom.TryGetValue(RoomID, out var room))
@@ -287,9 +293,10 @@ namespace caro.server.services
                     payload = JsonSerializer.Serialize(chatrecevie)
                 };
                 await SendToPlayerAsync(receiver, packet);
-                Console.WriteLine($"[Service - Chat Room {RoomID}] {sender.username}: {message}");
+                TCPServerManager.Log($"[Trò chuyện - Phòng {RoomID}] {sender.username}: {message}");
             }
         }
+
         public async Task SendToPlayerAsync(ClientHandle player, BasePacket packet)
         {
             try
@@ -301,7 +308,7 @@ namespace caro.server.services
             }
             catch (SocketException)
             {
-                Console.WriteLine($"[Lỗi mạng] Không thể gửi gói tin tới {player?.username}. Kết nối đã bị đứt.");
+                TCPServerManager.Log($"[Lỗi mạng] Không thể gửi gói tin tới '{player?.username}'. Kết nối mạng bị gián đoạn.");
 
                 // Tự động giải phóng phòng đấu ngay lập tức
                 if (player != null && !string.IsNullOrEmpty(player.CurrentRoomID))
@@ -311,7 +318,7 @@ namespace caro.server.services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Lỗi hệ thống] Sự cố khi gửi dữ liệu tới {player?.username}: {ex.Message}");
+                TCPServerManager.Log($"[Lỗi hệ thống] Sự cố khi gửi dữ liệu tới '{player?.username}': {ex.Message}");
             }
         }
     }
