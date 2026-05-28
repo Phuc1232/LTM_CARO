@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace caro.server.models
@@ -19,5 +20,6 @@ namespace caro.server.models
         public bool IsGameActive { get; set; }
 
         public int[,] board { get; set; } = new int[15, 15];
+        public List<string> MoveSequence { get; set; } = new List<string>();
     }
 }
