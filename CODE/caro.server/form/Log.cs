@@ -19,15 +19,7 @@ namespace caro.server.form
         {
             InitializeComponent();
         }
-        //public void UpdateStatus(string status)
-        //{
-        //    if (this.lblStatus.InvokeRequired)
-        //    {
-        //        this.lblStatus.Invoke(new Action(() => UpdateStatus(status)));
-        //        return;
-        //    }
-        //    lblStatus.Text = status;
-        //}
+        
         public void AppendLog(string message)
         {
             if (this.rtbLogs.InvokeRequired)

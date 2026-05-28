@@ -26,7 +26,7 @@ namespace caro.server.form
             TCPServerManager.OnPlayerConnectionChanged += HandlePlayerConnection;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void BTN_StopServer(object sender, EventArgs e)
         {
             _serverManager.StopServer();
             Application.Exit(); // Thoát hoàn toàn ứng dụng
@@ -48,7 +48,7 @@ namespace caro.server.form
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void BTN_StartServer(object sender, EventArgs e)
         {
             // 1. Khởi tạo duy nhất một đối tượng của Form2 (Log) lưu vào biến toàn cục _form2
             if (_form2 == null || _form2.IsDisposed)

@@ -49,7 +49,7 @@
             btnStart.Text = "Start";
             btnStart.TextAlign = ContentAlignment.TopCenter;
             btnStart.UseVisualStyleBackColor = true;
-            btnStart.Click += button1_Click;
+            btnStart.Click += BTN_StartServer;
             // 
             // btnStop
             // 
@@ -65,7 +65,7 @@
             btnStop.TabIndex = 1;
             btnStop.Text = "Exit";
             btnStop.UseVisualStyleBackColor = true;
-            btnStop.Click += button2_Click;
+            btnStop.Click += BTN_StopServer;
             // 
             // txtPort
             // 
