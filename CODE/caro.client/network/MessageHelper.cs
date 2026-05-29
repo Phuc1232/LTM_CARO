@@ -4,37 +4,44 @@ namespace CaroGame.Client.Network
 {
     public static class MessageHelper
     {
-        public static string Serialize<T>(T message)
+        public static string Serialize(object obj)
         {
-            return JsonSerializer.Serialize(message);
+            return JsonSerializer.Serialize(obj);
         }
 
-        public static object? Deserialize(string json)
+        public static BaseMessage? Deserialize(string json)
         {
-            using JsonDocument doc =
-                JsonDocument.Parse(json);
-
-            string? type =
-                doc.RootElement
-                .GetProperty("Type")
-                .GetString();
-
-            switch (type)
+            try
             {
-                case "MOVE":
-                    return JsonSerializer
-                        .Deserialize<MoveMessage>(json);
+                using JsonDocument doc =
+                    JsonDocument.Parse(json);
 
-                case "CHAT":
-                    return JsonSerializer
-                        .Deserialize<ChatMessage>(json);
+                string? type =
+                    doc.RootElement
+                        .GetProperty("Type")
+                        .GetString();
 
-                case "STATUS":
-                    return JsonSerializer
-                        .Deserialize<GameStatus>(json);
+                switch (type)
+                {
+                    case "MOVE":
+                        return JsonSerializer
+                            .Deserialize<MoveMessage>(json);
 
-                default:
-                    return null;
+                    case "CHAT":
+                        return JsonSerializer
+                            .Deserialize<ChatMessage>(json);
+
+                    case "STATUS":
+                        return JsonSerializer
+                            .Deserialize<GameStatus>(json);
+
+                    default:
+                        return null;
+                }
+            }
+            catch
+            {
+                return null;
             }
         }
     }

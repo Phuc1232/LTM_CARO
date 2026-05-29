@@ -12,38 +12,74 @@ namespace CaroGame.Client.Network
 
         private bool _isConnected;
 
-        // Event cũ
-        public event Action<string>? OnMessageReceived;
+        // Connection state
+        public ConnectionState State
+        {
+            get;
+            private set;
+        }
+        =
+        ConnectionState.Disconnected;
 
+        // Raw message event
+        public event EventHandler<
+            MessageReceivedEventArgs>?
+            OnMessageReceived;
+
+        // Connection events
         public event Action? OnConnected;
 
         public event Action? OnDisconnected;
 
-        // Event mới
-        public event Action<MoveMessage>? OnMoveReceived;
+        // Typed events
+        public event Action<MoveMessage>?
+            OnMoveReceived;
 
-        public event Action<ChatMessage>? OnChatReceived;
+        public event Action<ChatMessage>?
+            OnChatReceived;
 
-        public event Action<GameStatus>? OnStatusReceived;
+        public event Action<GameStatus>?
+            OnStatusReceived;
 
-        public async Task Connect(string ip, int port)
+        // Connect
+        public async Task Connect(
+            string ip,
+            int port)
         {
             try
             {
-                _client = new TcpClient();
+                State =
+                    ConnectionState.Connecting;
 
-                await _client.ConnectAsync(ip, port);
+                NetworkLogger.Log(
+                    "Connecting to server...");
 
-                NetworkStream stream = _client.GetStream();
+                _client =
+                    new TcpClient();
 
-                _reader = new StreamReader(stream);
+                await _client.ConnectAsync(
+                    ip,
+                    port);
 
-                _writer = new StreamWriter(stream)
-                {
-                    AutoFlush = true
-                };
+                NetworkStream stream =
+                    _client.GetStream();
+
+                _reader =
+                    new StreamReader(stream);
+
+                _writer =
+                    new StreamWriter(stream)
+                    {
+                        AutoFlush = true
+                    };
 
                 _isConnected = true;
+
+                State =
+                    ConnectionState.Connected;
+
+                NetworkLogger.Log(
+                    "Connected to server");
 
                 OnConnected?.Invoke();
 
@@ -51,79 +87,138 @@ namespace CaroGame.Client.Network
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                State =
+                    ConnectionState.Disconnected;
+
+                NetworkLogger.Error(
+                    ex.Message);
+
+                MessageBox.Show(
+                    ex.Message);
             }
         }
 
-        public async Task Send(string message)
+        // Send raw message
+        public async Task Send(
+            string message)
         {
-            if (!_isConnected || _writer == null)
+            if (!_isConnected
+                || _writer == null)
                 return;
 
-            await _writer.WriteLineAsync(message);
+            try
+            {
+                await _writer
+                    .WriteLineAsync(message);
+
+                NetworkLogger.Log(
+                    $"Sent: {message}");
+            }
+            catch (Exception ex)
+            {
+                NetworkLogger.Error(
+                    ex.Message);
+            }
         }
 
-        // Gửi nước đi
-        public async Task SendMove(MoveMessage move)
+        // Send move
+        public async Task SendMove(
+            MoveMessage move)
         {
-            string data = MessageHelper.Serialize(move);
+            string json =
+                MessageHelper
+                    .Serialize(move);
 
-            await Send(data);
+            await Send(json);
         }
 
-        // Gửi chat
-        public async Task SendChat(ChatMessage chat)
+        // Send chat
+        public async Task SendChat(
+            ChatMessage chat)
         {
-            string data = MessageHelper.Serialize(chat);
+            string json =
+                MessageHelper
+                    .Serialize(chat);
 
-            await Send(data);
+            await Send(json);
         }
 
+        // Receive loop
         private async Task ReceiveLoop()
         {
             try
             {
                 while (_isConnected)
                 {
-                    string? message = await _reader!.ReadLineAsync();
+                    string? message =
+                        await _reader!
+                            .ReadLineAsync();
 
                     if (message == null)
                         break;
 
-                    // Event raw message
-                    OnMessageReceived?.Invoke(message);
+                    NetworkLogger.Log(
+                        $"Received: {message}");
 
-                    // Parse message
-                    object? msg = MessageHelper.Deserialize(message);
-                    // Raise event theo loại message
+                    // Raw message event
+                    OnMessageReceived?.Invoke(
+                        this,
+                        new MessageReceivedEventArgs(
+                            message));
+
+                    // Deserialize
+                    BaseMessage? msg =
+                        MessageHelper
+                            .Deserialize(message);
+
+                    if (msg == null)
+                        continue;
+
+                    // Raise typed event
                     if (msg is MoveMessage move)
                     {
-                        OnMoveReceived?.Invoke(move);
+                        OnMoveReceived
+                            ?.Invoke(move);
                     }
                     else if (msg is ChatMessage chat)
                     {
-                        OnChatReceived?.Invoke(chat);
+                        OnChatReceived
+                            ?.Invoke(chat);
                     }
                     else if (msg is GameStatus status)
                     {
-                        OnStatusReceived?.Invoke(status);
+                        OnStatusReceived
+                            ?.Invoke(status);
                     }
                 }
             }
-            catch
+            catch (IOException)
             {
-
+                NetworkLogger.Error(
+                    "Connection lost");
+            }
+            catch (Exception ex)
+            {
+                NetworkLogger.Error(
+                    ex.Message);
             }
 
             Disconnect();
         }
 
+        // Disconnect
         public void Disconnect()
         {
             if (!_isConnected)
                 return;
 
             _isConnected = false;
+
+            State =
+                ConnectionState.Disconnected;
+
+            NetworkLogger.Log(
+                "Disconnected");
 
             _writer?.Close();
 
