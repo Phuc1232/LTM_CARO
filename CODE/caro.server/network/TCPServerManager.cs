@@ -1,3 +1,4 @@
+using caro.server.services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -37,9 +38,21 @@ namespace caro.server.network
             {
                 _listener.Start();
                 Log($"Server đã khởi động thành công trên cổng: {port}");
-
-                // Chạy tác vụ lắng nghe client trên luồng phụ để tránh gây đơ/treo giao diện WinForms
-                Task.Run(() => ListenForClientsAsync(_cts.Token));
+                _ = Task.Run(async () =>
+                {
+                    Log("[Database] Đang khởi tạo kết nối PostgreSQL (EF Core Code-First)...");
+                    bool isSuccess = await DatabaseServices.Instance.InitializeDatabaseAsync();
+                    if (isSuccess)
+                    {
+                        Log("[Database] Kết nối PostgreSQL thành công. Cơ cấu bảng lịch sử đấu sẵn sàng.");
+                    }
+                    else
+                    {
+                        Log("[Database] [Cảnh báo] Lỗi kết nối PostgreSQL. Hãy đảm bảo Docker Container đã chạy.");
+                    }
+                    // Chạy tác vụ lắng nghe client trên luồng phụ để tránh gây đơ/treo giao diện WinForms
+                    _ = Task.Run(() => ListenForClientsAsync(_cts.Token));
+                });
             }
             catch (Exception ex)
             {
