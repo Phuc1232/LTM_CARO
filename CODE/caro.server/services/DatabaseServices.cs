@@ -1,5 +1,6 @@
 ﻿using caro.server.database;
 using caro.server.form;
+using caro.server.models;
 using caro.server.network;
 using System;
 using System.Collections.Generic;
@@ -32,10 +33,26 @@ namespace caro.server.services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Database Error] Khởi tạo thất bại!!: {ex.Message}");
+               TCPServerManager.Log($"[Database Error] Khởi tạo thất bại!!: {ex.Message}");
                 return false;
             }
         }
-
+        public async Task SaveMatchHistoryAsync(MatchHistoryModels history)
+        {
+            try
+            {
+                using (var context = new CaroDbContext())
+                {
+                    var entity = MatchHistoryEntity.FromDomain(history);
+                    await context.MatchHistories.AddAsync(entity);
+                    await context.SaveChangesAsync();
+                    TCPServerManager.Log($"[Database] Đã lưu lịch sử đấu cho trận: {history.id}");
+                }
+            }
+            catch(Exception ex) 
+            {
+                TCPServerManager.Log($"[Database Error] Lưu lịch sử đấu thất bại: {ex.Message}");
+            }
+        }
     }
 }
