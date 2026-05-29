@@ -136,6 +136,16 @@ namespace caro.server.services
             _ = SendToPlayerAsync(room.player1, packet);
             _ = SendToPlayerAsync(room.player2, packet);
 
+            var history = new MatchHistoryModels
+            {
+                Player1 = room.player1.username,
+                Player2 = room.player2.username,
+                Winner = winner.username,
+                MatchType = "PvP",
+                MovesData = string.Join(";", room.MoveSequence) 
+            };
+            _ = Task.Run(() => DatabaseServices.Instance.SaveMatchHistoryAsync(history));
+
             TCPServerManager.Log($"[Trận đấu - Phòng {room.RoomID}] Hết giờ! Người chơi '{loser.username}' đã thua cuộc. Người chơi '{winner.username}' thắng cuộc!");
             CleanupRoom(room.RoomID);
         }
@@ -217,7 +227,7 @@ namespace caro.server.services
 
             int TurnPlayer = (room.CurrentTurn == room.player1.username) ? 1 : 2;
             room.board[row, col] = TurnPlayer;
-            
+            room.MoveSequence.Add($"{player.username}:{row},{col}");
             TCPServerManager.Log($"[Trận đấu - Phòng {RoomID}] Người chơi '{player.username}' đánh quân cờ tại tọa độ [{row}, {col}]");
 
             if (CheckWin(room.board, row, col, TurnPlayer))
@@ -251,7 +261,18 @@ namespace caro.server.services
 
                 _ = SendToPlayerAsync(room.player1, packet);
                 _ = SendToPlayerAsync(room.player2, packet);
-                
+
+                var history = new MatchHistoryModels
+                {
+                    Player1 = room.player1.username,
+                    Player2 = room.player2.username,
+                    Winner = player.username,
+                    MatchType = "PvP",
+                    MovesData = string.Join(";", room.MoveSequence)
+                };
+
+                _ = Task.Run(() => DatabaseServices.Instance.SaveMatchHistoryAsync(history));
+
                 TCPServerManager.Log($"[Trận đấu - Phòng {RoomID}] Trận đấu kết thúc! '{player.username}' chiến thắng do đạt đủ 5 quân liên tiếp.");
                 CleanupRoom(RoomID);
             }
