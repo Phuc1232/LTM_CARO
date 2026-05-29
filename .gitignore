@@ -1,3 +1,5 @@
 .vs/
 bin/
 obj/
+/CODE/caro.server/caro.server.csproj.user
+/CODE/CARO.slnLaunch.user

@@ -1,4 +1,7 @@
-namespace caro.server
+﻿using System;
+using System.Windows.Forms;
+
+namespace caro.server.form
 {
     internal static class Program
     {
@@ -10,8 +13,8 @@ namespace caro.server
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            ApplicationConfiguration.Initialize(); 
+            Application.Run(new Home());
         }
     }
 }
