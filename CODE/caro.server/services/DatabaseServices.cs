@@ -2,6 +2,7 @@
 using caro.server.form;
 using caro.server.models;
 using caro.server.network;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
@@ -53,6 +54,25 @@ namespace caro.server.services
             {
                 TCPServerManager.Log($"[Database Error] Lưu lịch sử đấu thất bại: {ex.Message}");
             }
+        }
+        public async Task<List<MatchHistoryModels>> GetMatchHistoryAsync()
+        {
+            try
+            {
+                using (var context = new CaroDbContext())
+                {
+                    var entities = await context.MatchHistories.
+                        OrderByDescending(m => m.PlayedAt).
+                        ToListAsync();
+                    return entities.Select(e => e.ToDomain()).ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                TCPServerManager.Log($"[Database Error] Lưu lịch sử đấu thất bại: {ex.Message}");
+                return new List<MatchHistoryModels>;
+            }
+   
         }
     }
 }
