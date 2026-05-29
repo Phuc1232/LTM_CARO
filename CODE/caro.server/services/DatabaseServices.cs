@@ -26,15 +26,15 @@ namespace caro.server.services
                     var CanConnect = await context.Database.CanConnectAsync();
                     if (!CanConnect)
                     {
-                        TCPServerManager.Log("Kết Nối Database Thất Bại!!!!");
+                        return false;
                     }
-                    TCPServerManager.Log("Kết Nối Database Thành Công!!!");
+                   
                     return true;
                 }
             }
             catch (Exception ex)
             {
-               TCPServerManager.Log($"[Database Error] Khởi tạo thất bại!!: {ex.Message}");
+               
                 return false;
             }
         }
@@ -70,7 +70,7 @@ namespace caro.server.services
             catch(Exception ex)
             {
                 TCPServerManager.Log($"[Database Error] Lưu lịch sử đấu thất bại: {ex.Message}");
-                return new List<MatchHistoryModels>;
+                return new List<MatchHistoryModels>();
             }
    
         }
