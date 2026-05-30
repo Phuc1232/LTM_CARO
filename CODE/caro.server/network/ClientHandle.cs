@@ -113,6 +113,16 @@ namespace caro.server.network
             {
                 responseDTO.isSuccess = false;
                 responseDTO.message = string.IsNullOrWhiteSpace(reqName) ? "Tên đăng nhập trống!" : "Tên này đã tồn tại trong máy chủ!";
+                TCPServerManager.Log($"[Đăng nhập] Xác nhận người chơi Thất Bại: Tên Không Hợp Lệ!!!");
+                var responsePacketFalse = new BasePacket
+                {
+                    Type = PacketType.LoginResponse,
+                    payload = JsonSerializer.Serialize(responseDTO)
+                };
+
+                await PacketHelper.SendPacketAsync<BasePacket>(_stream, responsePacketFalse);
+                this.CloseConnection();
+               
             }
             else 
             {
