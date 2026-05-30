@@ -156,6 +156,19 @@ namespace caro.server.services
             {
                 room.IsGameActive = false;
                 room.cts?.Cancel();
+                var endNotify = new GameEndNotifyDTO
+                {
+                    WinnerName = "",
+                    reason = "Đối thủ đã mất kết nối đột ngột!"
+                };
+                var packet = new BasePacket
+                {
+                    Type = PacketType.GameEndNotify,
+                    payload = JsonSerializer.Serialize(endNotify)
+                };
+
+                _ = SendToPlayerAsync(room.player1, packet);
+                _ = SendToPlayerAsync(room.player2, packet);
 
                 if (room.player1 != null) room.player1.CurrentRoomID = null;
                 if (room.player2 != null) room.player2.CurrentRoomID = null;
