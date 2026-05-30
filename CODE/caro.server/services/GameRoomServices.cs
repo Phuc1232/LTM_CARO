@@ -340,7 +340,7 @@ namespace caro.server.services
                     await player.SendPacketAsync(packet);
                 }
             }
-            catch (SocketException)
+            catch (Exception ex) when (ex is SocketException || ex is System.IO.IOException)
             {
                 TCPServerManager.Log($"[Lỗi mạng] Không thể gửi gói tin tới '{player?.username}'. Kết nối mạng bị gián đoạn.");
 
