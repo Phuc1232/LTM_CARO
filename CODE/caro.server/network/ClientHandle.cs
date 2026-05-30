@@ -75,11 +75,13 @@ namespace caro.server.network
                     TCPServerManager.onlineplayer.TryRemove(username, out _);
                     TCPServerManager.ChangePlayerStatus(username, false); // Báo về UI xóa khỏi danh sách Online
                     TCPServerManager.Log($"[Mạng] Người chơi '{username}' đã offline.");
+
+                    if (!string.IsNullOrEmpty(CurrentRoomID))
+                    {
+                        GameRoomServices.Instance.CleanupRoom(CurrentRoomID);
+                    }
                 }
-                if (!string.IsNullOrEmpty(CurrentRoomID))
-                {
-                    GameRoomServices.Instance.CleanupRoom(CurrentRoomID);
-                }
+                
                 _client.Close();
             }
         }
