@@ -89,6 +89,7 @@
             txtPort1.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtPort1.Location = new Point(594, 36);
             txtPort1.Name = "txtPort1";
+            txtPort1.ReadOnly = true;
             txtPort1.Size = new Size(118, 26);
             txtPort1.TabIndex = 5;
             txtPort1.Text = "8888";
