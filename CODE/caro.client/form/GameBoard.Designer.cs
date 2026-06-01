@@ -31,6 +31,11 @@
             playerCard1 = new caro.client.ui_components.PlayerCard();
             playerCard2 = new caro.client.ui_components.PlayerCard();
             boardControl1 = new caro.client.ui_components.BoardControl();
+            panel1 = new Panel();
+            menuButton1 = new caro.client.ui_components.MenuButton();
+            menuButton2 = new caro.client.ui_components.MenuButton();
+            menuButton3 = new caro.client.ui_components.MenuButton();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // playerCard1
@@ -59,10 +64,50 @@
             // boardControl1
             // 
             boardControl1.BorderStyle = BorderStyle.FixedSingle;
-            boardControl1.Location = new Point(231, 135);
+            boardControl1.Location = new Point(331, 139);
             boardControl1.Name = "boardControl1";
             boardControl1.Size = new Size(598, 598);
             boardControl1.TabIndex = 2;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(menuButton3);
+            panel1.Controls.Add(menuButton2);
+            panel1.Controls.Add(menuButton1);
+            panel1.Location = new Point(30, 305);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(258, 260);
+            panel1.TabIndex = 3;
+            // 
+            // menuButton1
+            // 
+            menuButton1.HoverBackColor = Color.DeepSkyBlue;
+            menuButton1.HoverForeColor = Color.White;
+            menuButton1.Location = new Point(5, 21);
+            menuButton1.Name = "menuButton1";
+            menuButton1.Size = new Size(250, 60);
+            menuButton1.TabIndex = 4;
+            menuButton1.Text = "menuButton1";
+            // 
+            // menuButton2
+            // 
+            menuButton2.HoverBackColor = Color.DeepSkyBlue;
+            menuButton2.HoverForeColor = Color.White;
+            menuButton2.Location = new Point(5, 102);
+            menuButton2.Name = "menuButton2";
+            menuButton2.Size = new Size(250, 60);
+            menuButton2.TabIndex = 5;
+            menuButton2.Text = "menuButton2";
+            // 
+            // menuButton3
+            // 
+            menuButton3.HoverBackColor = Color.DeepSkyBlue;
+            menuButton3.HoverForeColor = Color.White;
+            menuButton3.Location = new Point(5, 183);
+            menuButton3.Name = "menuButton3";
+            menuButton3.Size = new Size(250, 60);
+            menuButton3.TabIndex = 6;
+            menuButton3.Text = "menuButton3";
             // 
             // GameBoard
             // 
@@ -70,11 +115,13 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(255, 255, 192);
             ClientSize = new Size(1184, 761);
+            Controls.Add(panel1);
             Controls.Add(boardControl1);
             Controls.Add(playerCard2);
             Controls.Add(playerCard1);
             Name = "GameBoard";
             Text = "GameBoard";
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -83,5 +130,9 @@
         private ui_components.PlayerCard playerCard1;
         private ui_components.PlayerCard playerCard2;
         private ui_components.BoardControl boardControl1;
+        private Panel panel1;
+        private ui_components.MenuButton menuButton3;
+        private ui_components.MenuButton menuButton2;
+        private ui_components.MenuButton menuButton1;
     }
 }
