@@ -1,10 +1,13 @@
 using caro.server.services;
+using caro.share.DTOs;
+using caro.share.DTOs.Constants;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -141,6 +144,33 @@ namespace caro.server.network
         public static void ChangePlayerStatus(string username, bool isConnecting)
         {
             OnPlayerConnectionChanged?.Invoke(username, isConnecting);
+        }
+
+        /// <summary>
+        /// Phát sóng danh sách tất cả người chơi đang online tới toàn bộ clients.
+        /// </summary>
+        public static async Task BroadcastOnlinePlayersAsync()
+        {
+            var listDTO = new OnlinePlayerListDTO
+            {
+                players = new List<string>(onlineplayer.Keys)
+            };
+            var packet = new BasePacket
+            {
+                Type = PacketType.OnlinePlayerList,
+                payload = JsonSerializer.Serialize(listDTO)
+            };
+            foreach (var client in onlineplayer.Values)
+            {
+                try
+                {
+                    await client.SendPacketAsync(packet);
+                }
+                catch (Exception ex)
+                {
+                    Log($"[Lỗi mạng] Không thể gửi danh sách online tới '{client.username}': {ex.Message}");
+                }
+            }
         }
     }
 }

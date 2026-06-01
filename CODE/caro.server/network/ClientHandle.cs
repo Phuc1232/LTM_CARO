@@ -1,6 +1,7 @@
 using caro.server.services;
 using caro.share.DTOs;
 using caro.share.DTOs.Constants;
+using caro.share.network;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -80,6 +81,8 @@ namespace caro.server.network
                     {
                         GameRoomServices.Instance.CleanupRoom(CurrentRoomID);
                     }
+
+                    _ = TCPServerManager.BroadcastOnlinePlayersAsync();
                 }
                 
                 _client.Close();
@@ -115,31 +118,30 @@ namespace caro.server.network
             string reqName = loginRequest.username.Trim();
 
             var responseDTO = new LoginResponseDTO();
-            if (string.IsNullOrWhiteSpace(reqName) || TCPServerManager.onlineplayer.ContainsKey(reqName))
+            bool isSuccess = false;
+
+            if (string.IsNullOrWhiteSpace(reqName))
             {
                 responseDTO.isSuccess = false;
-                responseDTO.message = string.IsNullOrWhiteSpace(reqName) ? "Tên đăng nhập trống!" : "Tên này đã tồn tại trong máy chủ!";
-                TCPServerManager.Log($"[Đăng nhập] Xác nhận người chơi Thất Bại: Tên Không Hợp Lệ!!!");
-                var responsePacketFalse = new BasePacket
-                {
-                    Type = PacketType.LoginResponse,
-                    payload = JsonSerializer.Serialize(responseDTO)
-                };
-
-                await PacketHelper.SendPacketAsync<BasePacket>(_stream, responsePacketFalse);
-                this.CloseConnection();
-               
+                responseDTO.message = "Tên đăng nhập trống!";
+                TCPServerManager.Log($"[Đăng nhập] Đăng nhập thất bại: Tên đăng nhập trống!");
             }
-            else 
+            else if (TCPServerManager.onlineplayer.TryAdd(reqName, this))
             {
                 username = reqName;
-                TCPServerManager.onlineplayer.TryAdd(username, this);
                 responseDTO.isSuccess = true;
                 responseDTO.message = "Đăng nhập thành công !!!\n";
-                
+                isSuccess = true;
+
                 // Đẩy thông báo đăng nhập và danh sách online về UI Server
                 TCPServerManager.Log($"[Đăng nhập] Xác nhận người chơi '{username}' đăng nhập thành công vào máy chủ.");
                 TCPServerManager.ChangePlayerStatus(username, true); // Báo về UI để thêm vào danh sách Online
+            }
+            else
+            {
+                responseDTO.isSuccess = false;
+                responseDTO.message = "Tên này đã tồn tại trong máy chủ!";
+                TCPServerManager.Log($"[Đăng nhập] Đăng nhập thất bại: Tên '{reqName}' đã tồn tại!");
             }
 
             var responsePacket = new BasePacket
@@ -149,6 +151,15 @@ namespace caro.server.network
             };
 
             await PacketHelper.SendPacketAsync<BasePacket>(_stream, responsePacket);
+
+            if (isSuccess)
+            {
+                _ = TCPServerManager.BroadcastOnlinePlayersAsync();
+            }
+            else
+            {
+                this.CloseConnection();
+            }
         }
 
         public async Task ProccessChallengeRequestAsync(string payload)
@@ -200,6 +211,17 @@ namespace caro.server.network
 
             await target.SendPacketAsync(packet);
             TCPServerManager.Log($"[Thách đấu] Người chơi '{username}' đã thách đấu '{request.targetUsername}' (Mã thách đấu: {ChallengeID})");
+
+            // Thiết lập Timeout 30 giây cho lời thách đấu để tránh rò rỉ bộ nhớ
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(30000); // 30 giây
+                if (PendingChallenges.TryRemove(ChallengeID, out var expired))
+                {
+                    await expired.Challenger.SendResultToSelfAsync($"Yêu cầu thách đấu tới '{expired.Target.username}' đã hết thời gian phản hồi (30s)!", false);
+                    TCPServerManager.Log($"[Thách đấu] Lời mời thách đấu từ '{expired.Challenger.username}' gửi tới '{expired.Target.username}' đã hết hạn phản hồi (Mã: {ChallengeID}).");
+                }
+            });
         }
 
         public async Task ProccessChallengeResponseAsync(string payload)

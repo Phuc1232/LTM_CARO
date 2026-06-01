@@ -11,7 +11,7 @@ namespace caro.client
         {
             ApplicationConfiguration.Initialize();
 
-            Application.Run(new GameBoard());
+            Application.Run(new Form1());
         }
     }
 }

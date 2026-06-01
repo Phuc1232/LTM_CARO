@@ -1,232 +1,188 @@
-﻿using System.Net.Sockets;
+using System;
+using System.Net.Sockets;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using caro.share.DTOs;
+using caro.share.DTOs.Constants;
+using caro.share.network;
 
-namespace CaroGame.Client.Network
+namespace caro.client.network
 {
-    public class TcpClientManager
+    public class TCPClientManager
     {
+        private static readonly Lazy<TCPClientManager> _instance = new(() => new TCPClientManager());
+        public static TCPClientManager Instance => _instance.Value;
+
         private TcpClient? _client;
-
-        private StreamReader? _reader;
-
-        private StreamWriter? _writer;
-
+        private NetworkStream? _stream;
+        private CancellationTokenSource? _cts;
         private bool _isConnected;
 
-        // Connection state
-        public ConnectionState State
-        {
-            get;
-            private set;
-        }
-        =
-        ConnectionState.Disconnected;
-
-        // Raw message event
-        public event EventHandler<
-            MessageReceivedEventArgs>?
-            OnMessageReceived;
-
-        // Connection events
-        public event Action? OnConnected;
-
+        // Các sự kiện mạng đẩy dữ liệu về tầng UI
+        public event Action<LoginResponseDTO>? OnLoginResponse;
+        public event Action<ChallengeNotifyDTO>? OnChallengeReceived;
+        public event Action<ChallengeResultDTO>? OnChallengeResult;
+        public event Action<OnlinePlayerListDTO>? OnOnlinePlayerListUpdated;
+        public event Action<ChatReceiveDTO>? OnChatReceived;
+        public event Action<TimerUpdateDTO>? OnTimerUpdated;
+        public event Action<TimerExpiredDTO>? OnTimerExpired;
+        public event Action<GameStartNotifyDTO>? OnGameStarted;
+        public event Action<MoveNotifyDTO>? OnMoveNotify;
+        public event Action<GameEndNotifyDTO>? OnGameEnded;
         public event Action? OnDisconnected;
 
-        // Typed events
-        public event Action<MoveMessage>?
-            OnMoveReceived;
+        private TCPClientManager() { }
 
-        public event Action<ChatMessage>?
-            OnChatReceived;
-
-        public event Action<GameStatus>?
-            OnStatusReceived;
-
-        // Connect
-        public async Task Connect(
-            string ip,
-            int port)
+        /// <summary>
+        /// Kết nối đến TCP Server bất đồng bộ.
+        /// </summary>
+        public async Task<bool> ConnectAsync(string ip = "127.0.0.1", int port = 8888)
         {
+            if (_isConnected) return true;
             try
             {
-                State =
-                    ConnectionState.Connecting;
-
-                NetworkLogger.Log(
-                    "Connecting to server...");
-
-                _client =
-                    new TcpClient();
-
-                await _client.ConnectAsync(
-                    ip,
-                    port);
-
-                NetworkStream stream =
-                    _client.GetStream();
-
-                _reader =
-                    new StreamReader(stream);
-
-                _writer =
-                    new StreamWriter(stream)
-                    {
-                        AutoFlush = true
-                    };
-
+                _client = new TcpClient();
+                await _client.ConnectAsync(ip, port);
+                _stream = _client.GetStream();
                 _isConnected = true;
+                _cts = new CancellationTokenSource();
 
-                State =
-                    ConnectionState.Connected;
-
-                NetworkLogger.Log(
-                    "Connected to server");
-
-                OnConnected?.Invoke();
-
-                _ = Task.Run(ReceiveLoop);
+                // Bắt đầu luồng lắng nghe nhận gói tin từ server
+                _ = Task.Run(() => ReceiveLoopAsync(_cts.Token));
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                State =
-                    ConnectionState.Disconnected;
-
-                NetworkLogger.Error(
-                    ex.Message);
-
-                MessageBox.Show(
-                    ex.Message);
+                Disconnect();
+                return false;
             }
         }
 
-        // Send raw message
-        public async Task Send(
-            string message)
+        /// <summary>
+        /// Ngắt kết nối an toàn khỏi Server và giải phóng tài nguyên.
+        /// </summary>
+        public void Disconnect()
         {
-            if (!_isConnected
-                || _writer == null)
-                return;
+            if (!_isConnected) return;
 
+            _isConnected = false;
+            _cts?.Cancel();
             try
             {
-                await _writer
-                    .WriteLineAsync(message);
-
-                NetworkLogger.Log(
-                    $"Sent: {message}");
+                _stream?.Close();
             }
-            catch (Exception ex)
-            {
-                NetworkLogger.Error(
-                    ex.Message);
-            }
-        }
-
-        // Send move
-        public async Task SendMove(
-            MoveMessage move)
-        {
-            string json =
-                MessageHelper
-                    .Serialize(move);
-
-            await Send(json);
-        }
-
-        // Send chat
-        public async Task SendChat(
-            ChatMessage chat)
-        {
-            string json =
-                MessageHelper
-                    .Serialize(chat);
-
-            await Send(json);
-        }
-
-        // Receive loop
-        private async Task ReceiveLoop()
-        {
+            catch { }
             try
             {
-                while (_isConnected)
+                _client?.Close();
+            }
+            catch { }
+
+            _stream = null;
+            _client = null;
+
+            OnDisconnected?.Invoke();
+        }
+
+        /// <summary>
+        /// Gửi gói tin bất đồng bộ đến Server.
+        /// </summary>
+        public async Task SendPacketAsync<T>(PacketType type, T dtoData)
+        {
+            if (!_isConnected || _stream == null) return;
+            try
+            {
+                var packet = new BasePacket
                 {
-                    string? message =
-                        await _reader!
-                            .ReadLineAsync();
+                    Type = type,
+                    payload = JsonSerializer.Serialize(dtoData)
+                };
+                await PacketHelper.SendPacketAsync(_stream, packet);
+            }
+            catch (Exception)
+            {
+                Disconnect();
+            }
+        }
 
-                    if (message == null)
-                        break;
-
-                    NetworkLogger.Log(
-                        $"Received: {message}");
-
-                    // Raw message event
-                    OnMessageReceived?.Invoke(
-                        this,
-                        new MessageReceivedEventArgs(
-                            message));
-
-                    // Deserialize
-                    BaseMessage? msg =
-                        MessageHelper
-                            .Deserialize(message);
-
-                    if (msg == null)
-                        continue;
-
-                    // Raise typed event
-                    if (msg is MoveMessage move)
+        /// <summary>
+        /// Vòng lặp lắng nghe dữ liệu liên tục từ socket.
+        /// </summary>
+        private async Task ReceiveLoopAsync(CancellationToken token)
+        {
+            try
+            {
+                while (_isConnected && !token.IsCancellationRequested && _stream != null)
+                {
+                    var packet = await PacketHelper.ReceivePacketAsync<BasePacket>(_stream);
+                    if (packet != null)
                     {
-                        OnMoveReceived
-                            ?.Invoke(move);
-                    }
-                    else if (msg is ChatMessage chat)
-                    {
-                        OnChatReceived
-                            ?.Invoke(chat);
-                    }
-                    else if (msg is GameStatus status)
-                    {
-                        OnStatusReceived
-                            ?.Invoke(status);
+                        ProcessIncomingPacket(packet);
                     }
                 }
             }
-            catch (IOException)
+            catch (Exception)
             {
-                NetworkLogger.Error(
-                    "Connection lost");
+                Disconnect();
             }
-            catch (Exception ex)
-            {
-                NetworkLogger.Error(
-                    ex.Message);
-            }
-
-            Disconnect();
         }
 
-        // Disconnect
-        public void Disconnect()
+        /// <summary>
+        /// Phân phối gói tin đến sự kiện tương ứng dựa trên PacketType.
+        /// </summary>
+        private void ProcessIncomingPacket(BasePacket packet)
         {
-            if (!_isConnected)
-                return;
+            switch (packet.Type)
+            {
+                case PacketType.LoginResponse:
+                    TriggerEvent<LoginResponseDTO>(packet.payload, OnLoginResponse);
+                    break;
+                case PacketType.ChallengeNotify:
+                    TriggerEvent<ChallengeNotifyDTO>(packet.payload, OnChallengeReceived);
+                    break;
+                case PacketType.ChallengeResult:
+                    TriggerEvent<ChallengeResultDTO>(packet.payload, OnChallengeResult);
+                    break;
+                case PacketType.OnlinePlayerList:
+                    TriggerEvent<OnlinePlayerListDTO>(packet.payload, OnOnlinePlayerListUpdated);
+                    break;
+                case PacketType.ChatReceive:
+                    TriggerEvent<ChatReceiveDTO>(packet.payload, OnChatReceived);
+                    break;
+                case PacketType.TimerUpdate:
+                    TriggerEvent<TimerUpdateDTO>(packet.payload, OnTimerUpdated);
+                    break;
+                case PacketType.TimerExpired:
+                    TriggerEvent<TimerExpiredDTO>(packet.payload, OnTimerExpired);
+                    break;
+                case PacketType.GameStartNotify:
+                    TriggerEvent<GameStartNotifyDTO>(packet.payload, OnGameStarted);
+                    break;
+                case PacketType.MoveRequest: // Server gửi MoveRequest chứa MoveNotifyDTO khi đánh nước thắng
+                case PacketType.MoveNotiFy:  // Nước đi bình thường chứa MoveNotifyDTO
+                    TriggerEvent<MoveNotifyDTO>(packet.payload, OnMoveNotify);
+                    break;
+                case PacketType.GameEndNotify:
+                    TriggerEvent<GameEndNotifyDTO>(packet.payload, OnGameEnded);
+                    break;
+            }
+        }
 
-            _isConnected = false;
-
-            State =
-                ConnectionState.Disconnected;
-
-            NetworkLogger.Log(
-                "Disconnected");
-
-            _writer?.Close();
-
-            _reader?.Close();
-
-            _client?.Close();
-
-            OnDisconnected?.Invoke();
+        private void TriggerEvent<T>(string payload, Action<T>? eventAction)
+        {
+            try
+            {
+                var dto = JsonSerializer.Deserialize<T>(payload);
+                if (dto != null)
+                {
+                    eventAction?.Invoke(dto);
+                }
+            }
+            catch (JsonException)
+            {
+                // Xử lý lỗi giải mã JSON nếu cần thiết
+            }
         }
     }
 }
