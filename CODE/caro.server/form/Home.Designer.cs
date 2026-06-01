@@ -36,6 +36,7 @@
             // 
             // btnStart
             // 
+            btnStart.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             btnStart.BackgroundImageLayout = ImageLayout.Zoom;
             btnStart.FlatAppearance.BorderColor = Color.SpringGreen;
             btnStart.FlatAppearance.BorderSize = 5;
@@ -44,10 +45,9 @@
             btnStart.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnStart.Location = new Point(365, 149);
             btnStart.Name = "btnStart";
-            btnStart.Size = new Size(94, 39);
+            btnStart.Size = new Size(87, 38);
             btnStart.TabIndex = 0;
             btnStart.Text = "Start";
-            btnStart.TextAlign = ContentAlignment.TopCenter;
             btnStart.UseVisualStyleBackColor = true;
             btnStart.Click += BTN_StartServer;
             // 
@@ -61,14 +61,16 @@
             btnStop.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnStop.Location = new Point(365, 240);
             btnStop.Name = "btnStop";
-            btnStop.Size = new Size(94, 41);
+            btnStop.Size = new Size(87, 40);
             btnStop.TabIndex = 1;
             btnStop.Text = "Exit";
+            btnStop.TextAlign = ContentAlignment.BottomLeft;
             btnStop.UseVisualStyleBackColor = true;
             btnStop.Click += BTN_StopServer;
             // 
             // txtPort
             // 
+            txtPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             txtPort.AutoSize = true;
             txtPort.BackColor = SystemColors.ActiveCaptionText;
             txtPort.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -82,12 +84,13 @@
             // 
             // txtPort1
             // 
+            txtPort1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             txtPort1.BackColor = SystemColors.HighlightText;
             txtPort1.Cursor = Cursors.IBeam;
             txtPort1.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtPort1.Location = new Point(594, 36);
             txtPort1.Name = "txtPort1";
-            txtPort1.Size = new Size(125, 26);
+            txtPort1.Size = new Size(118, 26);
             txtPort1.TabIndex = 5;
             txtPort1.Text = "8888";
             txtPort1.TextChanged += txtPort1_TextChanged;
@@ -97,13 +100,14 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.Choi_co_caro;
-            ClientSize = new Size(784, 381);
+            ClientSize = new Size(777, 380);
             Controls.Add(txtPort1);
             Controls.Add(txtPort);
             Controls.Add(btnStop);
             Controls.Add(btnStart);
+            ForeColor = SystemColors.ActiveCaptionText;
             Name = "Home";
-            Text = "Form1";
+            Text = "HOME";
             Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();

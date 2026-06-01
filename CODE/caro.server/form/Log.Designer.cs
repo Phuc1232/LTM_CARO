@@ -71,7 +71,7 @@
             Controls.Add(rtbLogs);
             Controls.Add(lstPlayers);
             Name = "Log";
-            Text = "Form2";
+            Text = "SERVER-LOG";
             Load += Form2_Load;
             ResumeLayout(false);
         }
