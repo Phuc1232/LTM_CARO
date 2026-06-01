@@ -48,7 +48,7 @@ namespace caro.server.network
                     }
                     else
                     {
-                        Log("[Database] [Cảnh báo] Lỗi kết nối PostgreSQL. Hãy đảm bảo Docker Container đã chạy.");
+                        Log("[Database] [Cảnh báo] Lỗi kết nối PostgreSQL");
                     }
                     // Chạy tác vụ lắng nghe client trên luồng phụ để tránh gây đơ/treo giao diện WinForms
                     _ = Task.Run(() => ListenForClientsAsync(_cts.Token));
