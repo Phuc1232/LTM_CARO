@@ -64,7 +64,6 @@
             btnStop.Size = new Size(87, 40);
             btnStop.TabIndex = 1;
             btnStop.Text = "Exit";
-            btnStop.TextAlign = ContentAlignment.BottomLeft;
             btnStop.UseVisualStyleBackColor = true;
             btnStop.Click += BTN_StopServer;
             // 
