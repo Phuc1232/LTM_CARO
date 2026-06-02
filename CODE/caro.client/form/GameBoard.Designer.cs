@@ -32,7 +32,7 @@
             panel1 = new Panel();
             menuButton6 = new caro.client.ui_components.MenuButton();
             menuButton5 = new caro.client.ui_components.MenuButton();
-            menuButton4 = new caro.client.ui_components.MenuButton();
+            btnSurrender = new caro.client.ui_components.MenuButton();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -49,7 +49,7 @@
             // 
             panel1.Controls.Add(menuButton6);
             panel1.Controls.Add(menuButton5);
-            panel1.Controls.Add(menuButton4);
+            panel1.Controls.Add(btnSurrender);
             panel1.Location = new Point(61, 513);
             panel1.Name = "panel1";
             panel1.Size = new Size(176, 206);
@@ -63,7 +63,8 @@
             menuButton6.Name = "menuButton6";
             menuButton6.Size = new Size(141, 33);
             menuButton6.TabIndex = 6;
-            menuButton6.Text = "menuButton6";
+            menuButton6.Text = "Quit";
+            menuButton6.Load += menuButton6_Load;
             // 
             // menuButton5
             // 
@@ -73,18 +74,20 @@
             menuButton5.Name = "menuButton5";
             menuButton5.Size = new Size(141, 33);
             menuButton5.TabIndex = 5;
-            menuButton5.Text = "menuButton5";
+            menuButton5.Text = "New Game";
             // 
-            // menuButton4
+            // btnSurrender
             // 
-            menuButton4.BackColor = Color.FromArgb(88, 101, 242);
-            menuButton4.HoverBackColor = Color.DeepSkyBlue;
-            menuButton4.HoverForeColor = Color.White;
-            menuButton4.Location = new Point(20, 34);
-            menuButton4.Name = "menuButton4";
-            menuButton4.Size = new Size(141, 33);
-            menuButton4.TabIndex = 4;
-            menuButton4.Text = "menuButton4";
+            btnSurrender.BackColor = Color.FromArgb(88, 101, 242);
+            btnSurrender.HoverBackColor = Color.DeepSkyBlue;
+            btnSurrender.HoverForeColor = Color.White;
+            btnSurrender.Location = new Point(20, 34);
+            btnSurrender.Name = "btnSurrender";
+            btnSurrender.Size = new Size(141, 33);
+            btnSurrender.TabIndex = 4;
+            btnSurrender.Text = "Surrender";
+            btnSurrender.Load += menuButton4_Load;
+            btnSurrender.Click += menuButton4_Click;
             // 
             // GameBoard
             // 
@@ -108,6 +111,6 @@
         private ui_components.MenuButton menuButton1;
         private ui_components.MenuButton menuButton6;
         private ui_components.MenuButton menuButton5;
-        private ui_components.MenuButton menuButton4;
+        private ui_components.MenuButton btnSurrender;
     }
 }
