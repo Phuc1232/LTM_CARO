@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace caro.share.network
+namespace caro.share
 {
     public class PacketHelper
     {
