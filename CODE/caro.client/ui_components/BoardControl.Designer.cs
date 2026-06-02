@@ -34,6 +34,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(42, 42, 60);
             BorderStyle = BorderStyle.FixedSingle;
             Name = "BoardControl";
             Size = new Size(598, 598);

@@ -1,8 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Compile Update="form\Form1.cs">
+    <Compile Update="form\GameBoard.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="form\Home.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ui_components\BoardControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ui_components\MenuButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ui_components\PlayerCard.cs">
+      <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>
 </Project>

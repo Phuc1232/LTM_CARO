@@ -63,29 +63,9 @@ namespace caro.client.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap a41ae90a_db48_4c81_8094_0098e282cce7 {
+        internal static System.Drawing.Bitmap _596b5f16_70c9_49f3_a4c4_fb18db30178f {
             get {
-                object obj = ResourceManager.GetObject("a41ae90a-db48-4c81-8094-0098e282cce7", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Ảnh_caro {
-            get {
-                object obj = ResourceManager.GetObject("Ảnh caro", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap eb8646ac_bdc6_49b4_8380_7f769a3c6d5b {
-            get {
-                object obj = ResourceManager.GetObject("eb8646ac-bdc6-49b4-8380-7f769a3c6d5b", resourceCulture);
+                object obj = ResourceManager.GetObject("596b5f16-70c9-49f3-a4c4-fb18db30178f", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
