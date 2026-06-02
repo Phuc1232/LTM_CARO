@@ -21,5 +21,40 @@ namespace caro.client.form
         {
 
         }
+
+        private void menuButton6_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuButton4_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSurrender_Click(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void menuButton4_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+      "Bạn có chắc muốn đầu hàng không?",
+      "Surrender",
+      MessageBoxButtons.YesNo,
+      MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                MessageBox.Show(
+                    "Đối thủ đầu hàng!",
+                    "Game Over",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                boardControl1.NewGame();
+            }
+        }
     }
 }
