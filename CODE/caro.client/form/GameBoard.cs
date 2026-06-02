@@ -34,7 +34,7 @@ namespace caro.client.form
 
         private void btnSurrender_Click(object sender, EventArgs e)
         {
-           
+
         }
 
         private void menuButton4_Click(object sender, EventArgs e)
@@ -54,6 +54,23 @@ namespace caro.client.form
                     MessageBoxIcon.Information);
 
                 boardControl1.NewGame();
+            }
+        }
+
+        private void menuButton6_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+       "Bạn có muốn quay về trang chủ không?",
+       "Quit",
+       MessageBoxButtons.YesNo,
+       MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                Home home = new Home();
+                home.Show();
+
+                this.Hide();
             }
         }
     }
