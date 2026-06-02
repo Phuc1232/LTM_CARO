@@ -65,6 +65,7 @@
             menuButton6.TabIndex = 6;
             menuButton6.Text = "Quit";
             menuButton6.Load += menuButton6_Load;
+            menuButton6.Click += menuButton6_Click;
             // 
             // menuButton5
             // 
