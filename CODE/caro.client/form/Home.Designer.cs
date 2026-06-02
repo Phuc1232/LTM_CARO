@@ -39,11 +39,11 @@
             // 
             label1.AutoSize = true;
             label1.BackColor = Color.FromArgb(30, 30, 46);
-            label1.Font = new Font("Segoe UI", 40F);
+            label1.Font = new Font("Segoe UI", 36F);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(385, 28);
+            label1.Location = new Point(12, 105);
             label1.Name = "label1";
-            label1.Size = new Size(332, 72);
+            label1.Size = new Size(298, 65);
             label1.TabIndex = 5;
             label1.Text = "CARO GAME";
             // 
@@ -52,7 +52,7 @@
             menuButton1.ForeColor = Color.FromArgb(30, 30, 46);
             menuButton1.HoverBackColor = Color.LightGray;
             menuButton1.HoverForeColor = Color.Black;
-            menuButton1.Location = new Point(12, 462);
+            menuButton1.Location = new Point(67, 195);
             menuButton1.Name = "menuButton1";
             menuButton1.Size = new Size(190, 40);
             menuButton1.TabIndex = 0;
@@ -62,7 +62,7 @@
             // 
             menuButton2.HoverBackColor = Color.LightGray;
             menuButton2.HoverForeColor = Color.Black;
-            menuButton2.Location = new Point(12, 508);
+            menuButton2.Location = new Point(67, 241);
             menuButton2.Name = "menuButton2";
             menuButton2.Size = new Size(190, 40);
             menuButton2.TabIndex = 1;
@@ -73,7 +73,7 @@
             // 
             menuButton3.HoverBackColor = Color.LightGray;
             menuButton3.HoverForeColor = Color.Black;
-            menuButton3.Location = new Point(12, 554);
+            menuButton3.Location = new Point(67, 287);
             menuButton3.Name = "menuButton3";
             menuButton3.Size = new Size(190, 40);
             menuButton3.TabIndex = 2;
@@ -83,7 +83,7 @@
             // 
             menuButton5.HoverBackColor = Color.LightGray;
             menuButton5.HoverForeColor = Color.Black;
-            menuButton5.Location = new Point(12, 600);
+            menuButton5.Location = new Point(67, 333);
             menuButton5.Name = "menuButton5";
             menuButton5.Size = new Size(190, 40);
             menuButton5.TabIndex = 4;
