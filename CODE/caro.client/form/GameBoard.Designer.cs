@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            playerCard1 = new caro.client.ui_components.PlayerCard();
-            playerCard2 = new caro.client.ui_components.PlayerCard();
             boardControl1 = new caro.client.ui_components.BoardControl();
             panel1 = new Panel();
             menuButton6 = new caro.client.ui_components.MenuButton();
@@ -38,32 +36,9 @@
             panel1.SuspendLayout();
             SuspendLayout();
             // 
-            // playerCard1
-            // 
-            playerCard1.Avatar = null;
-            playerCard1.BackColor = Color.FromArgb(255, 255, 192);
-            playerCard1.Location = new Point(81, 338);
-            playerCard1.Name = "playerCard1";
-            playerCard1.PlayerName = "Player";
-            playerCard1.Size = new Size(156, 79);
-            playerCard1.TabIndex = 0;
-            playerCard1.TimeText = "Time: 20s";
-            // 
-            // playerCard2
-            // 
-            playerCard2.Avatar = null;
-            playerCard2.BackColor = Color.FromArgb(255, 255, 192);
-            playerCard2.Location = new Point(81, 113);
-            playerCard2.Name = "playerCard2";
-            playerCard2.PlayerName = "Player";
-            playerCard2.Size = new Size(156, 79);
-            playerCard2.TabIndex = 1;
-            playerCard2.TimeText = "Time: 20s";
-            playerCard2.Load += playerCard2_Load;
-            // 
             // boardControl1
             // 
-            boardControl1.BackColor = Color.Yellow;
+            boardControl1.BackColor = Color.FromArgb(42, 42, 60);
             boardControl1.BorderStyle = BorderStyle.FixedSingle;
             boardControl1.Location = new Point(331, 139);
             boardControl1.Name = "boardControl1";
@@ -102,7 +77,7 @@
             // 
             // menuButton4
             // 
-            menuButton4.BackColor = Color.Black;
+            menuButton4.BackColor = Color.FromArgb(88, 101, 242);
             menuButton4.HoverBackColor = Color.DeepSkyBlue;
             menuButton4.HoverForeColor = Color.White;
             menuButton4.Location = new Point(20, 34);
@@ -115,12 +90,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.White;
+            BackColor = Color.FromArgb(30, 30, 46);
             ClientSize = new Size(1184, 761);
             Controls.Add(panel1);
             Controls.Add(boardControl1);
-            Controls.Add(playerCard2);
-            Controls.Add(playerCard1);
             Name = "GameBoard";
             Text = "GameBoard";
             panel1.ResumeLayout(false);
@@ -128,9 +101,6 @@
         }
 
         #endregion
-
-        private ui_components.PlayerCard playerCard1;
-        private ui_components.PlayerCard playerCard2;
         private ui_components.BoardControl boardControl1;
         private Panel panel1;
         private ui_components.MenuButton menuButton3;
