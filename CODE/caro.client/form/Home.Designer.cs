@@ -31,17 +31,20 @@
             menuButton1 = new caro.client.ui_components.MenuButton();
             menuButton2 = new caro.client.ui_components.MenuButton();
             menuButton3 = new caro.client.ui_components.MenuButton();
-            menuButton4 = new caro.client.ui_components.MenuButton();
             menuButton5 = new caro.client.ui_components.MenuButton();
+            label1 = new Label();
+            pictureBox1 = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // menuButton1
             // 
+            menuButton1.ForeColor = Color.FromArgb(30, 30, 46);
             menuButton1.HoverBackColor = Color.LightGray;
             menuButton1.HoverForeColor = Color.Black;
-            menuButton1.Location = new Point(280, 60);
+            menuButton1.Location = new Point(99, 144);
             menuButton1.Name = "menuButton1";
-            menuButton1.Size = new Size(250, 60);
+            menuButton1.Size = new Size(284, 40);
             menuButton1.TabIndex = 0;
             menuButton1.Text = "Play Online";
             // 
@@ -49,9 +52,9 @@
             // 
             menuButton2.HoverBackColor = Color.LightGray;
             menuButton2.HoverForeColor = Color.Black;
-            menuButton2.Location = new Point(280, 126);
+            menuButton2.Location = new Point(99, 190);
             menuButton2.Name = "menuButton2";
-            menuButton2.Size = new Size(250, 60);
+            menuButton2.Size = new Size(284, 40);
             menuButton2.TabIndex = 1;
             menuButton2.Text = "Play With AI";
             // 
@@ -59,45 +62,61 @@
             // 
             menuButton3.HoverBackColor = Color.LightGray;
             menuButton3.HoverForeColor = Color.Black;
-            menuButton3.Location = new Point(280, 192);
+            menuButton3.Location = new Point(99, 236);
             menuButton3.Name = "menuButton3";
-            menuButton3.Size = new Size(250, 60);
+            menuButton3.Size = new Size(284, 40);
             menuButton3.TabIndex = 2;
             menuButton3.Text = "Match History";
-            // 
-            // menuButton4
-            // 
-            menuButton4.HoverBackColor = Color.LightGray;
-            menuButton4.HoverForeColor = Color.Black;
-            menuButton4.Location = new Point(280, 258);
-            menuButton4.Name = "menuButton4";
-            menuButton4.Size = new Size(250, 60);
-            menuButton4.TabIndex = 3;
-            menuButton4.Text = "Firends";
             // 
             // menuButton5
             // 
             menuButton5.HoverBackColor = Color.LightGray;
             menuButton5.HoverForeColor = Color.Black;
-            menuButton5.Location = new Point(280, 324);
+            menuButton5.Location = new Point(99, 282);
             menuButton5.Name = "menuButton5";
-            menuButton5.Size = new Size(250, 60);
+            menuButton5.Size = new Size(284, 40);
             menuButton5.TabIndex = 4;
             menuButton5.Text = "Log Out";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.BackColor = Color.FromArgb(30, 30, 46);
+            label1.Font = new Font("Segoe UI", 40F);
+            label1.ForeColor = Color.White;
+            label1.Location = new Point(80, 29);
+            label1.Name = "label1";
+            label1.Size = new Size(332, 72);
+            label1.TabIndex = 5;
+            label1.Text = "CARO GAME";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Location = new Point(12, 338);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(424, 259);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 6;
+            pictureBox1.TabStop = false;
             // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            BackColor = Color.FromArgb(30, 30, 46);
+            ClientSize = new Size(1050, 622);
+            Controls.Add(pictureBox1);
+            Controls.Add(label1);
             Controls.Add(menuButton5);
-            Controls.Add(menuButton4);
             Controls.Add(menuButton3);
             Controls.Add(menuButton2);
             Controls.Add(menuButton1);
             Name = "Home";
             Text = "Play Online";
+            Load += Home_Load;
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -105,7 +124,8 @@
         private ui_components.MenuButton menuButton1;
         private ui_components.MenuButton menuButton2;
         private ui_components.MenuButton menuButton3;
-        private ui_components.MenuButton menuButton4;
         private ui_components.MenuButton menuButton5;
+        private Label label1;
+        private PictureBox pictureBox1;
     }
 }
