@@ -15,5 +15,10 @@ namespace caro.client
         {
 
         }
+
+        private void menuButton2_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
