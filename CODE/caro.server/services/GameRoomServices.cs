@@ -167,13 +167,28 @@ namespace caro.server.services
                     payload = JsonSerializer.Serialize(endNotify)
                 };
 
-                _ = SendToPlayerAsync(room.player1, packet);
-                _ = SendToPlayerAsync(room.player2, packet);
+                _ = SendToPlayerWithoutCleanupAsync(room.player1, packet);
+                _ = SendToPlayerWithoutCleanupAsync(room.player2, packet);
 
                 if (room.player1 != null) room.player1.CurrentRoomID = null;
                 if (room.player2 != null) room.player2.CurrentRoomID = null;
 
                 TCPServerManager.Log($"[Hệ thống phòng] Phòng đấu '{RoomID}' đã được dọn dẹp và giải phóng.");
+            }
+        }
+
+        private async Task SendToPlayerWithoutCleanupAsync(ClientHandle player, BasePacket packet)
+        {
+            try
+            {
+                if (player != null)
+                {
+                    await player.SendPacketAsync(packet);
+                }
+            }
+            catch (Exception ex)
+            {
+                TCPServerManager.Log($"[Lỗi mạng] Không thể gửi gói tin ngắt kết nối tới '{player?.username}': {ex.Message}");
             }
         }
 

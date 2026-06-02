@@ -1,10 +1,13 @@
 using caro.server.services;
+using caro.share.DTOs;
+using caro.share.DTOs.Constants;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,6 +41,11 @@ namespace caro.server.network
             {
                 _listener.Start();
                 Log($"Server đã khởi động thành công trên cổng: {port}");
+                
+                // Chạy tác vụ lắng nghe client trên luồng phụ ngay lập tức để tránh block kết nối của client
+                _ = Task.Run(() => ListenForClientsAsync(_cts.Token));
+
+                // Khởi tạo Database bất đồng bộ song song
                 _ = Task.Run(async () =>
                 {
                     Log("[Database] Đang khởi tạo kết nối PostgreSQL (EF Core Code-First)...");
@@ -50,8 +58,6 @@ namespace caro.server.network
                     {
                         Log("[Database] [Cảnh báo] Lỗi kết nối PostgreSQL");
                     }
-                    // Chạy tác vụ lắng nghe client trên luồng phụ để tránh gây đơ/treo giao diện WinForms
-                    _ = Task.Run(() => ListenForClientsAsync(_cts.Token));
                 });
             }
             catch (Exception ex)
@@ -141,6 +147,33 @@ namespace caro.server.network
         public static void ChangePlayerStatus(string username, bool isConnecting)
         {
             OnPlayerConnectionChanged?.Invoke(username, isConnecting);
+        }
+
+        /// <summary>
+        /// Phát sóng danh sách tất cả người chơi đang online tới toàn bộ clients.
+        /// </summary>
+        public static async Task BroadcastOnlinePlayersAsync()
+        {
+            var listDTO = new OnlinePlayerListDTO
+            {
+                players = new List<string>(onlineplayer.Keys)
+            };
+            var packet = new BasePacket
+            {
+                Type = PacketType.OnlinePlayerList,
+                payload = JsonSerializer.Serialize(listDTO)
+            };
+            foreach (var client in onlineplayer.Values)
+            {
+                try
+                {
+                    await client.SendPacketAsync(packet);
+                }
+                catch (Exception ex)
+                {
+                    Log($"[Lỗi mạng] Không thể gửi danh sách online tới '{client.username}': {ex.Message}");
+                }
+            }
         }
     }
 }

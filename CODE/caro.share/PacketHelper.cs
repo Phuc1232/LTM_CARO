@@ -1,46 +1,52 @@
 using caro.share.DTOs.Constants;
 using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace caro.share
 {
     public class PacketHelper
     {
-        // sendpacket
-        //receivepacket
-        //readfullpacket
         public static async Task SendPacketAsync<T>(NetworkStream stream, T packet)
         {
-            // ma hoa object thanh json string
+            // Mã hóa object thành json string
             string json = JsonSerializer.Serialize(packet);
-            // chuyen thanh mang cac byte
+            // Chuyển thành mảng các byte
             byte[] bodybyte = Encoding.UTF8.GetBytes(json);
-            // ep thanh mang 4 byte theo bodybyte.Length -> biet kich thuoc noi dung goi tin 
+            // Ép thành mảng 4 byte theo bodybyte.Length -> biết kích thước nội dung gói tin 
             byte[] headerbyte = BitConverter.GetBytes(bodybyte.Length);
-            // ghep header voi body
+            // Ghép header với body
             byte[] fullpacket = new byte[headerbyte.Length + bodybyte.Length];
             Buffer.BlockCopy(headerbyte, 0, fullpacket, 0, headerbyte.Length);
             Buffer.BlockCopy(bodybyte, 0, fullpacket, headerbyte.Length, bodybyte.Length);
 
             await stream.WriteAsync(fullpacket, 0, fullpacket.Length);
         }
-        public static async Task<T>ReceivePacketAsync<T>(NetworkStream stream)
+
+        public static async Task<T> ReceivePacketAsync<T>(NetworkStream stream)
         {
             byte[] headerbuffer = await ReadfullpacketAsync(stream, 4);
             int bodylength = BitConverter.ToInt32(headerbuffer, 0);
-            if (bodylength <= 0)
+            
+            // Giới hạn kích thước gói tin nhận tối đa là 1MB để tránh tấn công DoS tràn RAM
+            const int MAX_PACKET_SIZE = 1024 * 1024; // 1 MB
+            if (bodylength <= 0 || bodylength > MAX_PACKET_SIZE)
             {
-                throw new InvalidOperationException("Kich thuc goi tin khong hop le!!!");
+                throw new InvalidOperationException("Kích thước gói tin không hợp lệ hoặc quá lớn!!!");
             }
+            
             byte[] bodybuffer = await ReadfullpacketAsync(stream, bodylength);
             string json = Encoding.UTF8.GetString(bodybuffer);
-            return JsonSerializer.Deserialize<T>(json);
-
+            var result = JsonSerializer.Deserialize<T>(json);
+            if (result == null)
+            {
+                throw new InvalidOperationException("Không thể giải mã gói tin!!!");
+            }
+            return result;
         }
+
         private static async Task<byte[]> ReadfullpacketAsync(NetworkStream stream, int count)
         {
             byte[] buffer = new byte[count];
