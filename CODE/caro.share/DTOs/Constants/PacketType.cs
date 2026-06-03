@@ -25,6 +25,9 @@ namespace caro.share.DTOs.Constants
 
         MoveRequest = 50,
         MoveNotiFy =51,
-        GameEndNotify =52
+        GameEndNotify =52,
+
+        MatchHistoryRequest = 60,
+        MatchHistoryResponse = 61
     }
 }
