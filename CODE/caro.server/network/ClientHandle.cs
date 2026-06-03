@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace caro.server.network
 {
@@ -107,6 +108,9 @@ namespace caro.server.network
                     break;
                 case PacketType.MoveRequest:
                     await ProccessMoveRequestAsync(packet.payload);
+                    break;
+                case PacketType.MatchHistoryRequest:
+                    await ProccessMatchHistoryRequestAsync(packet.payload);
                     break;
             }
         }
@@ -287,7 +291,7 @@ namespace caro.server.network
             await GameRoomServices.Instance.HandleChatAsync(CurrentRoomID, this, ChatData.message);
         }
 
-        private async Task ProccessMoveRequestAsync(string payload)
+        public async Task ProccessMoveRequestAsync(string payload)
         {
             var moveData = JsonSerializer.Deserialize<MoveRequestDTO>(payload);
             if (moveData == null) return;
@@ -295,7 +299,12 @@ namespace caro.server.network
 
             await GameRoomServices.Instance.MoveValid(CurrentRoomID, this, moveData.row, moveData.col);
         }
-
+        public async Task ProccessMatchHistoryRequestAsync(string payload)
+        {
+            var List_his = JsonSerializer.Deserialize<MatchHistoryResponseDTO>(payload);
+            var responseDTO = new MatchHistoryItemDTO();
+            
+        }
         public async Task SendResultToSelfAsync(string message, bool accepted)
         {
             var result = new ChallengeResultDTO
