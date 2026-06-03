@@ -327,19 +327,27 @@ namespace caro.server.network
         }
         public async Task SendResultToSelfAsync(string message, bool accepted)
         {
-            var result = new ChallengeResultDTO
+            try
             {
-                isAccepted = accepted,
-                message = message,
-                roomId = "",
-                opponentName = "",
-            };
-            var packet = new BasePacket
+                var result = new ChallengeResultDTO
+                {
+                    isAccepted = accepted,
+                    message = message,
+                    roomId = "",
+                    opponentName = "",
+                };
+                var packet = new BasePacket
+                {
+                    Type = PacketType.ChallengeResult,
+                    payload = JsonSerializer.Serialize(result)
+                };
+                await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
+            }
+            catch(Exception)
             {
-                Type = PacketType.ChallengeResult,
-                payload = JsonSerializer.Serialize(result)
-            };
-            await PacketHelper.SendPacketAsync<BasePacket>(_stream, packet);
+                TCPServerManager.Log("Lỗi Khi Tải dữ liệu từ Database!!");
+            }
+           
         }
     }
 
