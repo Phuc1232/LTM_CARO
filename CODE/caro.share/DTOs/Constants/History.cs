@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace caro.share.DTOs.Constants
 {
-    public class History
+    public class MatchHistoryItemDTO
     {
         public Guid id { get; set; }
         public string Player1 { get; set; }
@@ -14,9 +15,9 @@ namespace caro.share.DTOs.Constants
         public DateTime PlayedAt { get; set; }
         public string MovesData { get; set; } = string.Empty; // Chuỗi tọa độ nước đi: "phuc:7,7;an:8,8"
 
-        public History()
+        public class MatchHistoryResponeDTO()
         {
-            
+            public List<MatchHistoryItemDTO> histories { get; set; } = new List<MatchHistoryItemDTO>(); 
         }
     }
 }
