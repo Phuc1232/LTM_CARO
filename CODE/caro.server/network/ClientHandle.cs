@@ -321,7 +321,7 @@ namespace caro.server.network
                     Type = PacketType.MatchHistoryResponse,
                     payload = JsonSerializer.Serialize(response)
                 };
-                _ = SendPacketAsync(packet);
+                 await SendPacketAsync(packet);
             }
 
         }
