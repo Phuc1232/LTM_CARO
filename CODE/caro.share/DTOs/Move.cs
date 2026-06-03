@@ -22,5 +22,11 @@ namespace caro.share.DTOs
         public string WinnerName { get; set; }
 
         public string reason { get; set; }
+
+    }
+    public class WinCoordinate
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }
