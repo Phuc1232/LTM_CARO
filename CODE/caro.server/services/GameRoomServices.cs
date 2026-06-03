@@ -215,13 +215,17 @@ namespace caro.server.services
                 int count = 1;
                 int drow = dir[0];
                 int dcol = dir[1];
-
+                WinCoordinate coordinates = new WinCoordinate();
+                var WinningCells = new GameEndNotifyDTO();
                 int r = row + drow;
                 int c = col + dcol; // Sửa lỗi index bug ở đây: đổi từ row + dcol thành col + dcol
 
                 while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
                 {
                     count++;
+                    coordinates.X = r;
+                    coordinates.Y = c;
+                    WinningCells.WinningCells.Add(coordinates);
                     r += drow;
                     c += dcol;
                 }
@@ -231,11 +235,14 @@ namespace caro.server.services
                 while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
                 {
                     count++;
+                    coordinates.X = r;
+                    coordinates.Y = c;
+                    WinningCells.WinningCells.Add(coordinates);
                     r -= drow;
                     c -= dcol;
                 }
 
-                if (count >= 5)
+                if (count == 5)
                 {
                     return true;
                 }
