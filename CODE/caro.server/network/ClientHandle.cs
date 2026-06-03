@@ -301,9 +301,29 @@ namespace caro.server.network
         }
         public async Task ProccessMatchHistoryRequestAsync(string payload)
         {
-            var List_his = JsonSerializer.Deserialize<MatchHistoryResponseDTO>(payload);
-            var responseDTO = new MatchHistoryItemDTO();
-            
+            var list_his =  await DatabaseServices.Instance.GetMatchHistoryAsync();
+            var response = new MatchHistoryResponseDTO();
+
+            foreach ( var h in list_his)
+            {
+                response.histories.Add(new MatchHistoryItemDTO
+                {
+                    id = h.id,
+                    Player1 = h.Player1,
+                    Player2 = h.Player2,
+                    Winner = h.Winner,
+                    PlayedAt = h.PlayedAt,
+                    MatchType = h.MatchType,
+                    MovesData = h.MovesData
+                });
+                var packet = new BasePacket
+                {
+                    Type = PacketType.MatchHistoryResponse,
+                    payload = JsonSerializer.Serialize(response)
+                };
+                _ = SendPacketAsync(packet);
+            }
+
         }
         public async Task SendResultToSelfAsync(string message, bool accepted)
         {
