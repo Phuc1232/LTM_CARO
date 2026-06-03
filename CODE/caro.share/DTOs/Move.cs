@@ -22,6 +22,7 @@ namespace caro.share.DTOs
         public string WinnerName { get; set; }
 
         public string reason { get; set; }
+        public List<WinCoordinate> WinningCells { get; set; } = new List<WinCoordinate>();
 
     }
     public class WinCoordinate
