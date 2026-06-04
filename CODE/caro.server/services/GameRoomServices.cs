@@ -200,7 +200,7 @@ namespace caro.server.services
             }
         }
 
-        public bool CheckWin(int[,] board, int row, int col, int player)
+        public List<WinCoordinate>? GetWinningCoordinate(int[,] board, int row, int col, int player)
         {
             int[][] directions = new int[4][]
             {
@@ -215,17 +215,14 @@ namespace caro.server.services
                 int count = 1;
                 int drow = dir[0];
                 int dcol = dir[1];
-                WinCoordinate coordinates = new WinCoordinate();
-                var WinningCells = new GameEndNotifyDTO();
+                var winningcells = new List<WinCoordinate> { new WinCoordinate { X =row, Y=col} };
                 int r = row + drow;
                 int c = col + dcol; // Sửa lỗi index bug ở đây: đổi từ row + dcol thành col + dcol
 
                 while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
                 {
                     count++;
-                    coordinates.X = r;
-                    coordinates.Y = c;
-                    WinningCells.WinningCells.Add(coordinates);
+                    winningcells.Add(new WinCoordinate { X = r, Y = c });
                     r += drow;
                     c += dcol;
                 }
@@ -235,21 +232,22 @@ namespace caro.server.services
                 while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
                 {
                     count++;
-                    coordinates.X = r;
-                    coordinates.Y = c;
-                    WinningCells.WinningCells.Add(coordinates);
+                    winningcells.Add(new WinCoordinate { X = r, Y = c });
                     r -= drow;
                     c -= dcol;
                 }
 
                 if (count == 5)
                 {
-                    return true;
+                    return winningcells;
                 }
             }
-            return false;
+            return null;
         }
-
+        public bool CheckWin(int[,] board, int row, int col, int player)
+        {
+            return GetWinningCoordinate != null;
+        }
         public async Task MoveValid(string RoomID, ClientHandle player, int row, int col)
         {
             GameRoom room = null;
@@ -285,7 +283,8 @@ namespace caro.server.services
                 var EndGame = new GameEndNotifyDTO
                 {
                     WinnerName = player.username,
-                    reason = "Đạt đủ 5 quân liên tiếp!!!"
+                    reason = "Đạt đủ 5 quân liên tiếp!!!",
+                    WinningCells = GetWinningCoordinate(room.board, row, col, TurnPlayer)
                 };
 
                 var packet = new BasePacket
