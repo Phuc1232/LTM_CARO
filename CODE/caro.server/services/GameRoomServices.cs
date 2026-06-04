@@ -150,26 +150,28 @@ namespace caro.server.services
             CleanupRoom(room.RoomID);
         }
 
-        public void CleanupRoom(string RoomID)
+        public void CleanupRoom(string RoomID, bool isPlayerWin = false)
         {
             if (_activeroom.TryRemove(RoomID, out var room))
             {
                 room.IsGameActive = false;
                 room.cts?.Cancel();
-                var endNotify = new GameEndNotifyDTO
+                if (!isPlayerWin)
                 {
-                    WinnerName = "",
-                    reason = "Đối thủ đã mất kết nối đột ngột!"
-                };
-                var packet = new BasePacket
-                {
-                    Type = PacketType.GameEndNotify,
-                    payload = JsonSerializer.Serialize(endNotify)
-                };
-
-                _ = SendToPlayerWithoutCleanupAsync(room.player1, packet);
-                _ = SendToPlayerWithoutCleanupAsync(room.player2, packet);
-
+                    var endNotify = new GameEndNotifyDTO
+                    {
+                        WinnerName = "",
+                        reason = "Đối thủ đã mất kết nối đột ngột!"
+                    };
+                    var packet = new BasePacket
+                    {
+                        Type = PacketType.GameEndNotify,
+                        payload = JsonSerializer.Serialize(endNotify)
+                    };
+                    _ = SendToPlayerWithoutCleanupAsync(room.player1, packet);
+                    _ = SendToPlayerWithoutCleanupAsync(room.player2, packet);
+                }
+                
                 if (room.player1 != null) room.player1.CurrentRoomID = null;
                 if (room.player2 != null) room.player2.CurrentRoomID = null;
 
