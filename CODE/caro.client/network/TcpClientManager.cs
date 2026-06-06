@@ -31,6 +31,7 @@ namespace caro.client.network
         public event Action<MoveNotifyDTO>? OnMoveNotify;
         public event Action<GameEndNotifyDTO>? OnGameEnded;
         public event Action? OnDisconnected;
+        public event Action<MatchHistoryResponseDTO>? OnMatchHistoryReceived;
 
         private TCPClientManager() { }
 
@@ -165,6 +166,9 @@ namespace caro.client.network
                     break;
                 case PacketType.GameEndNotify:
                     TriggerEvent<GameEndNotifyDTO>(packet.payload, OnGameEnded);
+                    break;
+                case PacketType.MatchHistoryResponse:
+                    TriggerEvent<MatchHistoryResponseDTO>(packet.payload, OnMatchHistoryReceived);
                     break;
             }
         }

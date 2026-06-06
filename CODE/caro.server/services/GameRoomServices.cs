@@ -310,7 +310,7 @@ namespace caro.server.services
                 _ = Task.Run(() => DatabaseServices.Instance.SaveMatchHistoryAsync(history));
 
                 TCPServerManager.Log($"[Trận đấu - Phòng {RoomID}] Trận đấu kết thúc! '{player.username}' chiến thắng do đạt đủ 5 quân liên tiếp.");
-                CleanupRoom(RoomID);
+                CleanupRoom(RoomID, isPlayerWin: true);
             }
             else
             {
