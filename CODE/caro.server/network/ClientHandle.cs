@@ -219,10 +219,10 @@ namespace caro.server.network
             // Thiết lập Timeout 30 giây cho lời thách đấu để tránh rò rỉ bộ nhớ
             _ = Task.Run(async () =>
             {
-                await Task.Delay(30000); // 30 giây
+                await Task.Delay(15000); // 15 giây
                 if (PendingChallenges.TryRemove(ChallengeID, out var expired))
                 {
-                    await expired.Challenger.SendResultToSelfAsync($"Yêu cầu thách đấu tới '{expired.Target.username}' đã hết thời gian phản hồi (30s)!", false);
+                    await expired.Challenger.SendResultToSelfAsync($"Yêu cầu thách đấu tới '{expired.Target.username}' đã hết thời gian phản hồi (15s)!", false);
                     TCPServerManager.Log($"[Thách đấu] Lời mời thách đấu từ '{expired.Challenger.username}' gửi tới '{expired.Target.username}' đã hết hạn phản hồi (Mã: {ChallengeID}).");
                 }
             });
@@ -301,27 +301,34 @@ namespace caro.server.network
         }
         public async Task ProccessMatchHistoryRequestAsync(string payload)
         {
-            var list_his =  await DatabaseServices.Instance.GetMatchHistoryAsync();
-            var response = new MatchHistoryResponseDTO();
-
-            foreach ( var h in list_his)
+            try
             {
-                response.histories.Add(new MatchHistoryItemDTO
+                var list_his = await DatabaseServices.Instance.GetMatchHistoryAsync();
+                var response = new MatchHistoryResponseDTO();
+
+                foreach (var h in list_his)
                 {
-                    id = h.id,
-                    Player1 = h.Player1,
-                    Player2 = h.Player2,
-                    Winner = h.Winner,
-                    PlayedAt = h.PlayedAt,
-                    MatchType = h.MatchType,
-                    MovesData = h.MovesData
-                });
-                var packet = new BasePacket
-                {
-                    Type = PacketType.MatchHistoryResponse,
-                    payload = JsonSerializer.Serialize(response)
-                };
-                 await SendPacketAsync(packet);
+                    response.histories.Add(new MatchHistoryItemDTO
+                    {
+                        id = h.id,
+                        Player1 = h.Player1,
+                        Player2 = h.Player2,
+                        Winner = h.Winner,
+                        PlayedAt = h.PlayedAt,
+                        MatchType = h.MatchType,
+                        MovesData = h.MovesData
+                    });
+                    var packet = new BasePacket
+                    {
+                        Type = PacketType.MatchHistoryResponse,
+                        payload = JsonSerializer.Serialize(response)
+                    };
+                    await SendPacketAsync(packet);
+                }
+            }
+            catch(Exception)
+            {
+                TCPServerManager.Log("[Database] Lỗi khi tải dữ liệu từ database!!!");
             }
 
         }
@@ -345,7 +352,7 @@ namespace caro.server.network
             }
             catch(Exception)
             {
-                TCPServerManager.Log("Lỗi Khi Tải dữ liệu từ Database!!");
+                TCPServerManager.Log("Lỗi Khi Gửi Gói tin!!!");
             }
            
         }
