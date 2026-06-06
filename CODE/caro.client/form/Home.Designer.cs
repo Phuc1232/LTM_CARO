@@ -95,7 +95,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 30, 46);
-            BackgroundImage = Properties.Resources._596b5f16_70c9_49f3_a4c4_fb18db30178f;
+           
             ClientSize = new Size(1097, 690);
             Controls.Add(label1);
             Controls.Add(menuButton5);
