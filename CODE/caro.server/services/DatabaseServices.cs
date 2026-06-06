@@ -55,15 +55,17 @@ namespace caro.server.services
                 TCPServerManager.Log($"[Database Error] Lưu lịch sử đấu thất bại: {ex.Message}");
             }
         }
-        public async Task<List<MatchHistoryModels>> GetMatchHistoryAsync()
+        public async Task<List<MatchHistoryModels>> GetMatchHistoryAsync(string username)
         {
             try
             {
                 using (var context = new CaroDbContext())
                 {
                     var entities = await context.MatchHistories.
-                        OrderByDescending(m => m.PlayedAt).
-                        ToListAsync();
+                         Where(m => m.Player1 == username || m.Player2 == username).
+                         OrderByDescending(m => m.PlayedAt).
+                         ToListAsync();
+
                     return entities.Select(e => e.ToDomain()).ToList();
                 }
             }

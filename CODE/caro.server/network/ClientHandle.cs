@@ -303,7 +303,7 @@ namespace caro.server.network
         {
             try
             {
-                var list_his = await DatabaseServices.Instance.GetMatchHistoryAsync();
+                var list_his = await DatabaseServices.Instance.GetMatchHistoryAsync(username);
                 var response = new MatchHistoryResponseDTO();
 
                 foreach (var h in list_his)
