@@ -248,7 +248,7 @@ namespace caro.server.services
         }
         public bool CheckWin(int[,] board, int row, int col, int player)
         {
-            return GetWinningCoordinate != null;
+            return GetWinningCoordinate(board,row,col,player) != null;
         }
         public async Task MoveValid(string RoomID, ClientHandle player, int row, int col)
         {
@@ -286,7 +286,7 @@ namespace caro.server.services
                 {
                     WinnerName = player.username,
                     reason = "Đạt đủ 5 quân liên tiếp!!!",
-                    WinningCells = GetWinningCoordinate(room.board, row, col, TurnPlayer)
+                    WinningCells = GetWinningCoordinate(room.board, row, col, TurnPlayer) ??  new List<WinCoordinate>()
                 };
 
                 var packet = new BasePacket
