@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -72,6 +73,71 @@ namespace caro.ai
 
             }
             return moves.ToList();
+        }
+        public static GameStatus CheckWin(int[,] boardstate)
+        {
+            int[][] directions = new int[][]
+            {
+                new[] {0, 1},  // Ngang
+                new[] {1, 0},  // Dọc
+                new[] {1, 1},  // Chéo chính
+                new[] {1, -1}  // Chéo phụ
+            };
+
+            for (int r = 0; r < SIZE; r++)
+            {
+                for (int c = 0; c < SIZE; c++)
+                {
+                    int player = boardstate[r, c];
+                    if (player == EMPTY) continue;
+
+                    foreach (var dir in directions)
+                    {
+                        int dr = dir[0];
+                        int dc = dir[1];
+                        int count = 1;
+                        var WinningCells = new List<(int r, int c)> { (r, c) };
+
+                        int currR = r + dr;
+                        int currC = c + dc;
+
+                        while (InBounds(currR, currC) && boardstate[currR, currC] == player)
+                        {
+                            count++;
+                            WinningCells.Add((currR, currC));
+                            currR += dr;
+                            currC += dc;
+                        }
+                        currR = r - dr;
+                        currC = c - dc;
+                        while (InBounds(currR, currC) && boardstate[currR, currC] == player)
+                        {
+                            count++;
+                            WinningCells.Add((currR, currC));
+                            currR -= dr;
+                            currC -= dc;
+                        }
+                        if (count >= 5)
+                        {
+                            return new GameStatus { Winner = player, IsDraw = false, WinningCells = WinningCells };
+                        }
+                    }
+                }
+            }
+            bool isFull = true;
+            for (int r = 0; r < SIZE; r++)
+            {
+                for (int c = 0; c < SIZE; c++)
+                {
+                    if (boardstate[r, c] == EMPTY)
+                    {
+                        isFull = false;
+                        break;
+                    }
+                }
+                if (!isFull) break;
+            }
+            return new GameStatus { Winner = null, IsDraw = isFull, WinningCells = new List<(int r, int c)>() };
         }
         public class GameStatus
         {
