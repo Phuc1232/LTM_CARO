@@ -220,6 +220,39 @@ namespace caro.ai
             int scoreOpp = EvaluateSinglePlayer(boardState, opponentId);
             return (scoreAI - scoreOpp) + (bonusAI - bonusOpp);
         }
+        public static (int score, (int r, int c)? move) MiniMax(int[,] boardstate, int depthLimit,
+            int alpha, int beta, bool isMaximizing, int aiId)
+        {
+            var status = CheckWin(boardstate);
+            if (status.Winner != null || status.IsDraw || depthLimit == 0)
+            {
+                int score = EvaluateBoard(boardstate, aiId);
+                if (status.Winner == aiId) score += 1000000 + depthLimit * 1000;
+                else if (status.Winner != null) score -= 1000000 + depthLimit * 1000;
+                return (score, null);
+            }
+
+            var validMoves = GetVaildMove(boardstate);
+
+            if (validMoves.Count ==0) return (EvaluateBoard(boardstate, aiId), null);
+
+            int currPlayer = isMaximizing ? aiId : (aiId==1 ? 2 : 1);
+
+            if (depthLimit >= 2)
+            {
+                var scoreMoves = new List<ScoredMove>();
+
+                foreach (var move in validMoves)
+                {
+                    boardstate[move.r, move.c] = currPlayer;
+                    int s = EvaluateBoard(boardstate, currPlayer);
+                    boardstate[move.r, move.c] = EMPTY;
+                    scoreMoves.Add(new ScoredMove { Move = move, Score = isMaximizing ? s : -s });
+                }
+                scoreMoves.Sort((a, b) => b.Score.CompareTo(a.Score));
+                validMoves = scoreMoves.Select(m => m.Move).ToList();
+            }
+        }
         public class GameStatus
         {
             public int? Winner { get; set; }
