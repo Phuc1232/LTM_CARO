@@ -234,9 +234,9 @@ namespace caro.ai
 
             var validMoves = GetVaildMove(boardstate);
 
-            if (validMoves.Count ==0) return (EvaluateBoard(boardstate, aiId), null);
+            if (validMoves.Count == 0) return (EvaluateBoard(boardstate, aiId), null);
 
-            int currPlayer = isMaximizing ? aiId : (aiId==1 ? 2 : 1);
+            int currPlayer = isMaximizing ? aiId : (aiId == 1 ? 2 : 1);
 
             if (depthLimit >= 2)
             {
@@ -251,6 +251,47 @@ namespace caro.ai
                 }
                 scoreMoves.Sort((a, b) => b.Score.CompareTo(a.Score));
                 validMoves = scoreMoves.Select(m => m.Move).ToList();
+            }
+
+            (int r, int c)? bestMove = null;
+
+            if (isMaximizing)
+            {
+                int bestScore = int.MinValue;
+
+                foreach (var move in validMoves)
+                {
+                    boardstate[move.r, move.c] = currPlayer;
+                    var result = MiniMax(boardstate, depthLimit - 1, int.MaxValue, int.MinValue, false, aiId);
+                    boardstate[move.r, move.c] = EMPTY;
+
+                    if (result.score > bestScore)
+                    {
+                        bestScore = result.score;
+                        bestMove = result.move;
+                    }
+                    alpha = Math.Max(alpha, beta);
+                    if (alpha >= beta) break;
+                }
+                return (bestScore, bestMove);
+            }
+            else
+            {
+                int bestScore = int.MaxValue;
+                foreach (var move in validMoves)
+                {
+                    boardstate[move.r, move.c] = currPlayer;
+                    var result = MiniMax(boardstate, depthLimit - 1, alpha, beta, true, aiId);
+                    boardstate[move.r, move.c] = EMPTY;
+                    if (result.score < bestScore)
+                    {
+                        bestScore = result.score;
+                        bestMove = move;
+                    }
+                    beta = Math.Min(beta, bestScore);
+                    if (beta <= alpha) break; // Cắt tỉa
+                }
+                return (bestScore, bestMove);
             }
         }
         public class GameStatus
