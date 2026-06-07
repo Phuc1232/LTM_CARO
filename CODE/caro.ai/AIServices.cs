@@ -73,5 +73,17 @@ namespace caro.ai
             }
             return moves.ToList();
         }
+        public class GameStatus
+        {
+            public int? Winner { get; set; }
+            public bool IsDraw { get; set; }
+            public List<(int r, int c)> WinningCells { get; set; } = new();
+        }
+        private class ScoredMove
+        {
+            public (int r, int c) Move { get; set; }
+            public int Score { get; set; }
+        }
     }
+    
 }
