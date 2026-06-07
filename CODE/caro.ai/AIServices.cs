@@ -139,6 +139,48 @@ namespace caro.ai
             }
             return new GameStatus { Winner = null, IsDraw = isFull, WinningCells = new List<(int r, int c)>() };
         }
+        private static int ScorePatternFormCell(int[,] boardstate, int row, int col, int dr, int dc, int player)
+        {
+            if (!InBounds(row, col) || boardstate[row, col] != player) return 0;
+
+            int prevR = row - dr;
+            int prevC = col - dc;
+
+            if (InBounds(prevR, prevC) && boardstate[prevR, prevC] == player) return 0;
+
+            int length = 0;
+            int r = row;
+            int c = col;
+            while (InBounds(r, c) && boardstate[r, c] == player)
+            {
+                length++;
+                r += dr;
+                c += dc;
+            }
+            int endR1 = row - dr;
+            int endC1 = col - dc;
+            int endR2 = r;
+            int endC2 = c;
+            int openEnds = 0;
+            if (InBounds(endR1, endC1) && boardstate[endR1, endC1] == EMPTY) openEnds++;
+            if (InBounds(endR2, endC2) && boardstate[endR2, endC2] == EMPTY) openEnds++;
+            if (length >= 5) return 100000;
+            if (length == 4)
+            {
+                if (openEnds == 2) return 10000;
+                if (openEnds == 1) return 5000;
+            }
+            if (length == 3)
+            {
+                if (openEnds == 2) return 1000;
+                if (openEnds == 1) return 200;
+            }
+            if (length == 2)
+            {
+                if (openEnds == 2) return 50;
+            }
+            return 0;
+        }
         public class GameStatus
         {
             public int? Winner { get; set; }
