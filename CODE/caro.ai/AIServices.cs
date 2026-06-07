@@ -203,6 +203,23 @@ namespace caro.ai
             }
             return total;
         }
+        public static int EvaluateBoard(int[,] boardState, int aiPlayerId)
+        {
+            int opponentId = aiPlayerId == 1 ? 2 : 1;
+            int bonusAI = 0;
+            int bonusOpp = 0;
+            for (int r = 0; r < SIZE; r++)
+            {
+                for (int c = 0; c < SIZE; c++)
+                {
+                    if (boardState[r, c] == aiPlayerId) bonusAI += PositionalMatrix[r, c];
+                    else if (boardState[r, c] == opponentId) bonusOpp += PositionalMatrix[r, c];
+                }
+            }
+            int scoreAI = EvaluateSinglePlayer(boardState, aiPlayerId);
+            int scoreOpp = EvaluateSinglePlayer(boardState, opponentId);
+            return (scoreAI - scoreOpp) + (bonusAI - bonusOpp);
+        }
         public class GameStatus
         {
             public int? Winner { get; set; }
