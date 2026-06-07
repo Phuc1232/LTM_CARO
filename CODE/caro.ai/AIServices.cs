@@ -139,7 +139,7 @@ namespace caro.ai
             }
             return new GameStatus { Winner = null, IsDraw = isFull, WinningCells = new List<(int r, int c)>() };
         }
-        private static int ScorePatternFormCell(int[,] boardstate, int row, int col, int dr, int dc, int player)
+        private static int ScorePatternFromCell(int[,] boardstate, int row, int col, int dr, int dc, int player)
         {
             if (!InBounds(row, col) || boardstate[row, col] != player) return 0;
 
@@ -180,6 +180,28 @@ namespace caro.ai
                 if (openEnds == 2) return 50;
             }
             return 0;
+        }
+        private static int EvaluateSinglePlayer(int[,] boardState, int player)
+        {
+            int total = 0;
+            int[][] directions = new int[][]
+            {
+                new[] {0, 1},
+                new[] {1, 0},
+                new[] {1, 1},
+                new[] {1, -1}
+            };
+            for (int r = 0; r < SIZE; r++)
+            {
+                for (int c = 0; c < SIZE; c++)
+                {
+                    foreach (var dir in directions)
+                    {
+                        total += ScorePatternFromCell(boardState, r, c, dir[0], dir[1], player);
+                    }
+                }
+            }
+            return total;
         }
         public class GameStatus
         {
