@@ -29,7 +29,17 @@ namespace caro.ai
 
         }
         private readonly int[,] _board = new int[SIZE, SIZE];
-
+        public void UpdateBoard(int row, int col, int player)
+        {
+            if (row >= 0 && row < SIZE && col >= 0 && col < SIZE)
+            {
+                _board[row, col] = player;
+            }
+        }
+        public void ResetBoard()
+        {
+            Array.Clear(_board, 0, _board.Length);
+        }
         public int[,] GetBoardState()
         {
             return (int[,])_board.Clone();
