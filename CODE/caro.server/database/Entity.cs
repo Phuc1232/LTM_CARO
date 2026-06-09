@@ -57,4 +57,20 @@ namespace caro.server.database
             };
         }
     }
+    [Table("player_records")]
+    public class PlayerRecordEntity
+    {
+        [Key]
+        [Column("username")]
+        [StringLength(100)]
+        public string Username { get; set; } = null!;
+
+        [Column("wins")]
+        public int Wins { get; set; }
+
+        [Column("losses")]
+        public int Losses { get; set; }
+
+        
+    }
 }
