@@ -59,5 +59,15 @@ namespace caro.client.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _596b5f16_70c9_49f3_a4c4_fb18db30178f {
+            get {
+                object obj = ResourceManager.GetObject("596b5f16-70c9-49f3-a4c4-fb18db30178f", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
