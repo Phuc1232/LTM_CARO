@@ -57,6 +57,8 @@
             menuButton1.Size = new Size(262, 52);
             menuButton1.TabIndex = 0;
             menuButton1.Text = "Play Online";
+            menuButton1.Load += menuButton1_Load;
+            menuButton1.Click += menuButton1_Click;
             // 
             // menuButton2
             // 
@@ -95,7 +97,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 30, 46);
-           
+            BackgroundImage = Properties.Resources._596b5f16_70c9_49f3_a4c4_fb18db30178f;
             ClientSize = new Size(1097, 690);
             Controls.Add(label1);
             Controls.Add(menuButton5);
