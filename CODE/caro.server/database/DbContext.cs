@@ -6,6 +6,7 @@ namespace caro.server.database
     {
         
         public DbSet<MatchHistoryEntity> MatchHistories { get; set; } = null!;
+        public DbSet<PlayerRecordEntity> PlayerRecords { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
