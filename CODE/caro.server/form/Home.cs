@@ -13,7 +13,7 @@ namespace caro.server.form
 {
     public partial class Home : Form
     {
-        private Log _form2;
+        private Log _Log;
         private TCPServerManager _serverManager; // Sử dụng TCPServerManager thực tế
 
         public Home()
@@ -34,32 +34,32 @@ namespace caro.server.form
 
         private void HandleServerLog(string message)
         {
-            if (_form2 != null && !_form2.IsDisposed)
+            if (_Log != null && !_Log.IsDisposed)
             {
-                _form2.AppendLog(message);
+                _Log.AppendLog(message);
             }
         }
 
         private void HandlePlayerConnection(string playerInfo, bool isConnecting)
         {
-            if (_form2 != null && !_form2.IsDisposed)
+            if (_Log != null && !_Log.IsDisposed)
             {
-                _form2.UpdatePlayerList(playerInfo, isConnecting);
+                _Log.UpdatePlayerList(playerInfo, isConnecting);
             }
         }
 
         private void BTN_StartServer(object sender, EventArgs e)
         {
-            // 1. Khởi tạo duy nhất một đối tượng của Form2 (Log) lưu vào biến toàn cục _form2
-            if (_form2 == null || _form2.IsDisposed)
+            // 1. Khởi tạo duy nhất một đối tượng của Form2 (Log) lưu vào biến toàn cục _Log
+            if (_Log == null || _Log.IsDisposed)
             {
-                _form2 = new Log();
-                _form2.ParentForm1 = this;
-                _form2.FormClosed += (s, args) => Application.Exit();
+                _Log = new Log();
+                _Log.ParentForm1 = this;
+                _Log.FormClosed += (s, args) => Application.Exit();
             }
 
             // 2. Hiển thị Form2 lên màn hình
-            _form2.Show();
+            _Log.Show();
 
             // 3. Ẩn Form Home hiện tại đi
             this.Hide();
@@ -71,7 +71,7 @@ namespace caro.server.form
             btnStart.Enabled = false;
             btnStop.Enabled = true;
 
-            //_form2.UpdateStatus($"Đang mở tại Port: {port}");
+            //_Log.UpdateStatus($"Đang mở tại Port: {port}");
         }
 
         // Hàm giúp Form2 gọi ngược lại Form Home khi người dùng click tắt/dừng server
