@@ -96,6 +96,18 @@ namespace caro.server.database
                 ShortestWinMoves = domain.ShortestWinMoves
             };
         }
-
+        public PlayerRecordModels ToDomain()
+        {
+            return new PlayerRecordModels
+            {
+                Username = Username,
+                Wins = Wins,
+                Losses = Losses,
+                Draws = Draws,
+                WinStreak = WinStreak,
+                MaxWinStreak = MaxWinStreak,
+                ShortestWinMoves = ShortestWinMoves
+            };
+        }
     }
 }
