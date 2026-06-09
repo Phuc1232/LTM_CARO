@@ -14,5 +14,8 @@ namespace caro.share.DTOs
         public int ShortestWinMoves { get; set; } // int.MaxValue nếu chưa có trận thắng nào
     }
 
-   
+    public class BestRecordResponseDTO
+    {
+        public List<BestRecordItemDTO> Records { get; set; } = new List<BestRecordItemDTO>();
+    }
 }
