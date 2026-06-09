@@ -82,5 +82,20 @@ namespace caro.server.database
 
         [Column("shortest_win_moves")]
         public int ShortestWinMoves { get; set; } = int.MaxValue;
+
+        public static PlayerRecordEntity FromDomain(PlayerRecordModels domain)
+        {
+            return new PlayerRecordEntity
+            {
+                Username = domain.Username,
+                Wins = domain.Wins,
+                Losses = domain.Losses,
+                Draws = domain.Draws,
+                WinStreak = domain.WinStreak,
+                MaxWinStreak = domain.MaxWinStreak,
+                ShortestWinMoves = domain.ShortestWinMoves
+            };
+        }
+
     }
 }
