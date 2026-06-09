@@ -28,6 +28,9 @@ namespace caro.share.DTOs.Constants
         GameEndNotify =52,
 
         MatchHistoryRequest = 60,
-        MatchHistoryResponse = 61
+        MatchHistoryResponse = 61,
+
+        BestRecordRequest = 70,
+        BestRecordResponse = 71
     }
 }
