@@ -33,6 +33,9 @@
             menuButton6 = new caro.client.ui_components.MenuButton();
             menuButton5 = new caro.client.ui_components.MenuButton();
             btnSurrender = new caro.client.ui_components.MenuButton();
+            playerCard1 = new caro.client.ui_components.PlayerCard();
+            playerCard2 = new caro.client.ui_components.PlayerCard();
+            chatBox1 = new caro.client.ui_components.ChatBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -40,7 +43,7 @@
             // 
             boardControl1.BackColor = Color.FromArgb(42, 42, 60);
             boardControl1.BorderStyle = BorderStyle.FixedSingle;
-            boardControl1.Location = new Point(331, 139);
+            boardControl1.Location = new Point(265, 130);
             boardControl1.Name = "boardControl1";
             boardControl1.Size = new Size(608, 610);
             boardControl1.TabIndex = 2;
@@ -50,7 +53,7 @@
             panel1.Controls.Add(menuButton6);
             panel1.Controls.Add(menuButton5);
             panel1.Controls.Add(btnSurrender);
-            panel1.Location = new Point(61, 513);
+            panel1.Location = new Point(42, 331);
             panel1.Name = "panel1";
             panel1.Size = new Size(176, 206);
             panel1.TabIndex = 3;
@@ -90,12 +93,47 @@
             btnSurrender.Load += menuButton4_Load;
             btnSurrender.Click += menuButton4_Click;
             // 
+            // playerCard1
+            // 
+            playerCard1.Avatar = null;
+            playerCard1.BackColor = Color.FromArgb(42, 42, 60);
+            playerCard1.ForeColor = Color.White;
+            playerCard1.Location = new Point(354, 24);
+            playerCard1.Name = "playerCard1";
+            playerCard1.PlayerName = "Player";
+            playerCard1.Size = new Size(156, 79);
+            playerCard1.TabIndex = 4;
+            playerCard1.TimeText = "Time: 20s";
+            // 
+            // playerCard2
+            // 
+            playerCard2.Avatar = null;
+            playerCard2.BackColor = Color.FromArgb(42, 42, 60);
+            playerCard2.ForeColor = Color.White;
+            playerCard2.Location = new Point(612, 24);
+            playerCard2.Name = "playerCard2";
+            playerCard2.PlayerName = "Player";
+            playerCard2.Size = new Size(156, 79);
+            playerCard2.TabIndex = 5;
+            playerCard2.TimeText = "Time: 20s";
+            // 
+            // chatBox1
+            // 
+            chatBox1.BackColor = Color.FromArgb(42, 42, 60);
+            chatBox1.Location = new Point(898, 179);
+            chatBox1.Name = "chatBox1";
+            chatBox1.Size = new Size(260, 561);
+            chatBox1.TabIndex = 6;
+            // 
             // GameBoard
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 30, 46);
             ClientSize = new Size(1184, 761);
+            Controls.Add(chatBox1);
+            Controls.Add(playerCard2);
+            Controls.Add(playerCard1);
             Controls.Add(panel1);
             Controls.Add(boardControl1);
             Name = "GameBoard";
@@ -113,5 +151,8 @@
         private ui_components.MenuButton menuButton6;
         private ui_components.MenuButton menuButton5;
         private ui_components.MenuButton btnSurrender;
+        private ui_components.PlayerCard playerCard1;
+        private ui_components.PlayerCard playerCard2;
+        private ui_components.ChatBox chatBox1;
     }
 }
