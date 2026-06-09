@@ -71,6 +71,16 @@ namespace caro.server.database
         [Column("losses")]
         public int Losses { get; set; }
 
-        
+        [Column("draws")]
+        public int Draws { get; set; }
+
+        [Column("win_streak")]
+        public int WinStreak { get; set; }
+
+        [Column("max_win_streak")]
+        public int MaxWinStreak { get; set; }
+
+        [Column("shortest_win_moves")]
+        public int ShortestWinMoves { get; set; } = int.MaxValue;
     }
 }
