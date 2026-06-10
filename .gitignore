@@ -5,3 +5,4 @@ obj/
 /CODE/CARO.slnLaunch.user
 .env
 *.csproj.user
+/CODE/caro.client/caro.client.csproj.user
