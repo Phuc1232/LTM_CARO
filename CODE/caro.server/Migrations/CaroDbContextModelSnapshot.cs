@@ -66,6 +66,42 @@ namespace caro.server.Migrations
 
                     b.ToTable("match_histories");
                 });
+
+            modelBuilder.Entity("caro.server.database.PlayerRecordEntity", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("username");
+
+                    b.Property<int>("Draws")
+                        .HasColumnType("integer")
+                        .HasColumnName("draws");
+
+                    b.Property<int>("Losses")
+                        .HasColumnType("integer")
+                        .HasColumnName("losses");
+
+                    b.Property<int>("MaxWinStreak")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_win_streak");
+
+                    b.Property<int>("ShortestWinMoves")
+                        .HasColumnType("integer")
+                        .HasColumnName("shortest_win_moves");
+
+                    b.Property<int>("WinStreak")
+                        .HasColumnType("integer")
+                        .HasColumnName("win_streak");
+
+                    b.Property<int>("Wins")
+                        .HasColumnType("integer")
+                        .HasColumnName("wins");
+
+                    b.HasKey("Username");
+
+                    b.ToTable("player_records");
+                });
 #pragma warning restore 612, 618
         }
     }
