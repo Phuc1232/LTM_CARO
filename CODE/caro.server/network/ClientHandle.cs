@@ -112,6 +112,9 @@ namespace caro.server.network
                 case PacketType.MatchHistoryRequest:
                     await ProccessMatchHistoryRequestAsync(packet.payload);
                     break;
+                case PacketType.BestRecordRequest:
+                    await ProccessBestRecordRequestAsync(packet.payload);
+                    break;
             }
         }
 
@@ -318,19 +321,24 @@ namespace caro.server.network
                         MatchType = h.MatchType,
                         MovesData = h.MovesData
                     });
-                    var packet = new BasePacket
-                    {
-                        Type = PacketType.MatchHistoryResponse,
-                        payload = JsonSerializer.Serialize(response)
-                    };
-                    await SendPacketAsync(packet);
+                   
                 }
+                var packet = new BasePacket
+                {
+                    Type = PacketType.MatchHistoryResponse,
+                    payload = JsonSerializer.Serialize(response)
+                };
+                await SendPacketAsync(packet);
             }
             catch(Exception)
             {
                 TCPServerManager.Log("[Database] Lỗi khi tải dữ liệu từ database!!!");
             }
 
+        }
+        public async Task ProccessBestRecordRequestAsync(string payload)
+        {
+            
         }
         public async Task SendResultToSelfAsync(string message, bool accepted)
         {
