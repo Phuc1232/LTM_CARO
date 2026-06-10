@@ -82,10 +82,48 @@ namespace caro.server.services
             var p1 = history.Player1;
             var p2 = history.Player2;
 
-            var rec1 = await context.PlayerRecords.FindAsync(p1)?? new PlayerRecordEntity { Username=p1};
-            var rec2 = await context.PlayerRecords.FindAsync(p2)?? new PlayerRecordEntity { Username=p2};
+            var rec1 = await context.PlayerRecords.FindAsync(p1) ?? new PlayerRecordEntity { Username = p1 };
+            var rec2 = await context.PlayerRecords.FindAsync(p2) ?? new PlayerRecordEntity { Username = p2 };
 
+            await context.PlayerRecords.AddAsync(rec1);
+            await context.PlayerRecords.AddAsync(rec2);
 
-        }
+            int moveCount = string.IsNullOrEmpty(history.MovesData) ? 0 : history.MovesData.
+                Split(';', StringSplitOptions.RemoveEmptyEntries).Length;
+
+            if (history.Winner == p1)
+            {
+                rec1.Wins++;
+                rec1.WinStreak++;
+                if (rec1.WinStreak > rec1.MaxWinStreak)
+                {
+                    rec1.MaxWinStreak = rec1.WinStreak;
+                }
+                if (moveCount > 0 && moveCount < rec1.ShortestWinMoves)
+                    rec1.ShortestWinMoves = moveCount;
+                rec2.Losses++;
+                rec2.WinStreak = 0; // Thua reset chuỗi thắng
+            }
+            else if (history.Winner == p2)
+            {
+                rec2.Wins++;
+                rec2.WinStreak++;
+                if (rec2.WinStreak > rec2.MaxWinStreak)
+                    rec2.MaxWinStreak = rec2.WinStreak;
+                if (moveCount > 0 && moveCount < rec2.ShortestWinMoves)
+                    rec2.ShortestWinMoves = moveCount;
+                rec1.Losses++;
+                rec1.WinStreak = 0; // Thua reset chuỗi thắng
+
+            }
+            else
+            {
+                // Trận đấu hòa
+                rec1.Draws++;
+
+                rec2.Draws++;
+            }
+
+        } 
     }
 }
