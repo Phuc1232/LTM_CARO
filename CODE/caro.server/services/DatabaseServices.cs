@@ -79,6 +79,25 @@ namespace caro.server.services
             }
    
         }
+        public async Task<List<PlayerRecordModels>> GetBestRecordsAsync()
+        {
+            try
+            {
+                using (var context = new CaroDbContext())
+                {
+                    var entities = await context.PlayerRecords
+                        .OrderByDescending(r => r.Wins)
+                        .ToListAsync();
+                    
+                    return entities.Select(e => e.ToDomain()).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                TCPServerManager.Log($"[Database Error] Tải bảng xếp hạng thất bại: {ex.Message}");
+                return new List<PlayerRecordModels>();
+            }
+        }
         public async Task UpdatePlayerStatsAsync(CaroDbContext context, MatchHistoryModels history)
         {
             var p1 = history.Player1;
