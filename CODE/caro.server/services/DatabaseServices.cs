@@ -6,6 +6,7 @@ using caro.share.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.DirectoryServices.ActiveDirectory;
 using System.Text;
 
@@ -47,6 +48,7 @@ namespace caro.server.services
                 {
                     var entity = MatchHistoryEntity.FromDomain(history);
                     await context.MatchHistories.AddAsync(entity);
+                    await UpdatePlayerStatsAsync(context, history);
                     await context.SaveChangesAsync();
                     TCPServerManager.Log($"[Database] Đã lưu lịch sử đấu cho trận: {history.id}");
                 }
@@ -84,9 +86,10 @@ namespace caro.server.services
 
             var rec1 = await context.PlayerRecords.FindAsync(p1) ?? new PlayerRecordEntity { Username = p1 };
             var rec2 = await context.PlayerRecords.FindAsync(p2) ?? new PlayerRecordEntity { Username = p2 };
+            
+            if (context.Entry(rec1).State == EntityState.Detached) await context.PlayerRecords.AddAsync(rec1);
 
-            await context.PlayerRecords.AddAsync(rec1);
-            await context.PlayerRecords.AddAsync(rec2);
+            if (context.Entry(rec2).State == EntityState.Detached) await context.PlayerRecords.AddAsync(rec2);
 
             int moveCount = string.IsNullOrEmpty(history.MovesData) ? 0 : history.MovesData.
                 Split(';', StringSplitOptions.RemoveEmptyEntries).Length;
