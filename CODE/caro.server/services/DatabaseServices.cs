@@ -2,6 +2,7 @@
 using caro.server.form;
 using caro.server.models;
 using caro.server.network;
+using caro.share.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -75,6 +76,16 @@ namespace caro.server.services
                 return new List<MatchHistoryModels>();
             }
    
+        }
+        public async Task UpdatePlayerStatsAsync(CaroDbContext context, MatchHistoryModels history)
+        {
+            var p1 = history.Player1;
+            var p2 = history.Player2;
+
+            var rec1 = await context.PlayerRecords.FindAsync(p1)?? new PlayerRecordEntity { Username=p1};
+            var rec2 = await context.PlayerRecords.FindAsync(p2)?? new PlayerRecordEntity { Username=p2};
+
+
         }
     }
 }
