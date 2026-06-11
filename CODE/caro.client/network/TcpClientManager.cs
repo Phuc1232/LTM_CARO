@@ -32,6 +32,7 @@ namespace caro.client.network
         public event Action<GameEndNotifyDTO>? OnGameEnded;
         public event Action? OnDisconnected;
         public event Action<MatchHistoryResponseDTO>? OnMatchHistoryReceived;
+        public event Action<BestRecordResponseDTO>? OnBestRecordReceived;
 
         private TCPClientManager() { }
 
@@ -169,6 +170,9 @@ namespace caro.client.network
                     break;
                 case PacketType.MatchHistoryResponse:
                     TriggerEvent<MatchHistoryResponseDTO>(packet.payload, OnMatchHistoryReceived);
+                    break;
+                case PacketType.BestRecordResponse:
+                    TriggerEvent<BestRecordResponseDTO>(packet.payload, OnBestRecordReceived);
                     break;
             }
         }

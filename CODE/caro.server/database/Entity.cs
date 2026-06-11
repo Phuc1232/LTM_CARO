@@ -57,4 +57,57 @@ namespace caro.server.database
             };
         }
     }
+    [Table("player_records")]
+    public class PlayerRecordEntity
+    {
+        [Key]
+        [Column("username")]
+        [StringLength(100)]
+        public string Username { get; set; } = null!;
+
+        [Column("wins")]
+        public int Wins { get; set; }
+
+        [Column("losses")]
+        public int Losses { get; set; }
+
+        [Column("draws")]
+        public int Draws { get; set; }
+
+        [Column("win_streak")]
+        public int WinStreak { get; set; }
+
+        [Column("max_win_streak")]
+        public int MaxWinStreak { get; set; }
+
+        [Column("shortest_win_moves")]
+        public int ShortestWinMoves { get; set; } = int.MaxValue;
+
+        public static PlayerRecordEntity FromDomain(PlayerRecordModels domain)
+        {
+            return new PlayerRecordEntity
+            {
+                Username = domain.Username,
+                Wins = domain.Wins,
+                Losses = domain.Losses,
+                Draws = domain.Draws,
+                WinStreak = domain.WinStreak,
+                MaxWinStreak = domain.MaxWinStreak,
+                ShortestWinMoves = domain.ShortestWinMoves
+            };
+        }
+        public PlayerRecordModels ToDomain()
+        {
+            return new PlayerRecordModels
+            {
+                Username = Username,
+                Wins = Wins,
+                Losses = Losses,
+                Draws = Draws,
+                WinStreak = WinStreak,
+                MaxWinStreak = MaxWinStreak,
+                ShortestWinMoves = ShortestWinMoves
+            };
+        }
+    }
 }

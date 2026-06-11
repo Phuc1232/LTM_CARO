@@ -112,6 +112,9 @@ namespace caro.server.network
                 case PacketType.MatchHistoryRequest:
                     await ProccessMatchHistoryRequestAsync(packet.payload);
                     break;
+                case PacketType.BestRecordRequest:
+                    await ProccessBestRecordRequestAsync(packet.payload);
+                    break;
             }
         }
 
@@ -318,19 +321,56 @@ namespace caro.server.network
                         MatchType = h.MatchType,
                         MovesData = h.MovesData
                     });
-                    var packet = new BasePacket
-                    {
-                        Type = PacketType.MatchHistoryResponse,
-                        payload = JsonSerializer.Serialize(response)
-                    };
-                    await SendPacketAsync(packet);
+                   
                 }
+                var packet = new BasePacket
+                {
+                    Type = PacketType.MatchHistoryResponse,
+                    payload = JsonSerializer.Serialize(response)
+                };
+                await SendPacketAsync(packet);
             }
             catch(Exception)
             {
                 TCPServerManager.Log("[Database] Lỗi khi tải dữ liệu từ database!!!");
             }
 
+        }
+        public async Task ProccessBestRecordRequestAsync(string payload)
+        {
+            try
+            {
+                var listRecord = await DatabaseServices.Instance.GetBestRecordsAsync();
+
+                var response = new BestRecordResponseDTO();
+
+                foreach (var r in listRecord)
+                {
+                    int calculatedScore = (r.Wins * 3) + (r.Draws * 1);
+                    response.Records.Add(new BestRecordItemDTO
+                    {
+                        Username = r.Username,
+                        Scores = calculatedScore,
+                        Wins = r.Wins,
+                        Losses = r.Losses,
+                        Draws = r.Draws,
+                        MaxWinStreak = r.MaxWinStreak,
+                        ShortestWinMoves = r.ShortestWinMoves
+                    });
+                }
+                response.Records = response.Records.OrderByDescending(x => x.Scores).ToList();
+                var packet = new BasePacket
+                {
+                    Type = PacketType.BestRecordResponse,
+                    payload = JsonSerializer.Serialize(response)
+                };
+                await SendPacketAsync(packet);
+                TCPServerManager.Log($"[Database] Đã gửi bảng vàng thành tích cho người chơi '{username}'");
+            }
+            catch (Exception ex)
+            {
+                TCPServerManager.Log($"[Database Error] Xử lý yêu cầu kỷ lục thất bại: {ex.Message}");
+            }
         }
         public async Task SendResultToSelfAsync(string message, bool accepted)
         {
