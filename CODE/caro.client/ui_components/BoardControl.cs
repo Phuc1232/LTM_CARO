@@ -57,17 +57,28 @@ namespace caro.client.ui_components
         }
         private void Cell_Click(object? sender, EventArgs e)
         {
-            Button cell = (Button)sender;
+            Button cell = (Button)sender!;
 
             if (cell.Text != "")
                 return;
 
-            if (isXTurn)
-                cell.Text = "X";
-            else
-                cell.Text = "O";
+            string[] parts = cell.Tag.ToString()!.Split(',');
+            int row = int.Parse(parts[0]);
+            int col = int.Parse(parts[1]);
 
-            isXTurn = !isXTurn;
+            OnCellClicked?.Invoke(row, col);
+        }
+        public void SetCell(int row, int col, string text)
+        {
+            foreach (Control control in Controls)
+            {
+                if (control is Button btn && btn.Tag?.ToString() == $"{row},{col}")
+                {
+                    btn.Text = text;
+                    btn.Enabled = false;
+                    return;
+                }
+            }
         }
 
         public void NewGame()
@@ -88,5 +99,6 @@ namespace caro.client.ui_components
         {
 
         }
+        public event Action<int, int>? OnCellClicked;
     }
 }
