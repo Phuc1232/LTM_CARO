@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using caro.client.network;
+using caro.share.DTOs;
+using caro.share.DTOs.Constants;
 
 namespace caro.client.form
 {
@@ -15,6 +18,38 @@ namespace caro.client.form
         public GameBoard()
         {
             InitializeComponent();
+            boardControl1.OnCellClicked += async (row, col) =>
+            {
+                await TCPClientManager.Instance.SendPacketAsync(
+                    PacketType.MoveRequest,
+                    new MoveRequestDTO
+                    {
+                        row = row,
+                        col = col
+                    });
+            };
+
+            TCPClientManager.Instance.OnMoveNotify += move =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke(() => boardControl1.SetCell(move.row, move.col, move.player));
+                    return;
+                }
+
+                boardControl1.SetCell(move.row, move.col, move.player);
+            };
+
+            TCPClientManager.Instance.OnGameEnded += gameEnd =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke(() => MessageBox.Show($"{gameEnd.WinnerName} thắng!\n{gameEnd.reason}"));
+                    return;
+                }
+
+                MessageBox.Show($"{gameEnd.WinnerName} thắng!\n{gameEnd.reason}");
+            };
         }
 
         private void playerCard2_Load(object sender, EventArgs e)
@@ -72,6 +107,11 @@ namespace caro.client.form
 
                 this.Hide();
             }
+        }
+
+        private void GameBoard_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

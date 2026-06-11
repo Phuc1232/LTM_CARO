@@ -43,7 +43,7 @@
             // 
             boardControl1.BackColor = Color.FromArgb(42, 42, 60);
             boardControl1.BorderStyle = BorderStyle.FixedSingle;
-            boardControl1.Location = new Point(265, 130);
+            boardControl1.Location = new Point(324, 37);
             boardControl1.Name = "boardControl1";
             boardControl1.Size = new Size(608, 610);
             boardControl1.TabIndex = 2;
@@ -53,7 +53,7 @@
             panel1.Controls.Add(menuButton6);
             panel1.Controls.Add(menuButton5);
             panel1.Controls.Add(btnSurrender);
-            panel1.Location = new Point(42, 331);
+            panel1.Location = new Point(12, 393);
             panel1.Name = "panel1";
             panel1.Size = new Size(176, 206);
             panel1.TabIndex = 3;
@@ -98,7 +98,7 @@
             playerCard1.Avatar = null;
             playerCard1.BackColor = Color.FromArgb(42, 42, 60);
             playerCard1.ForeColor = Color.White;
-            playerCard1.Location = new Point(354, 24);
+            playerCard1.Location = new Point(32, 53);
             playerCard1.Name = "playerCard1";
             playerCard1.PlayerName = "Player";
             playerCard1.Size = new Size(156, 79);
@@ -110,7 +110,7 @@
             playerCard2.Avatar = null;
             playerCard2.BackColor = Color.FromArgb(42, 42, 60);
             playerCard2.ForeColor = Color.White;
-            playerCard2.Location = new Point(612, 24);
+            playerCard2.Location = new Point(32, 169);
             playerCard2.Name = "playerCard2";
             playerCard2.PlayerName = "Player";
             playerCard2.Size = new Size(156, 79);
@@ -120,7 +120,7 @@
             // chatBox1
             // 
             chatBox1.BackColor = Color.FromArgb(42, 42, 60);
-            chatBox1.Location = new Point(898, 179);
+            chatBox1.Location = new Point(1058, 53);
             chatBox1.Name = "chatBox1";
             chatBox1.Size = new Size(260, 561);
             chatBox1.TabIndex = 6;
@@ -130,7 +130,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 30, 46);
-            ClientSize = new Size(1184, 761);
+            ClientSize = new Size(1402, 690);
             Controls.Add(chatBox1);
             Controls.Add(playerCard2);
             Controls.Add(playerCard1);
@@ -138,6 +138,7 @@
             Controls.Add(boardControl1);
             Name = "GameBoard";
             Text = "GameBoard";
+            Load += GameBoard_Load;
             panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
