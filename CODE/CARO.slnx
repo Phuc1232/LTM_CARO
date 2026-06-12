@@ -1,5 +1,7 @@
 <Solution>
-  <Project Path="caro.ai/caro.ai.csproj" />
+  <Project Path="caro.ai/caro.ai.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="caro.client/caro.client.csproj" />
   <Project Path="caro.server/caro.server.csproj" />
   <Project Path="caro.share/caro.share.csproj" />

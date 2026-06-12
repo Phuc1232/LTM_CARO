@@ -83,7 +83,7 @@ namespace caro.server.network
 
                     if (!string.IsNullOrEmpty(CurrentRoomID))
                     {
-                        GameRoomServices.Instance.CleanupRoom(CurrentRoomID);
+                        GameRoomServices.Instance.CleanupRoom(CurrentRoomID, false, username);
                     }
 
                     _ = TCPServerManager.BroadcastOnlinePlayersAsync();
