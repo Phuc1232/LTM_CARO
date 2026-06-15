@@ -52,6 +52,7 @@ namespace caro.client.form
         {
             string username = txtUsername.Text.Trim();
             string ip = txtIpAddress.Text.Trim();
+            TCPClientManager.Instance.CurrentUsername = username;
 
             if (username == "" || ip == "")
             {
