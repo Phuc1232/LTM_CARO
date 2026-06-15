@@ -33,11 +33,11 @@ namespace caro.client.form
             {
                 if (InvokeRequired)
                 {
-                    Invoke(() => boardControl1.SetCell(move.row, move.col, move.player));
+                    Invoke(() => HandleMoveNotify(move));
                     return;
                 }
 
-                boardControl1.SetCell(move.row, move.col, move.player);
+                HandleMoveNotify(move);
             };
 
             TCPClientManager.Instance.OnGameEnded += gameEnd =>
@@ -50,6 +50,17 @@ namespace caro.client.form
 
                 MessageBox.Show($"{gameEnd.WinnerName} thắng!\n{gameEnd.reason}");
             };
+        }
+        private void HandleMoveNotify(MoveNotifyDTO move)
+        {
+            string symbol;
+
+            if (move.player == TCPClientManager.Instance.CurrentUsername)
+                symbol = "X";
+            else
+                symbol = "O";
+
+            boardControl1.SetCell(move.row, move.col, symbol);
         }
 
         private void playerCard2_Load(object sender, EventArgs e)
