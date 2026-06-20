@@ -79,6 +79,7 @@
             menuButton5.Size = new Size(141, 33);
             menuButton5.TabIndex = 5;
             menuButton5.Text = "New Game";
+            menuButton5.Click += menuButton5_Click;
             // 
             // btnSurrender
             // 
