@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using caro.client.network;
 using caro.share.DTOs;
@@ -15,20 +8,43 @@ namespace caro.client.form
 {
     public partial class MatchMaking : Form
     {
+        private bool isGameOpened = false;
+
         public MatchMaking()
         {
             InitializeComponent();
+
             TCPClientManager.Instance.OnOnlinePlayerListUpdated += UpdateOnlinePlayers;
             TCPClientManager.Instance.OnChallengeReceived += ReceiveChallenge;
             TCPClientManager.Instance.OnChallengeResult += ChallengeResult;
             TCPClientManager.Instance.OnGameStarted += GameStarted;
+
+            btnBack.Click += btnBack_Click;
+            FormClosed += MatchMaking_FormClosed;
+
             if (TCPClientManager.Instance.LastOnlinePlayers != null)
             {
                 UpdateOnlinePlayers(TCPClientManager.Instance.LastOnlinePlayers);
             }
         }
+
+        private void MatchMaking_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            UnsubscribeNetworkEvents();
+        }
+
+        private void UnsubscribeNetworkEvents()
+        {
+            TCPClientManager.Instance.OnOnlinePlayerListUpdated -= UpdateOnlinePlayers;
+            TCPClientManager.Instance.OnChallengeReceived -= ReceiveChallenge;
+            TCPClientManager.Instance.OnChallengeResult -= ChallengeResult;
+            TCPClientManager.Instance.OnGameStarted -= GameStarted;
+        }
+
         private void UpdateOnlinePlayers(OnlinePlayerListDTO dto)
         {
+            if (IsDisposed) return;
+
             if (InvokeRequired)
             {
                 Invoke(() => UpdateOnlinePlayers(dto));
@@ -39,7 +55,6 @@ namespace caro.client.form
 
             foreach (string player in dto.players)
             {
-                // Không hiện chính mình
                 if (player == TCPClientManager.Instance.CurrentUsername)
                     continue;
 
@@ -47,28 +62,22 @@ namespace caro.client.form
             }
         }
 
-        private async void btnChallenge_Click(object sender, EventArgs e)
+        private void OpenGameBoard(GameStartNotifyDTO dto)
         {
-            if (lstOnlinePlayers.SelectedItem == null)
-            {
-                MessageBox.Show("Hãy chọn người chơi để thách đấu!");
-                return;
-            }
+            if (isGameOpened) return;
+            isGameOpened = true;
 
-            string targetUsername = lstOnlinePlayers.SelectedItem.ToString();
+            GameBoard gameBoard = new GameBoard(dto);
+            gameBoard.Show();
 
-            await TCPClientManager.Instance.SendPacketAsync(
-                PacketType.ChallengeRequest,
-                new ChallengeRequestDTO
-                {
-                    targetUsername = targetUsername
-                });
-
-            MessageBox.Show($"Đã gửi lời thách đấu tới {targetUsername}");
+            UnsubscribeNetworkEvents();
+            this.Close();
         }
 
         private async void ReceiveChallenge(ChallengeNotifyDTO dto)
         {
+            if (IsDisposed) return;
+
             if (InvokeRequired)
             {
                 Invoke(() => ReceiveChallenge(dto));
@@ -88,10 +97,15 @@ namespace caro.client.form
                     roomId = dto.roomId,
                     isAccepted = result == DialogResult.Yes
                 });
+
+            // Không mở GameBoard ở đây.
+            // Đợi server gửi GameStartNotify.
         }
 
         private void ChallengeResult(ChallengeResultDTO dto)
         {
+            if (IsDisposed) return;
+
             if (InvokeRequired)
             {
                 Invoke(() => ChallengeResult(dto));
@@ -100,47 +114,43 @@ namespace caro.client.form
 
             MessageBox.Show(dto.message);
 
-            if (dto.isAccepted)
-            {
-                GameBoard gameBoard = new GameBoard();
-                gameBoard.Show();
-                this.Hide();
-            }
+            // Không mở GameBoard ở đây.
+            // Đợi server gửi GameStartNotify.
         }
+
         private void GameStarted(GameStartNotifyDTO dto)
         {
+            if (IsDisposed) return;
+
             if (InvokeRequired)
             {
                 Invoke(() => GameStarted(dto));
                 return;
             }
 
-            GameBoard gameBoard = new GameBoard();
-            gameBoard.Show();
-
-            this.Hide();
+            OpenGameBoard(dto);
         }
-        private void btnBack_Click(object sender, EventArgs e)
+
+        private void btnBack_Click(object? sender, EventArgs e)
         {
+            Home home = new Home();
+            home.Show();
             this.Close();
         }
 
         private void MatchMaking_Load(object sender, EventArgs e)
         {
-
         }
 
         private async void btnChallenge_Click_1(object sender, EventArgs e)
         {
-            MessageBox.Show("Đã bấm nút thách đấu");
-
             if (lstOnlinePlayers.SelectedItem == null)
             {
                 MessageBox.Show("Hãy chọn người chơi để thách đấu!");
                 return;
             }
 
-            string targetUsername = lstOnlinePlayers.SelectedItem.ToString();
+            string targetUsername = lstOnlinePlayers.SelectedItem.ToString()!;
 
             await TCPClientManager.Instance.SendPacketAsync(
                 PacketType.ChallengeRequest,

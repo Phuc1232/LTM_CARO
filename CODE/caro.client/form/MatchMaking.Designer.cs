@@ -49,11 +49,12 @@
             // lstOnlinePlayers
             // 
             lstOnlinePlayers.BackColor = Color.FromArgb(42, 42, 60);
+            lstOnlinePlayers.Font = new Font("Segoe UI", 20F);
             lstOnlinePlayers.ForeColor = Color.White;
             lstOnlinePlayers.FormattingEnabled = true;
             lstOnlinePlayers.Location = new Point(559, 108);
             lstOnlinePlayers.Name = "lstOnlinePlayers";
-            lstOnlinePlayers.Size = new Size(300, 379);
+            lstOnlinePlayers.Size = new Size(300, 374);
             lstOnlinePlayers.TabIndex = 7;
             // 
             // btnChallenge
