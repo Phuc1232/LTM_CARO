@@ -28,6 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\caro.ai\caro.ai.csproj" />
+    <ProjectReference Include="..\caro.server\caro.server.csproj" />
     <ProjectReference Include="..\caro.share\caro.share.csproj" />
   </ItemGroup>
 

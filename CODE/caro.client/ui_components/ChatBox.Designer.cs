@@ -56,6 +56,7 @@
             rtbMessages.Size = new Size(230, 450);
             rtbMessages.TabIndex = 1;
             rtbMessages.Text = "";
+            
             // 
             // txtMessage
             // 
