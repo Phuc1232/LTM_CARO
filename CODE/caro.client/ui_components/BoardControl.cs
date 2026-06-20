@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace caro.client.ui_components
@@ -9,18 +15,14 @@ namespace caro.client.ui_components
         private const int ROWS = 15;
         private const int COLS = 15;
         private const int CELL_SIZE = 40;
-
-        public event Action<int, int>? OnCellClicked;
-
+        private bool isXTurn = true;
         public BoardControl()
         {
             InitializeComponent();
             CreateBoard();
-
-            Width = COLS * CELL_SIZE;
-            Height = ROWS * CELL_SIZE;
+            this.Width = COLS * CELL_SIZE;
+            this.Height = ROWS * CELL_SIZE;
         }
-
         private void CreateBoard()
         {
             for (int row = 0; row < ROWS; row++)
@@ -31,20 +33,19 @@ namespace caro.client.ui_components
 
                     cell.Width = CELL_SIZE;
                     cell.Height = CELL_SIZE;
+
                     cell.Left = col * CELL_SIZE;
                     cell.Top = row * CELL_SIZE;
-
                     cell.Text = "";
-                    cell.Tag = $"{row},{col}";
-
                     cell.FlatStyle = FlatStyle.Flat;
                     cell.FlatAppearance.BorderSize = 1;
                     cell.FlatAppearance.BorderColor = Color.FromArgb(90, 90, 120);
 
+                    cell.Tag = $"{row},{col}";
                     cell.BackColor = Color.FromArgb(42, 42, 60);
                     cell.ForeColor = Color.White;
-                    cell.Font = new Font("Segoe UI", 14, FontStyle.Bold);
 
+                    cell.Font = new Font("Segoe UI", 14, FontStyle.Bold);
                     cell.Margin = new Padding(0);
                     cell.Padding = new Padding(0);
 
@@ -54,7 +55,6 @@ namespace caro.client.ui_components
                 }
             }
         }
-
         private void Cell_Click(object? sender, EventArgs e)
         {
             Button cell = (Button)sender!;
@@ -68,7 +68,6 @@ namespace caro.client.ui_components
 
             OnCellClicked?.Invoke(row, col);
         }
-
         public void SetCell(int row, int col, string text)
         {
             foreach (Control control in Controls)
@@ -78,17 +77,6 @@ namespace caro.client.ui_components
                     btn.Text = text;
                     btn.Enabled = false;
                     return;
-                }
-            }
-        }
-
-        public void SetBoardEnabled(bool enabled)
-        {
-            foreach (Control control in Controls)
-            {
-                if (control is Button btn)
-                {
-                    btn.Enabled = enabled && string.IsNullOrEmpty(btn.Text);
                 }
             }
         }
@@ -103,10 +91,14 @@ namespace caro.client.ui_components
                     btn.Enabled = true;
                 }
             }
+
+            isXTurn = true;
         }
 
         private void BoardControl_Load(object sender, EventArgs e)
         {
+
         }
+        public event Action<int, int>? OnCellClicked;
     }
 }
