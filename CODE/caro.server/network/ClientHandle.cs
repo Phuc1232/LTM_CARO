@@ -39,7 +39,10 @@ namespace caro.server.network
             {
                 _client?.Close();
             }
-            catch {}
+            catch (Exception ex)
+            {
+                TCPServerManager.Log("Lỗi khi trong khi đóng kết nối!!!");
+            }
         }
 
         public async Task SendPacketAsync(BasePacket packet)
@@ -65,9 +68,9 @@ namespace caro.server.network
             {
                 TCPServerManager.Log($"[Mạng] Mất kết nối đột ngột với người chơi: '{(string.IsNullOrEmpty(username) ? "Người chơi ẩn danh" : username)}'");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                TCPServerManager.Log($"[Lỗi mạng] Sự cố xử lý dữ liệu của người chơi '{(string.IsNullOrEmpty(username) ? "Người chơi ẩn danh" : username)}': {ex.Message}");
+                TCPServerManager.Log($"[Lỗi mạng] Sự cố xử lý dữ liệu của người chơi '{(string.IsNullOrEmpty(username) ? "Người chơi ẩn danh" : username)}'");
             }
             finally
             {
@@ -80,7 +83,7 @@ namespace caro.server.network
 
                     if (!string.IsNullOrEmpty(CurrentRoomID))
                     {
-                        GameRoomServices.Instance.CleanupRoom(CurrentRoomID);
+                        GameRoomServices.Instance.CleanupRoom(CurrentRoomID, false, username);
                     }
 
                     _ = TCPServerManager.BroadcastOnlinePlayersAsync();

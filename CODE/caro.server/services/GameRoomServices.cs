@@ -150,7 +150,7 @@ namespace caro.server.services
             CleanupRoom(room.RoomID);
         }
 
-        public void CleanupRoom(string RoomID, bool isPlayerWin = false)
+        public void CleanupRoom(string RoomID, bool isPlayerWin = false, string username = "")
         {
             if (_activeroom.TryRemove(RoomID, out var room))
             {
@@ -160,7 +160,7 @@ namespace caro.server.services
                 {
                     var endNotify = new GameEndNotifyDTO
                     {
-                        WinnerName = "",
+                        WinnerName = room.player1.username==username ? room.player2.username : username,
                         reason = "Đối thủ đã mất kết nối đột ngột!"
                     };
                     var packet = new BasePacket
