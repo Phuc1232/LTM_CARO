@@ -41,7 +41,7 @@
             label1.BackColor = Color.FromArgb(30, 30, 46);
             label1.Font = new Font("Segoe UI", 36F);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(573, 106);
+            label1.Location = new Point(337, 66);
             label1.Name = "label1";
             label1.Size = new Size(298, 65);
             label1.TabIndex = 5;
@@ -52,9 +52,9 @@
             menuButton1.ForeColor = Color.FromArgb(30, 30, 46);
             menuButton1.HoverBackColor = Color.LightGray;
             menuButton1.HoverForeColor = Color.Black;
-            menuButton1.Location = new Point(597, 199);
+            menuButton1.Location = new Point(361, 159);
             menuButton1.Name = "menuButton1";
-            menuButton1.Size = new Size(262, 52);
+            menuButton1.Size = new Size(257, 47);
             menuButton1.TabIndex = 0;
             menuButton1.Text = "Play Online";
             menuButton1.Load += menuButton1_Load;
@@ -64,9 +64,9 @@
             // 
             menuButton2.HoverBackColor = Color.LightGray;
             menuButton2.HoverForeColor = Color.Black;
-            menuButton2.Location = new Point(597, 257);
+            menuButton2.Location = new Point(361, 217);
             menuButton2.Name = "menuButton2";
-            menuButton2.Size = new Size(262, 52);
+            menuButton2.Size = new Size(257, 47);
             menuButton2.TabIndex = 1;
             menuButton2.Text = "Play With AI";
             menuButton2.Load += menuButton2_Load;
@@ -75,19 +75,20 @@
             // 
             menuButton3.HoverBackColor = Color.LightGray;
             menuButton3.HoverForeColor = Color.Black;
-            menuButton3.Location = new Point(597, 315);
+            menuButton3.Location = new Point(361, 275);
             menuButton3.Name = "menuButton3";
-            menuButton3.Size = new Size(262, 52);
+            menuButton3.Size = new Size(257, 47);
             menuButton3.TabIndex = 2;
             menuButton3.Text = "Match History";
+            menuButton3.Click += menuButton3_Click;
             // 
             // menuButton5
             // 
             menuButton5.HoverBackColor = Color.LightGray;
             menuButton5.HoverForeColor = Color.Black;
-            menuButton5.Location = new Point(597, 373);
+            menuButton5.Location = new Point(361, 333);
             menuButton5.Name = "menuButton5";
-            menuButton5.Size = new Size(262, 52);
+            menuButton5.Size = new Size(257, 47);
             menuButton5.TabIndex = 4;
             menuButton5.Text = "Log Out";
             menuButton5.Load += menuButton5_Load;
@@ -99,7 +100,7 @@
             BackColor = Color.FromArgb(30, 30, 46);
             BackgroundImage = Properties.Resources._596b5f16_70c9_49f3_a4c4_fb18db30178f;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1402, 690);
+            ClientSize = new Size(979, 580);
             Controls.Add(label1);
             Controls.Add(menuButton5);
             Controls.Add(menuButton3);
