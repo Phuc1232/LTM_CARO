@@ -68,7 +68,7 @@ namespace caro.ai
                             {
                                 int nr = r + dr;
                                 int nc = c + dc;
-                                if (boardstate[nr, nc] == EMPTY)
+                                if (InBounds(nr, nc) && boardstate[nr, nc] == EMPTY)
                                 {
                                     moves.Add((nr, nc));
                                 }
