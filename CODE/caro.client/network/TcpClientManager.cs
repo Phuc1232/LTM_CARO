@@ -33,6 +33,8 @@ namespace caro.client.network
         public event Action? OnDisconnected;
         public event Action<MatchHistoryResponseDTO>? OnMatchHistoryReceived;
         public event Action<BestRecordResponseDTO>? OnBestRecordReceived;
+        public OnlinePlayerListDTO? LastOnlinePlayers { get; private set; }
+        public string CurrentUsername { get; set; } = "";
 
         private TCPClientManager() { }
 
