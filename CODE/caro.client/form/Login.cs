@@ -19,6 +19,7 @@ namespace caro.client.form
         {
             InitializeComponent();
             TCPClientManager.Instance.OnLoginResponse += HandleLoginResponse;
+            TCPClientManager.Instance.OnDisconnected += HandleDisconnected;
         }
         private void HandleLoginResponse(LoginResponseDTO response)
         {
@@ -30,7 +31,7 @@ namespace caro.client.form
 
             if (response.isSuccess)
             {
-                MessageBox.Show("Đăng nhập thành công!");
+                
 
                 Home home = new Home();
                 home.Show();
@@ -40,6 +41,38 @@ namespace caro.client.form
             else
             {
                 MessageBox.Show(response.message);
+            }
+        }
+        private void HandleDisconnected()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(HandleDisconnected));
+                return;
+            }
+
+            
+            if (!this.Visible)
+            {
+                MessageBox.Show("Mất kết nối tới máy chủ! Hệ thống sẽ quay lại trang đăng nhập.", "Lỗi kết nối", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                
+                this.Show();
+
+               
+                List<Form> formsToClose = new List<Form>();
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form != this)
+                    {
+                        formsToClose.Add(form);
+                    }
+                }
+
+                foreach (Form form in formsToClose)
+                {
+                    form.Close();
+                }
             }
         }
 
@@ -73,7 +106,7 @@ namespace caro.client.form
                     loginRequest
                 );
 
-                MessageBox.Show("Đã gửi yêu cầu đăng nhập lên server!");
+               
 
        
             }
