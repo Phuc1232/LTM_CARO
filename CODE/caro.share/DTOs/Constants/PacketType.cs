@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -26,6 +26,7 @@ namespace caro.share.DTOs.Constants
         MoveRequest = 50,
         MoveNotiFy =51,
         GameEndNotify =52,
+        SurrenderRequest = 53,
 
         MatchHistoryRequest = 60,
         MatchHistoryResponse = 61,

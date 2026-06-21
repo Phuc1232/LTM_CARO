@@ -9,23 +9,26 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
+using System.Threading;
 
 namespace caro.server.network
 {
     public class ClientHandle
     {
-        private TcpClient _client;
-        private NetworkStream _stream;
+        private TcpClient? _client;
+        private NetworkStream? _stream;
         public string username { get; set; }
         public string CurrentRoomID { get; set; }
 
         public static readonly ConcurrentDictionary<string, PendingChallenge> PendingChallenges = new();
 
-        public ClientHandle(TcpClient client)
+        public ClientHandle(TcpClient? client)
         {
             _client = client;
-            _stream = _client.GetStream();
+            if (_client != null)
+            {
+                _stream = _client.GetStream();
+            }
             username = "";
             CurrentRoomID = "";
         }
@@ -118,6 +121,9 @@ namespace caro.server.network
                 case PacketType.BestRecordRequest:
                     await ProccessBestRecordRequestAsync(packet.payload);
                     break;
+                case PacketType.SurrenderRequest:
+                    await ProccessSurrenderRequestAsync(packet.payload);
+                    break;
             }
         }
 
@@ -177,6 +183,40 @@ namespace caro.server.network
             var request = JsonSerializer.Deserialize<ChallengeRequestDTO>(payload);
             ClientHandle target = null;
             if (request == null) return;
+
+            if (request.targetUsername == "AI_Bot")
+            {
+                if (!string.IsNullOrEmpty(CurrentRoomID))
+                {
+                    await SendResultToSelfAsync("Bạn đang trong trận đấu!", false);
+                    return;
+                }
+
+                // Tạo ClientHandle ảo cho AI
+                ClientHandle aiHandle = new ClientHandle(null)
+                {
+                    username = "AI_Bot"
+                };
+
+                // Tạo phòng đấu AI
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(this, aiHandle, timesecons: 300);
+
+                var result = new ChallengeResultDTO
+                {
+                    isAccepted = true,
+                    message = "AI_Bot đã chấp nhận thách đấu!",
+                    roomId = room.RoomID,
+                    opponentName = "AI_Bot"
+                };
+                var resultPacket = new BasePacket
+                {
+                    Type = PacketType.ChallengeResult,
+                    payload = JsonSerializer.Serialize(result)
+                };
+                await this.SendPacketAsync(resultPacket);
+                TCPServerManager.Log($"[Thách đấu] Người chơi '{username}' đã thách đấu AI_Bot (Bắt đầu trận đấu!)");
+                return;
+            }
 
             if (request.targetUsername == username)
             {
@@ -304,6 +344,11 @@ namespace caro.server.network
             if (string.IsNullOrEmpty(CurrentRoomID)) return;
 
             await GameRoomServices.Instance.MoveValid(CurrentRoomID, this, moveData.row, moveData.col);
+        }
+        public async Task ProccessSurrenderRequestAsync(string payload)
+        {
+            if (string.IsNullOrEmpty(CurrentRoomID)) return;
+            await GameRoomServices.Instance.HandleSurrenderAsync(CurrentRoomID, this);
         }
         public async Task ProccessMatchHistoryRequestAsync(string payload)
         {

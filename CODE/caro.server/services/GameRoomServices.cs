@@ -64,6 +64,11 @@ namespace caro.server.services
             TCPServerManager.Log($"[Dịch vụ Phòng] Trận đấu bắt đầu: '{player1.username}' VS '{player2.username}' (Phòng: {room.RoomID})");
             _ = Task.Run(() => RunTimerLoopAsync(room, room.cts.Token));
 
+            if (room.CurrentTurn == "AI_Bot")
+            {
+                _ = Task.Run(() => TriggerAIMove(room));
+            }
+
             return room;
         }
 
@@ -141,13 +146,54 @@ namespace caro.server.services
                 Player1 = room.player1.username,
                 Player2 = room.player2.username,
                 Winner = winner.username,
-                MatchType = "PvP",
+                MatchType = (room.player1.username == "AI_Bot" || room.player2.username == "AI_Bot") ? "PvAI" : "PvP",
                 MovesData = string.Join(";", room.MoveSequence) 
             };
             _ = Task.Run(() => DatabaseServices.Instance.SaveMatchHistoryAsync(history));
 
             TCPServerManager.Log($"[Trận đấu - Phòng {room.RoomID}] Hết giờ! Người chơi '{loser.username}' đã thua cuộc. Người chơi '{winner.username}' thắng cuộc!");
-            CleanupRoom(room.RoomID);
+            CleanupRoom(room.RoomID, isPlayerWin: true);
+        }
+
+        public async Task HandleSurrenderAsync(string RoomID, ClientHandle player)
+        {
+            GameRoom room = null;
+            if (!_activeroom.TryGetValue(RoomID, out room)) return;
+            if (!room.IsGameActive) return;
+
+            room.IsGameActive = false;
+
+            ClientHandle winner = (room.player1.username == player.username) ? room.player2 : room.player1;
+            ClientHandle loser = (room.player1.username == player.username) ? room.player1 : room.player2;
+
+            var EndGame = new GameEndNotifyDTO
+            {
+                WinnerName = winner.username,
+                reason = $"{loser.username} đã đầu hàng!",
+                WinningCells = new List<WinCoordinate>()
+            };
+
+            var packet = new BasePacket
+            {
+                Type = PacketType.GameEndNotify,
+                payload = JsonSerializer.Serialize(EndGame)
+            };
+
+            _ = SendToPlayerAsync(room.player1, packet);
+            _ = SendToPlayerAsync(room.player2, packet);
+
+            var history = new MatchHistoryModels
+            {
+                Player1 = room.player1.username,
+                Player2 = room.player2.username,
+                Winner = winner.username,
+                MatchType = (room.player1.username == "AI_Bot" || room.player2.username == "AI_Bot") ? "PvAI" : "PvP",
+                MovesData = string.Join(";", room.MoveSequence)
+            };
+            _ = Task.Run(() => DatabaseServices.Instance.SaveMatchHistoryAsync(history));
+
+            TCPServerManager.Log($"[Trận đấu - Phòng {RoomID}] Trận đấu kết thúc! '{winner.username}' chiến thắng do '{loser.username}' đầu hàng.");
+            CleanupRoom(RoomID, isPlayerWin: true);
         }
 
         public void CleanupRoom(string RoomID, bool isPlayerWin = false, string username = "")
@@ -158,9 +204,21 @@ namespace caro.server.services
                 room.cts?.Cancel();
                 if (!isPlayerWin)
                 {
+                    string winnerName = "";
+                    if (room.player1 != null && string.Equals(room.player1.username, username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        winnerName = room.player2?.username ?? "";
+                    }
+                    else if (room.player2 != null && string.Equals(room.player2.username, username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        winnerName = room.player1?.username ?? "";
+                    }
+
+                    TCPServerManager.Log($"[Hệ thống phòng] Phát hiện ngắt kết nối đột ngột từ người chơi '{username}' trong phòng '{RoomID}'. Xác định người chiến thắng: '{winnerName}'");
+
                     var endNotify = new GameEndNotifyDTO
                     {
-                        WinnerName = room.player1.username==username ? room.player2.username : username,
+                        WinnerName = winnerName,
                         reason = "Đối thủ đã mất kết nối đột ngột!"
                     };
                     var packet = new BasePacket
@@ -168,6 +226,8 @@ namespace caro.server.services
                         Type = PacketType.GameEndNotify,
                         payload = JsonSerializer.Serialize(endNotify)
                     };
+
+                    TCPServerManager.Log($"[Hệ thống phòng] Đang phát sóng gói tin kết thúc trận đấu (GameEndNotify) tới cả hai người chơi...");
                     _ = SendToPlayerWithoutCleanupAsync(room.player1, packet);
                     _ = SendToPlayerWithoutCleanupAsync(room.player2, packet);
                 }
@@ -177,16 +237,20 @@ namespace caro.server.services
 
                 TCPServerManager.Log($"[Hệ thống phòng] Phòng đấu '{RoomID}' đã được dọn dẹp và giải phóng.");
             }
+            else
+            {
+                TCPServerManager.Log($"[Hệ thống phòng] [Cảnh báo] Không thể tìm thấy phòng đấu '{RoomID}' để giải phóng hoặc phòng đã được dọn dẹp trước đó.");
+            }
         }
 
         private async Task SendToPlayerWithoutCleanupAsync(ClientHandle player, BasePacket packet)
         {
+            if (player == null || player.username == "AI_Bot") return; // Bỏ qua AI ảo
             try
             {
-                if (player != null)
-                {
-                    await player.SendPacketAsync(packet);
-                }
+                TCPServerManager.Log($"[Gửi dữ liệu] Đang gửi gói tin ngắt kết nối đột ngột tới người chơi '{player.username}'...");
+                await player.SendPacketAsync(packet);
+                TCPServerManager.Log($"[Gửi dữ liệu] Đã gửi thành công gói tin tới người chơi '{player.username}'");
             }
             catch (Exception ex)
             {
@@ -303,7 +367,7 @@ namespace caro.server.services
                     Player1 = room.player1.username,
                     Player2 = room.player2.username,
                     Winner = player.username,
-                    MatchType = "PvP",
+                    MatchType = (room.player1.username == "AI_Bot" || room.player2.username == "AI_Bot") ? "PvAI" : "PvP",
                     MovesData = string.Join(";", room.MoveSequence)
                 };
 
@@ -329,6 +393,11 @@ namespace caro.server.services
                 };
                 _ = SendToPlayerAsync(room.player1, movePacket);
                 _ = SendToPlayerAsync(room.player2, movePacket);
+
+                if (room.CurrentTurn == "AI_Bot")
+                {
+                    _ = Task.Run(() => TriggerAIMove(room));
+                }
             }
         }
 
@@ -354,23 +423,39 @@ namespace caro.server.services
             }
         }
 
+        private async Task TriggerAIMove(GameRoom room)
+        {
+            if (!room.IsGameActive) return;
+
+            // Trích xuất trạng thái bàn cờ của phòng đấu
+            int[,] boardState = (int[,])room.board.Clone();
+            int aiPlayerId = (room.player1.username == "AI_Bot") ? 1 : 2;
+
+            // Chạy Minimax trên ThreadPool đa luồng
+            var result = await Task.Run(() => AIServices.MiniMax(boardState, 4, int.MinValue, int.MaxValue, true, aiPlayerId));
+
+            if (result.move.HasValue && room.IsGameActive && room.CurrentTurn == "AI_Bot")
+            {
+                ClientHandle aiClient = (aiPlayerId == 1) ? room.player1 : room.player2;
+                await MoveValid(room.RoomID, aiClient, result.move.Value.r, result.move.Value.c);
+            }
+        }
+
         public async Task SendToPlayerAsync(ClientHandle player, BasePacket packet)
         {
+            if (player == null || player.username == "AI_Bot") return; // Bỏ qua AI ảo
             try
             {
-                if (player != null)
-                {
-                    await player.SendPacketAsync(packet);
-                }
+                await player.SendPacketAsync(packet);
             }
             catch (Exception ex) when (ex is SocketException || ex is System.IO.IOException)
             {
                 TCPServerManager.Log($"[Lỗi mạng] Không thể gửi gói tin tới '{player?.username}'. Kết nối mạng bị gián đoạn.");
 
                 // Tự động giải phóng phòng đấu ngay lập tức
-                if (player != null && !string.IsNullOrEmpty(player.CurrentRoomID))
+                if (!string.IsNullOrEmpty(player.CurrentRoomID))
                 {
-                    CleanupRoom(player.CurrentRoomID);
+                    CleanupRoom(player.CurrentRoomID, false, player.username);
                 }
             }
             catch (Exception ex)

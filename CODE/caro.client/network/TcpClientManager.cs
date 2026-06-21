@@ -18,12 +18,13 @@ namespace caro.client.network
         private NetworkStream? _stream;
         private CancellationTokenSource? _cts;
         private bool _isConnected;
+        public bool IsConnected => _isConnected;
 
         // Các sự kiện mạng đẩy dữ liệu về tầng UI
         public event Action<LoginResponseDTO>? OnLoginResponse;
         public event Action<ChallengeNotifyDTO>? OnChallengeReceived;
         public event Action<ChallengeResultDTO>? OnChallengeResult;
-        public event Action<OnlinePlayerListDTO>? OnOnlinePlayerListUpdated;
+        public event Action<OnlinePlayerListDTO>? OnlinePlayerListUpdated;
         public event Action<ChatReceiveDTO>? OnChatReceived;
         public event Action<TimerUpdateDTO>? OnTimerUpdated;
         public event Action<TimerExpiredDTO>? OnTimerExpired;
@@ -72,6 +73,7 @@ namespace caro.client.network
 
             _isConnected = false;
             _cts?.Cancel();
+            LastOnlinePlayers = null;
             try
             {
                 _stream?.Close();
@@ -149,7 +151,19 @@ namespace caro.client.network
                     TriggerEvent<ChallengeResultDTO>(packet.payload, OnChallengeResult);
                     break;
                 case PacketType.OnlinePlayerList:
-                    TriggerEvent<OnlinePlayerListDTO>(packet.payload, OnOnlinePlayerListUpdated);
+                    try
+                    {
+                        var dto = JsonSerializer.Deserialize<OnlinePlayerListDTO>(packet.payload);
+                        if (dto != null)
+                        {
+                            LastOnlinePlayers = dto;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Lỗi giải mã danh sách người chơi online: " + ex.Message);
+                    }
+                    TriggerEvent<OnlinePlayerListDTO>(packet.payload, OnlinePlayerListUpdated);
                     break;
                 case PacketType.ChatReceive:
                     TriggerEvent<ChatReceiveDTO>(packet.payload, OnChatReceived);
@@ -186,12 +200,19 @@ namespace caro.client.network
                 var dto = JsonSerializer.Deserialize<T>(payload);
                 if (dto != null)
                 {
-                    eventAction?.Invoke(dto);
+                    try
+                    {
+                        eventAction?.Invoke(dto);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi xử lý sự kiện {typeof(T).Name} trên giao diện: {ex.Message}\n{ex.StackTrace}", "Lỗi giao diện", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
-                // Xử lý lỗi giải mã JSON nếu cần thiết
+                MessageBox.Show($"Lỗi giải mã JSON loại {typeof(T).Name}: {ex.Message}\nPayload: {payload}", "Lỗi dữ liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
