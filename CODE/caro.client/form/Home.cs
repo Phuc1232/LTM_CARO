@@ -21,7 +21,6 @@ namespace caro.client
 
             // Đăng ký sự kiện click cho các nút
             btnPlayWithAI.Click += btnPlayWithAI_Click; // Nút Play With AI
-            btnMatchHistory.Click += btnMatchHistory_Click; // Nút Match History
             btnLogOut.Click += (s, e) => this.Close(); // Nút Log Out
 
             this.FormClosing += Home_FormClosing;
