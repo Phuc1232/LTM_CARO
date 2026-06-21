@@ -11,6 +11,7 @@ namespace caro.client.form
 {
     public partial class MatchHistory : Form
     {
+        private List<MatchHistoryItemDTO> _histories = new();
         public MatchHistory()
         {
             InitializeComponent();
@@ -31,7 +32,12 @@ namespace caro.client.form
             dgvHistory.Columns.Add("Result", "Kết quả");
             dgvHistory.Columns.Add("Type", "Chế độ");
             dgvHistory.Columns.Add("Date", "Ngày chơi");
-
+            DataGridViewButtonColumn replayColumn = new DataGridViewButtonColumn();
+            replayColumn.Name = "Replay";
+            replayColumn.HeaderText = "Xem lại";
+            replayColumn.Text = "Xem";
+            replayColumn.UseColumnTextForButtonValue = true;
+            dgvHistory.Columns.Add(replayColumn);
             // Thiết lập phong cách tối (Dark theme) đồng bộ giao diện Caro
             dgvHistory.EnableHeadersVisualStyles = false;
             dgvHistory.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(60, 60, 80);
@@ -60,7 +66,7 @@ namespace caro.client.form
                 Invoke(() => HandleMatchHistoryReceived(response));
                 return;
             }
-
+            _histories = response.histories;
             dgvHistory.Rows.Clear();
 
             string currentUsername = TCPClientManager.Instance.CurrentUsername;
@@ -121,7 +127,17 @@ namespace caro.client.form
 
         private void dgvHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
 
+            if (dgvHistory.Columns[e.ColumnIndex].Name == "Replay")
+            {
+                if (e.RowIndex >= _histories.Count) return;
+
+                var selectedMatch = _histories[e.RowIndex];
+
+                MatchReplay replayForm = new MatchReplay(selectedMatch);
+                replayForm.ShowDialog();
+            }
         }
     }
 }
