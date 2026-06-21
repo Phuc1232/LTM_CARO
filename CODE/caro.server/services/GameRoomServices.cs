@@ -25,7 +25,7 @@ namespace caro.server.services
 
         private GameRoomServices() { }
 
-        public async Task<GameRoom> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons = 300)
+        public async Task<GameRoom> CreateAndStartRoomAsync(ClientHandle player1, ClientHandle player2, int timesecons = 15)
         {
             var room = new GameRoom
             {
@@ -116,6 +116,10 @@ namespace caro.server.services
                         return;
                     }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                TCPServerManager.Log($"[Trận đấu - Phòng {room.RoomID}] Đồng hồ đếm ngược đã dừng (trận đấu kết thúc hoặc dọn phòng).");
             }
             catch (Exception ex)
             {

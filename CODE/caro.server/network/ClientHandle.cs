@@ -199,7 +199,7 @@ namespace caro.server.network
                 };
 
                 // Tạo phòng đấu AI
-                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(this, aiHandle, timesecons: 300);
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(this, aiHandle, timesecons: 15);
 
                 var result = new ChallengeResultDTO
                 {
@@ -289,7 +289,7 @@ namespace caro.server.network
 
             if (responseData.isAccepted)
             {
-                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(pending.Challenger, pending.Target, timesecons: 300);
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(pending.Challenger, pending.Target, timesecons: 15);
                 var result = new ChallengeResultDTO
                 {
                     isAccepted = true,

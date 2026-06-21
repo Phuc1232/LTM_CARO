@@ -81,7 +81,7 @@ namespace caro.client.form
                     opponent,
                     resultText,
                     item.MatchType,
-                    item.PlayedAt.ToString("dd/MM/yyyy HH:mm")
+                    item.PlayedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                 );
 
                 // Tô màu theo kết quả đấu
