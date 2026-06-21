@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,7 +15,7 @@ namespace caro.client.ui_components
         private const int ROWS = 15;
         private const int COLS = 15;
         private const int CELL_SIZE = 40;
-        private bool isXTurn = true;
+        
         public BoardControl()
         {
             InitializeComponent();
@@ -91,8 +91,11 @@ namespace caro.client.ui_components
                     btn.Enabled = true;
                 }
             }
+        }
 
-            isXTurn = true;
+        public void SetBoardEnabled(bool enabled)
+        {
+            this.Enabled = enabled;
         }
 
         private void BoardControl_Load(object sender, EventArgs e)
