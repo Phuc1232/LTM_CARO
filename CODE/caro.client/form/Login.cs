@@ -54,9 +54,6 @@ namespace caro.client.form
             
             if (!this.Visible)
             {
-                MessageBox.Show("Mất kết nối tới máy chủ! Hệ thống sẽ quay lại trang đăng nhập.", "Lỗi kết nối", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                
                 this.Show();
 
                
