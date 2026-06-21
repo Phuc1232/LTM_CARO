@@ -1,4 +1,4 @@
-﻿namespace caro.client
+namespace caro.client
 {
     partial class Home
     {
@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             label1 = new Label();
-            menuButton1 = new caro.client.ui_components.MenuButton();
-            menuButton2 = new caro.client.ui_components.MenuButton();
-            menuButton3 = new caro.client.ui_components.MenuButton();
-            menuButton5 = new caro.client.ui_components.MenuButton();
+            btnPlayOnline = new caro.client.ui_components.MenuButton();
+            btnPlayWithAI = new caro.client.ui_components.MenuButton();
+            btnMatchHistory = new caro.client.ui_components.MenuButton();
+            btnLogOut = new caro.client.ui_components.MenuButton();
             SuspendLayout();
             // 
             // label1
@@ -47,51 +47,51 @@
             label1.TabIndex = 5;
             label1.Text = "CARO GAME";
             // 
-            // menuButton1
+            // btnPlayOnline
             // 
-            menuButton1.ForeColor = Color.FromArgb(30, 30, 46);
-            menuButton1.HoverBackColor = Color.LightGray;
-            menuButton1.HoverForeColor = Color.Black;
-            menuButton1.Location = new Point(361, 159);
-            menuButton1.Name = "menuButton1";
-            menuButton1.Size = new Size(257, 47);
-            menuButton1.TabIndex = 0;
-            menuButton1.Text = "Play Online";
-            menuButton1.Load += menuButton1_Load;
-            menuButton1.Click += menuButton1_Click;
+            btnPlayOnline.ForeColor = Color.FromArgb(30, 30, 46);
+            btnPlayOnline.HoverBackColor = Color.LightGray;
+            btnPlayOnline.HoverForeColor = Color.Black;
+            btnPlayOnline.Location = new Point(361, 159);
+            btnPlayOnline.Name = "btnPlayOnline";
+            btnPlayOnline.Size = new Size(257, 47);
+            btnPlayOnline.TabIndex = 0;
+            btnPlayOnline.Text = "Play Online";
+            btnPlayOnline.Load += btnPlayOnline_Load;
+            btnPlayOnline.Click += btnPlayOnline_Click;
             // 
-            // menuButton2
+            // btnPlayWithAI
             // 
-            menuButton2.HoverBackColor = Color.LightGray;
-            menuButton2.HoverForeColor = Color.Black;
-            menuButton2.Location = new Point(361, 217);
-            menuButton2.Name = "menuButton2";
-            menuButton2.Size = new Size(257, 47);
-            menuButton2.TabIndex = 1;
-            menuButton2.Text = "Play With AI";
-            menuButton2.Load += menuButton2_Load;
+            btnPlayWithAI.HoverBackColor = Color.LightGray;
+            btnPlayWithAI.HoverForeColor = Color.Black;
+            btnPlayWithAI.Location = new Point(361, 217);
+            btnPlayWithAI.Name = "btnPlayWithAI";
+            btnPlayWithAI.Size = new Size(257, 47);
+            btnPlayWithAI.TabIndex = 1;
+            btnPlayWithAI.Text = "Play With AI";
+            btnPlayWithAI.Load += btnPlayWithAI_Load;
             // 
-            // menuButton3
+            // btnMatchHistory
             // 
-            menuButton3.HoverBackColor = Color.LightGray;
-            menuButton3.HoverForeColor = Color.Black;
-            menuButton3.Location = new Point(361, 275);
-            menuButton3.Name = "menuButton3";
-            menuButton3.Size = new Size(257, 47);
-            menuButton3.TabIndex = 2;
-            menuButton3.Text = "Match History";
-            menuButton3.Click += menuButton3_Click;
+            btnMatchHistory.HoverBackColor = Color.LightGray;
+            btnMatchHistory.HoverForeColor = Color.Black;
+            btnMatchHistory.Location = new Point(361, 275);
+            btnMatchHistory.Name = "btnMatchHistory";
+            btnMatchHistory.Size = new Size(257, 47);
+            btnMatchHistory.TabIndex = 2;
+            btnMatchHistory.Text = "Match History";
+            btnMatchHistory.Click += btnMatchHistory_Click;
             // 
-            // menuButton5
+            // btnLogOut
             // 
-            menuButton5.HoverBackColor = Color.LightGray;
-            menuButton5.HoverForeColor = Color.Black;
-            menuButton5.Location = new Point(361, 333);
-            menuButton5.Name = "menuButton5";
-            menuButton5.Size = new Size(257, 47);
-            menuButton5.TabIndex = 4;
-            menuButton5.Text = "Log Out";
-            menuButton5.Load += menuButton5_Load;
+            btnLogOut.HoverBackColor = Color.LightGray;
+            btnLogOut.HoverForeColor = Color.Black;
+            btnLogOut.Location = new Point(361, 333);
+            btnLogOut.Name = "btnLogOut";
+            btnLogOut.Size = new Size(257, 47);
+            btnLogOut.TabIndex = 4;
+            btnLogOut.Text = "Log Out";
+            btnLogOut.Load += btnLogOut_Load;
             // 
             // Home
             // 
@@ -102,10 +102,10 @@
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(979, 580);
             Controls.Add(label1);
-            Controls.Add(menuButton5);
-            Controls.Add(menuButton3);
-            Controls.Add(menuButton2);
-            Controls.Add(menuButton1);
+            Controls.Add(btnLogOut);
+            Controls.Add(btnMatchHistory);
+            Controls.Add(btnPlayWithAI);
+            Controls.Add(btnPlayOnline);
             Name = "Home";
             Text = "Play Online";
             Load += Home_Load;
@@ -116,9 +116,9 @@
         #endregion
 
         private Label label1;
-        private ui_components.MenuButton menuButton1;
-        private ui_components.MenuButton menuButton2;
-        private ui_components.MenuButton menuButton3;
-        private ui_components.MenuButton menuButton5;
+        private ui_components.MenuButton btnPlayOnline;
+        private ui_components.MenuButton btnPlayWithAI;
+        private ui_components.MenuButton btnMatchHistory;
+        private ui_components.MenuButton btnLogOut;
     }
 }
