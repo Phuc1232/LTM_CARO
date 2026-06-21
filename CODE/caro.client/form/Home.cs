@@ -57,6 +57,7 @@ namespace caro.client
             }
         }
 
+
         private void UnsubscribeEvents()
         {
             if (_isSubscribed)
@@ -143,6 +144,13 @@ namespace caro.client
         {
             MatchHistory matchHistory = new MatchHistory();
             matchHistory.Show();
+            this.Hide();
+        }
+
+        private void btnRanking_Click(object sender, EventArgs e)
+        {
+            Ranking ranking = new Ranking();
+            ranking.Show();
             this.Hide();
         }
     }

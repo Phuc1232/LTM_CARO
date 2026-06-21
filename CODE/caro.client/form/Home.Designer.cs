@@ -33,6 +33,7 @@ namespace caro.client
             btnPlayWithAI = new caro.client.ui_components.MenuButton();
             btnMatchHistory = new caro.client.ui_components.MenuButton();
             btnLogOut = new caro.client.ui_components.MenuButton();
+            btnRanking = new caro.client.ui_components.MenuButton();
             SuspendLayout();
             // 
             // label1
@@ -86,12 +87,23 @@ namespace caro.client
             // 
             btnLogOut.HoverBackColor = Color.LightGray;
             btnLogOut.HoverForeColor = Color.Black;
-            btnLogOut.Location = new Point(361, 333);
+            btnLogOut.Location = new Point(361, 381);
             btnLogOut.Name = "btnLogOut";
             btnLogOut.Size = new Size(257, 47);
             btnLogOut.TabIndex = 4;
             btnLogOut.Text = "Log Out";
             btnLogOut.Load += btnLogOut_Load;
+            // 
+            // btnRanking
+            // 
+            btnRanking.HoverBackColor = Color.DeepSkyBlue;
+            btnRanking.HoverForeColor = Color.White;
+            btnRanking.Location = new Point(361, 328);
+            btnRanking.Name = "btnRanking";
+            btnRanking.Size = new Size(257, 47);
+            btnRanking.TabIndex = 6;
+            btnRanking.Text = "Ranking";
+            btnRanking.Click += btnRanking_Click;
             // 
             // Home
             // 
@@ -101,6 +113,7 @@ namespace caro.client
             BackgroundImage = Properties.Resources._596b5f16_70c9_49f3_a4c4_fb18db30178f;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(979, 580);
+            Controls.Add(btnRanking);
             Controls.Add(label1);
             Controls.Add(btnLogOut);
             Controls.Add(btnMatchHistory);
@@ -120,5 +133,6 @@ namespace caro.client
         private ui_components.MenuButton btnPlayWithAI;
         private ui_components.MenuButton btnMatchHistory;
         private ui_components.MenuButton btnLogOut;
+        private ui_components.MenuButton btnRanking;
     }
 }
