@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using caro.client.network;
 using caro.share.DTOs;
@@ -52,6 +53,7 @@ namespace caro.client.form
         private void HandleMatchHistoryReceived(MatchHistoryResponseDTO response)
         {
             if (IsDisposed) return;
+            if (response?.histories == null) return;
 
             if (InvokeRequired)
             {
@@ -105,9 +107,21 @@ namespace caro.client.form
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            Home home = new Home();
-            home.Show();
+            try
+            {
+                var home = Application.OpenForms.OfType<Home>().FirstOrDefault() ?? new Home();
+                home.Show();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Lỗi hiển thị Home: " + ex.Message);
+            }
             this.Close();
+        }
+
+        private void dgvHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Linq;
 using System.Windows.Forms;
 using caro.client.network;
 using caro.share.DTOs;
@@ -14,7 +15,7 @@ namespace caro.client.form
         {
             InitializeComponent();
 
-            TCPClientManager.Instance.OnOnlinePlayerListUpdated += UpdateOnlinePlayers;
+            TCPClientManager.Instance.OnlinePlayerListUpdated += UpdateOnlinePlayers;
             TCPClientManager.Instance.OnChallengeReceived += ReceiveChallenge;
             TCPClientManager.Instance.OnChallengeResult += ChallengeResult;
             TCPClientManager.Instance.OnGameStarted += GameStarted;
@@ -35,7 +36,7 @@ namespace caro.client.form
 
         private void UnsubscribeNetworkEvents()
         {
-            TCPClientManager.Instance.OnOnlinePlayerListUpdated -= UpdateOnlinePlayers;
+            TCPClientManager.Instance.OnlinePlayerListUpdated -= UpdateOnlinePlayers;
             TCPClientManager.Instance.OnChallengeReceived -= ReceiveChallenge;
             TCPClientManager.Instance.OnChallengeResult -= ChallengeResult;
             TCPClientManager.Instance.OnGameStarted -= GameStarted;
@@ -47,7 +48,7 @@ namespace caro.client.form
 
             if (InvokeRequired)
             {
-                Invoke(() => UpdateOnlinePlayers(dto));
+                BeginInvoke(() => UpdateOnlinePlayers(dto));
                 return;
             }
 
@@ -80,7 +81,7 @@ namespace caro.client.form
 
             if (InvokeRequired)
             {
-                Invoke(() => ReceiveChallenge(dto));
+                BeginInvoke(() => ReceiveChallenge(dto));
                 return;
             }
 
@@ -108,7 +109,7 @@ namespace caro.client.form
 
             if (InvokeRequired)
             {
-                Invoke(() => ChallengeResult(dto));
+                BeginInvoke(() => ChallengeResult(dto));
                 return;
             }
 
@@ -124,7 +125,7 @@ namespace caro.client.form
 
             if (InvokeRequired)
             {
-                Invoke(() => GameStarted(dto));
+                BeginInvoke(() => GameStarted(dto));
                 return;
             }
 
@@ -133,7 +134,7 @@ namespace caro.client.form
 
         private void btnBack_Click(object? sender, EventArgs e)
         {
-            Home home = new Home();
+            var home = Application.OpenForms.OfType<Home>().FirstOrDefault() ?? new Home();
             home.Show();
             this.Close();
         }
