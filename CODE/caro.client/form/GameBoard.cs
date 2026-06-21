@@ -231,6 +231,10 @@ namespace caro.client.form
             // 2. Chặn re-entrancy bằng cách đặt isGameActive = false ngay lập tức trên luồng UI
             isGameActive = false;
             boardControl1.SetBoardEnabled(false);
+            if (gameEnd.WinningCells != null && gameEnd.WinningCells.Count > 0)
+            {
+                boardControl1.HighlightWinningCells(gameEnd.WinningCells);
+            }
 
             string message = string.IsNullOrEmpty(gameEnd.WinnerName)
                 ? gameEnd.reason
