@@ -36,6 +36,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(42, 42, 60);
             BorderStyle = BorderStyle.FixedSingle;
+            ForeColor = Color.White;
             Name = "BoardControl";
             Size = new Size(598, 598);
             Load += BoardControl_Load;

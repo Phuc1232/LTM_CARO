@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Media;
+using caro.share.DTOs;
 
 namespace caro.client.ui_components
 {
@@ -44,6 +46,7 @@ namespace caro.client.ui_components
                     cell.Tag = $"{row},{col}";
                     cell.BackColor = Color.FromArgb(42, 42, 60);
                     cell.ForeColor = Color.White;
+                    cell.UseVisualStyleBackColor = false;
 
                     cell.Font = new Font("Segoe UI", 14, FontStyle.Bold);
                     cell.Margin = new Padding(0);
@@ -55,8 +58,14 @@ namespace caro.client.ui_components
                 }
             }
         }
+        private bool _canPlay = true;
+        private Button? _lastMoveButton = null;
+
         private void Cell_Click(object? sender, EventArgs e)
         {
+            if (!_canPlay)
+                return;
+
             Button cell = (Button)sender!;
 
             if (cell.Text != "")
@@ -74,28 +83,71 @@ namespace caro.client.ui_components
             {
                 if (control is Button btn && btn.Tag?.ToString() == $"{row},{col}")
                 {
-                    btn.Text = text;
-                    btn.Enabled = false;
+                    // Xóa highlight c?a n??c ?i tr??c
+                    if (_lastMoveButton != null)
+                    {
+                        _lastMoveButton.BackColor = Color.FromArgb(42, 42, 60);
+                        _lastMoveButton.ForeColor = Color.White;
+                        _lastMoveButton.UseVisualStyleBackColor = false;
+                    }
+
+                    // Set quân m?i
+                    btn.Text = text.ToUpper();
+                    btn.Enabled = true;
+                    btn.ForeColor = Color.Black;
+                    btn.Font = new Font("Segoe UI", 18, FontStyle.Bold);
+                    btn.UseVisualStyleBackColor = false;
+
+                    // Highlight ô v?a ?ánh
+                    btn.BackColor = Color.LightSkyBlue;
+
+                    _lastMoveButton = btn;
+
+                    SystemSounds.Asterisk.Play();
+
                     return;
+                }
+            }
+        }
+        public void HighlightWinningCells(List<WinCoordinate> winningCells)
+        {
+            foreach (var winCell in winningCells)
+            {
+                foreach (Control control in Controls)
+                {
+                    if (control is Button btn && btn.Tag?.ToString() == $"{winCell.X},{winCell.Y}")
+                    {
+                        btn.BackColor = Color.Gold;
+                        btn.ForeColor = Color.Black;
+                        btn.Font = new Font("Segoe UI", 18, FontStyle.Bold);
+                        btn.UseVisualStyleBackColor = false;
+                        btn.Enabled = true;
+                    }
                 }
             }
         }
 
         public void NewGame()
         {
+            _lastMoveButton = null;
             foreach (Control control in Controls)
             {
                 if (control is Button btn)
                 {
                     btn.Text = "";
                     btn.Enabled = true;
+                    btn.ForeColor = Color.White;
+                    btn.Font = new Font("Segoe UI", 18, FontStyle.Bold);
+                    btn.UseVisualStyleBackColor = false;
+                    btn.BackColor = Color.FromArgb(42, 42, 60);
                 }
             }
         }
 
+
         public void SetBoardEnabled(bool enabled)
         {
-            this.Enabled = enabled;
+            _canPlay = enabled;
         }
 
         private void BoardControl_Load(object sender, EventArgs e)
