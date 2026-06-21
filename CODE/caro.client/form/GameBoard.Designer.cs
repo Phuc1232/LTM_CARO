@@ -1,4 +1,4 @@
-﻿namespace caro.client.form
+namespace caro.client.form
 {
     partial class GameBoard
     {
@@ -30,8 +30,8 @@
         {
             boardControl1 = new caro.client.ui_components.BoardControl();
             panel1 = new Panel();
-            menuButton6 = new caro.client.ui_components.MenuButton();
-            menuButton5 = new caro.client.ui_components.MenuButton();
+            BnQuit = new caro.client.ui_components.MenuButton();
+            BnNewGame = new caro.client.ui_components.MenuButton();
             btnSurrender = new caro.client.ui_components.MenuButton();
             playerCard1 = new caro.client.ui_components.PlayerCard();
             playerCard2 = new caro.client.ui_components.PlayerCard();
@@ -43,66 +43,73 @@
             // 
             boardControl1.BackColor = Color.FromArgb(42, 42, 60);
             boardControl1.BorderStyle = BorderStyle.FixedSingle;
-            boardControl1.Location = new Point(324, 37);
+            boardControl1.Location = new Point(370, 49);
+            boardControl1.Margin = new Padding(3, 5, 3, 5);
             boardControl1.Name = "boardControl1";
-            boardControl1.Size = new Size(608, 610);
+            boardControl1.Size = new Size(695, 813);
             boardControl1.TabIndex = 2;
             // 
             // panel1
             // 
-            panel1.Controls.Add(menuButton6);
-            panel1.Controls.Add(menuButton5);
+            panel1.Controls.Add(BnQuit);
+            panel1.Controls.Add(BnNewGame);
             panel1.Controls.Add(btnSurrender);
-            panel1.Location = new Point(12, 393);
+            panel1.Location = new Point(14, 524);
+            panel1.Margin = new Padding(3, 4, 3, 4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(176, 206);
+            panel1.Size = new Size(201, 275);
             panel1.TabIndex = 3;
             // 
-            // menuButton6
+            // BnQuit
             // 
-            menuButton6.HoverBackColor = Color.DeepSkyBlue;
-            menuButton6.HoverForeColor = Color.White;
-            menuButton6.Location = new Point(20, 150);
-            menuButton6.Name = "menuButton6";
-            menuButton6.Size = new Size(141, 33);
-            menuButton6.TabIndex = 6;
-            menuButton6.Text = "Quit";
-            menuButton6.Load += menuButton6_Load;
-            menuButton6.Click += menuButton6_Click;
+            BnQuit.HoverBackColor = Color.DeepSkyBlue;
+            BnQuit.HoverForeColor = Color.White;
+            BnQuit.Location = new Point(23, 200);
+            BnQuit.Margin = new Padding(3, 5, 3, 5);
+            BnQuit.Name = "BnQuit";
+            BnQuit.Size = new Size(161, 44);
+            BnQuit.TabIndex = 6;
+            BnQuit.Text = "Quit";
+            BnQuit.Load += btnQuit_Load;
+            BnQuit.Click += btnQuit_Click;
             // 
-            // menuButton5
+            // BnNewGame
             // 
-            menuButton5.HoverBackColor = Color.DeepSkyBlue;
-            menuButton5.HoverForeColor = Color.White;
-            menuButton5.Location = new Point(20, 91);
-            menuButton5.Name = "menuButton5";
-            menuButton5.Size = new Size(141, 33);
-            menuButton5.TabIndex = 5;
-            menuButton5.Text = "New Game";
-            menuButton5.Click += menuButton5_Click;
+            BnNewGame.HoverBackColor = Color.DeepSkyBlue;
+            BnNewGame.HoverForeColor = Color.White;
+            BnNewGame.Location = new Point(23, 121);
+            BnNewGame.Margin = new Padding(3, 5, 3, 5);
+            BnNewGame.Name = "BnNewGame";
+            BnNewGame.Size = new Size(161, 44);
+            BnNewGame.TabIndex = 5;
+            BnNewGame.Text = "New Game";
+            BnNewGame.Load += btnNewGame_Load;
+            BnNewGame.Click += btnNewGame_Click;
             // 
             // btnSurrender
             // 
             btnSurrender.BackColor = Color.FromArgb(88, 101, 242);
             btnSurrender.HoverBackColor = Color.DeepSkyBlue;
             btnSurrender.HoverForeColor = Color.White;
-            btnSurrender.Location = new Point(20, 34);
+            btnSurrender.Location = new Point(23, 45);
+            btnSurrender.Margin = new Padding(3, 5, 3, 5);
             btnSurrender.Name = "btnSurrender";
-            btnSurrender.Size = new Size(141, 33);
+            btnSurrender.Size = new Size(161, 44);
             btnSurrender.TabIndex = 4;
             btnSurrender.Text = "Surrender";
-            btnSurrender.Load += menuButton4_Load;
-            btnSurrender.Click += menuButton4_Click;
+            btnSurrender.Load += btnSurrender_Load;
+            btnSurrender.Click += btnSurrender_Click;
             // 
             // playerCard1
             // 
             playerCard1.Avatar = null;
             playerCard1.BackColor = Color.FromArgb(42, 42, 60);
             playerCard1.ForeColor = Color.White;
-            playerCard1.Location = new Point(32, 53);
+            playerCard1.Location = new Point(37, 71);
+            playerCard1.Margin = new Padding(3, 5, 3, 5);
             playerCard1.Name = "playerCard1";
             playerCard1.PlayerName = "Player";
-            playerCard1.Size = new Size(156, 79);
+            playerCard1.Size = new Size(178, 105);
             playerCard1.TabIndex = 4;
             playerCard1.TimeText = "Time: 20s";
             // 
@@ -111,32 +118,35 @@
             playerCard2.Avatar = null;
             playerCard2.BackColor = Color.FromArgb(42, 42, 60);
             playerCard2.ForeColor = Color.White;
-            playerCard2.Location = new Point(32, 169);
+            playerCard2.Location = new Point(37, 225);
+            playerCard2.Margin = new Padding(3, 5, 3, 5);
             playerCard2.Name = "playerCard2";
             playerCard2.PlayerName = "Player";
-            playerCard2.Size = new Size(156, 79);
+            playerCard2.Size = new Size(178, 105);
             playerCard2.TabIndex = 5;
             playerCard2.TimeText = "Time: 20s";
             // 
             // chatBox1
             // 
             chatBox1.BackColor = Color.FromArgb(42, 42, 60);
-            chatBox1.Location = new Point(1058, 53);
+            chatBox1.Location = new Point(1209, 71);
+            chatBox1.Margin = new Padding(3, 5, 3, 5);
             chatBox1.Name = "chatBox1";
-            chatBox1.Size = new Size(260, 561);
+            chatBox1.Size = new Size(297, 748);
             chatBox1.TabIndex = 6;
             // 
             // GameBoard
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 30, 46);
-            ClientSize = new Size(1402, 690);
+            ClientSize = new Size(1602, 920);
             Controls.Add(chatBox1);
             Controls.Add(playerCard2);
             Controls.Add(playerCard1);
             Controls.Add(panel1);
             Controls.Add(boardControl1);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "GameBoard";
             Text = "GameBoard";
             Load += GameBoard_Load;
@@ -150,8 +160,8 @@
         private ui_components.MenuButton menuButton3;
         private ui_components.MenuButton menuButton2;
         private ui_components.MenuButton menuButton1;
-        private ui_components.MenuButton menuButton6;
-        private ui_components.MenuButton menuButton5;
+        private ui_components.MenuButton BnQuit;
+        private ui_components.MenuButton BnNewGame;
         private ui_components.MenuButton btnSurrender;
         private ui_components.PlayerCard playerCard1;
         private ui_components.PlayerCard playerCard2;
