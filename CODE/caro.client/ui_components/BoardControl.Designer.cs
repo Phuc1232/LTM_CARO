@@ -32,13 +32,14 @@
             // 
             // BoardControl
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(42, 42, 60);
             BorderStyle = BorderStyle.FixedSingle;
             ForeColor = Color.White;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "BoardControl";
-            Size = new Size(598, 598);
+            Size = new Size(692, 797);
             Load += BoardControl_Load;
             ResumeLayout(false);
         }
