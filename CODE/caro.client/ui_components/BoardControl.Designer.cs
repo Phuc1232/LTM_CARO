@@ -20,6 +20,7 @@
             base.Dispose(disposing);
         }
 
+
         #region Component Designer generated code
 
         /// <summary> 
@@ -39,7 +40,7 @@
             ForeColor = Color.White;
             Margin = new Padding(3, 4, 3, 4);
             Name = "BoardControl";
-            Size = new Size(692, 797);
+            Size = new Size(712, 819);
             Load += BoardControl_Load;
             ResumeLayout(false);
         }
