@@ -33,14 +33,14 @@ namespace caro.client.ui_components
         {
             if (e.KeyCode == Keys.Enter)
             {
-                e.SuppressKeyPress = true; // Chặn tiếng bíp mặc định
+                e.SuppressKeyPress = true; // Ch?n ti?ng b�p m?c ??nh
                 SendMessage();
             }
         }
 
         private void TxtMessage_Enter(object? sender, EventArgs e)
         {
-            if (txtMessage.Text == "Nhập Chat Ở Đây Lèeee")
+            if (txtMessage.Text == "Nh?p Chat ? ?�y L�eee")
             {
                 txtMessage.Text = "";
                 txtMessage.ForeColor = Color.White;
@@ -51,7 +51,7 @@ namespace caro.client.ui_components
         {
             if (string.IsNullOrWhiteSpace(txtMessage.Text))
             {
-                txtMessage.Text = "Nhập Chat Ở Đây Lèeee";
+                txtMessage.Text = "Nh?p Chat ? ?�y L�eee";
                 txtMessage.ForeColor = Color.Gray;
             }
         }
@@ -59,7 +59,7 @@ namespace caro.client.ui_components
         private void SendMessage()
         {
             string message = txtMessage.Text.Trim();
-            if (!string.IsNullOrEmpty(message) && message != "Nhập Chat Ở Đây Lèeee")
+            if (!string.IsNullOrEmpty(message) && message != "Nh?p Chat ? ?�y L�eee")
             {
                 OnSendMessage?.Invoke(message);
                 txtMessage.Clear();
@@ -78,6 +78,11 @@ namespace caro.client.ui_components
         }
 
         private void ChatBox_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rtbMessages_TextChanged(object sender, EventArgs e)
         {
 
         }

@@ -54,6 +54,11 @@ namespace caro.client.ui_components
             }
         }
 
+        private void btnMenu_Click(object sender, EventArgs e)
+        {
+
+        }
+
         [Browsable(true)]
         [Category("Appearance")]
         [Description("The text associated with the control.")]
@@ -77,8 +82,6 @@ namespace caro.client.ui_components
             }
         }
 
-        private void btnMenu_Click(object sender, EventArgs e)
-        {
-        }
+
     }
 }

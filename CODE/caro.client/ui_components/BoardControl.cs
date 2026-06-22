@@ -17,7 +17,7 @@ namespace caro.client.ui_components
         private const int ROWS = 15;
         private const int COLS = 15;
         private const int CELL_SIZE = 40;
-        
+
         public BoardControl()
         {
             InitializeComponent();
