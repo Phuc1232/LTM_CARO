@@ -39,8 +39,7 @@
             btnMenu.TabIndex = 0;
             btnMenu.Text = "Menu";
             btnMenu.UseVisualStyleBackColor = false;
-            
-
+            btnMenu.Click += btnMenu_Click;
             // 
             // MenuButton
             // 
