@@ -39,9 +39,9 @@
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 14F);
             lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(15, 15);
+            lblTitle.Location = new Point(18, 23);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(51, 25);
+            lblTitle.Size = new Size(63, 32);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Chat";
             // 
@@ -50,10 +50,11 @@
             rtbMessages.BackColor = Color.FromArgb(30, 30, 46);
             rtbMessages.BorderStyle = BorderStyle.None;
             rtbMessages.ForeColor = Color.White;
-            rtbMessages.Location = new Point(16, 55);
+            rtbMessages.Location = new Point(18, 73);
+            rtbMessages.Margin = new Padding(3, 4, 3, 4);
             rtbMessages.Name = "rtbMessages";
             rtbMessages.ReadOnly = true;
-            rtbMessages.Size = new Size(230, 450);
+            rtbMessages.Size = new Size(263, 600);
             rtbMessages.TabIndex = 1;
             rtbMessages.Text = "";
             // 
@@ -63,9 +64,10 @@
             txtMessage.BorderStyle = BorderStyle.FixedSingle;
             txtMessage.Font = new Font("Segoe UI", 9F);
             txtMessage.ForeColor = Color.White;
-            txtMessage.Location = new Point(15, 520);
+            txtMessage.Location = new Point(17, 693);
+            txtMessage.Margin = new Padding(3, 4, 3, 4);
             txtMessage.Name = "txtMessage";
-            txtMessage.Size = new Size(160, 23);
+            txtMessage.Size = new Size(183, 27);
             txtMessage.TabIndex = 2;
             txtMessage.Text = "Nhập Chat Ở Đây Lèeee";
             // 
@@ -74,24 +76,26 @@
             btnSend.BackColor = Color.FromArgb(88, 101, 242);
             btnSend.FlatStyle = FlatStyle.Flat;
             btnSend.ForeColor = Color.White;
-            btnSend.Location = new Point(181, 520);
+            btnSend.Location = new Point(207, 693);
+            btnSend.Margin = new Padding(3, 4, 3, 4);
             btnSend.Name = "btnSend";
-            btnSend.Size = new Size(65, 23);
+            btnSend.Size = new Size(74, 31);
             btnSend.TabIndex = 3;
             btnSend.Text = "➤";
             btnSend.UseVisualStyleBackColor = false;
             // 
             // ChatBox
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(42, 42, 60);
             Controls.Add(btnSend);
             Controls.Add(txtMessage);
             Controls.Add(rtbMessages);
             Controls.Add(lblTitle);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "ChatBox";
-            Size = new Size(260, 561);
+            Size = new Size(297, 748);
             Load += ChatBox_Load;
             ResumeLayout(false);
             PerformLayout();
