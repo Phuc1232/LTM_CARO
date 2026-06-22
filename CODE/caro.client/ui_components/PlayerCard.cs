@@ -46,6 +46,7 @@ namespace caro.client.ui_components
             set => picAvatar.Image = value;
         }
 
+
         private void lblTime_Click(object sender, EventArgs e)
         {
 

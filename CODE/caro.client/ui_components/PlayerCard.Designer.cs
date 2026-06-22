@@ -38,8 +38,9 @@
             // 
             picAvatar.BackColor = Color.FromArgb(58, 58, 80);
             picAvatar.Location = new Point(0, 0);
+            picAvatar.Margin = new Padding(3, 4, 3, 4);
             picAvatar.Name = "picAvatar";
-            picAvatar.Size = new Size(70, 79);
+            picAvatar.Size = new Size(80, 105);
             picAvatar.SizeMode = PictureBoxSizeMode.StretchImage;
             picAvatar.TabIndex = 0;
             picAvatar.TabStop = false;
@@ -49,9 +50,9 @@
             lblPlayerName.AutoSize = true;
             lblPlayerName.Font = new Font("Segoe UI", 11F);
             lblPlayerName.ForeColor = Color.White;
-            lblPlayerName.Location = new Point(76, 9);
+            lblPlayerName.Location = new Point(87, 12);
             lblPlayerName.Name = "lblPlayerName";
-            lblPlayerName.Size = new Size(49, 20);
+            lblPlayerName.Size = new Size(64, 25);
             lblPlayerName.TabIndex = 1;
             lblPlayerName.Text = "Player";
             // 
@@ -60,24 +61,25 @@
             lblTime.AutoSize = true;
             lblTime.Font = new Font("Segoe UI", 11F);
             lblTime.ForeColor = Color.DeepSkyBlue;
-            lblTime.Location = new Point(76, 41);
+            lblTime.Location = new Point(87, 55);
             lblTime.Name = "lblTime";
-            lblTime.Size = new Size(71, 20);
+            lblTime.Size = new Size(90, 25);
             lblTime.TabIndex = 2;
             lblTime.Text = "Time: 20s";
             lblTime.Click += lblTime_Click;
             // 
             // PlayerCard
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(42, 42, 60);
             Controls.Add(lblTime);
             Controls.Add(lblPlayerName);
             Controls.Add(picAvatar);
             ForeColor = Color.White;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "PlayerCard";
-            Size = new Size(156, 79);
+            Size = new Size(178, 111);
             ((System.ComponentModel.ISupportInitialize)picAvatar).EndInit();
             ResumeLayout(false);
             PerformLayout();
