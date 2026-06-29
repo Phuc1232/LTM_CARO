@@ -135,6 +135,12 @@ namespace caro.client.form
 
                 var selectedMatch = _histories[e.RowIndex];
 
+                if (string.IsNullOrWhiteSpace(selectedMatch.MovesData))
+                {
+                    MessageBox.Show("Trận đấu này không có dữ liệu nước đi để xem lại!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 MatchReplay replayForm = new MatchReplay(selectedMatch);
                 replayForm.ShowDialog();
             }
