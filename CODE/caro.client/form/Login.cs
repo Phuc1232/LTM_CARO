@@ -102,10 +102,6 @@ namespace caro.client.form
                     PacketType.LoginRequest,
                     loginRequest
                 );
-
-               
-
-       
             }
             else
             {

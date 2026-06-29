@@ -199,7 +199,7 @@ namespace caro.server.network
                 };
 
                 // Tạo phòng đấu AI
-                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(this, aiHandle, timesecons: 15);
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(this, aiHandle, timesecons: 300);
 
                 var result = new ChallengeResultDTO
                 {
@@ -262,7 +262,7 @@ namespace caro.server.network
             await target.SendPacketAsync(packet);
             TCPServerManager.Log($"[Thách đấu] Người chơi '{username}' đã thách đấu '{request.targetUsername}' (Mã thách đấu: {ChallengeID})");
 
-            // Thiết lập Timeout 30 giây cho lời thách đấu để tránh rò rỉ bộ nhớ
+            // Thiết lập Timeout 15 giây cho lời thách đấu để tránh rò rỉ bộ nhớ
             _ = Task.Run(async () =>
             {
                 await Task.Delay(15000); // 15 giây
@@ -289,7 +289,7 @@ namespace caro.server.network
 
             if (responseData.isAccepted)
             {
-                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(pending.Challenger, pending.Target, timesecons: 15);
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(pending.Challenger, pending.Target, timesecons: 300);
                 var result = new ChallengeResultDTO
                 {
                     isAccepted = true,
