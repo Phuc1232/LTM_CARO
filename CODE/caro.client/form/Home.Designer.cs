@@ -39,10 +39,10 @@ namespace caro.client
             // label1
             // 
             label1.AutoSize = true;
-            label1.BackColor = Color.FromArgb(30, 30, 46);
+            label1.BackColor = Color.FromArgb(128, 255, 255);
             label1.Font = new Font("Segoe UI", 36F);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(337, 66);
+            label1.ForeColor = Color.Black;
+            label1.Location = new Point(342, 58);
             label1.Name = "label1";
             label1.Size = new Size(298, 65);
             label1.TabIndex = 5;
@@ -50,7 +50,8 @@ namespace caro.client
             // 
             // btnPlayOnline
             // 
-            btnPlayOnline.ForeColor = Color.FromArgb(30, 30, 46);
+            btnPlayOnline.BackColor = Color.FromArgb(30, 30, 46);
+            btnPlayOnline.ForeColor = SystemColors.ControlText;
             btnPlayOnline.HoverBackColor = Color.LightGray;
             btnPlayOnline.HoverForeColor = Color.Black;
             btnPlayOnline.Location = new Point(361, 159);

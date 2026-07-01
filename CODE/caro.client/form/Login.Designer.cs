@@ -39,20 +39,21 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.BackColor = Color.White;
+            label1.BackColor = Color.Silver;
             label1.Font = new Font("Segoe UI", 24F);
-            label1.Location = new Point(642, 84);
+            label1.ForeColor = Color.Black;
+            label1.Location = new Point(147, 93);
             label1.Name = "label1";
-            label1.Size = new Size(104, 45);
+            label1.Size = new Size(206, 45);
             label1.TabIndex = 0;
-            label1.Text = "CARO";
+            label1.Text = "CARO LOGIN";
             // 
             // Label2
             // 
             Label2.AutoSize = true;
             Label2.BackColor = Color.White;
             Label2.Font = new Font("Segoe UI", 16F);
-            Label2.Location = new Point(563, 149);
+            Label2.Location = new Point(99, 187);
             Label2.Name = "Label2";
             Label2.Size = new Size(111, 30);
             Label2.TabIndex = 1;
@@ -63,7 +64,7 @@
             Label3.AutoSize = true;
             Label3.BackColor = Color.White;
             Label3.Font = new Font("Segoe UI", 16F);
-            Label3.Location = new Point(545, 202);
+            Label3.Location = new Point(81, 240);
             Label3.Name = "Label3";
             Label3.Size = new Size(129, 30);
             Label3.TabIndex = 2;
@@ -71,25 +72,25 @@
             // 
             // txtUsername
             // 
-            txtUsername.Location = new Point(695, 156);
+            txtUsername.Location = new Point(231, 194);
             txtUsername.Name = "txtUsername";
             txtUsername.Size = new Size(182, 23);
             txtUsername.TabIndex = 3;
             // 
             // txtIpAddress
             // 
-            txtIpAddress.Location = new Point(695, 211);
+            txtIpAddress.Location = new Point(231, 249);
             txtIpAddress.Name = "txtIpAddress";
             txtIpAddress.Size = new Size(182, 23);
             txtIpAddress.TabIndex = 4;
             // 
             // btnLogin
             // 
-            btnLogin.BackColor = Color.White;
+            btnLogin.BackColor = Color.Silver;
             btnLogin.ForeColor = Color.White;
             btnLogin.HoverBackColor = Color.DeepSkyBlue;
-            btnLogin.HoverForeColor = Color.White;
-            btnLogin.Location = new Point(594, 264);
+            btnLogin.HoverForeColor = SystemColors.WindowFrame;
+            btnLogin.Location = new Point(147, 307);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(206, 37);
             btnLogin.TabIndex = 5;
@@ -100,8 +101,8 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(30, 30, 46);
-            ClientSize = new Size(1402, 690);
+            BackColor = Color.Gray;
+            ClientSize = new Size(484, 610);
             Controls.Add(btnLogin);
             Controls.Add(txtIpAddress);
             Controls.Add(txtUsername);
