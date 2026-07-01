@@ -17,7 +17,7 @@ namespace caro.client.form
 
             Text = "Bảng xếp hạng";
             StartPosition = FormStartPosition.CenterScreen;
-            BackColor = Color.FromArgb(30, 30, 46);
+            BackColor = Color.FromArgb(128, 255, 255);
             ClientSize = new Size(800, 520);
 
             BuildUI();
@@ -54,8 +54,8 @@ namespace caro.client.form
 
             dgvRanking.Location = new Point(30, 80);
             dgvRanking.Size = new Size(740, 350);
-            dgvRanking.BackgroundColor = Color.FromArgb(42, 42, 60);
-            dgvRanking.ForeColor = Color.White;
+            dgvRanking.BackgroundColor = Color.FromArgb(128, 255, 255);
+            dgvRanking.ForeColor = Color.Black;
             dgvRanking.GridColor = Color.FromArgb(90, 90, 120);
             dgvRanking.AllowUserToAddRows = false;
             dgvRanking.ReadOnly = true;
@@ -63,13 +63,13 @@ namespace caro.client.form
             dgvRanking.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvRanking.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            dgvRanking.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(42, 42, 60);
-            dgvRanking.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvRanking.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
+            dgvRanking.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
             dgvRanking.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             dgvRanking.EnableHeadersVisualStyles = false;
 
-            dgvRanking.DefaultCellStyle.BackColor = Color.FromArgb(30, 30, 46);
-            dgvRanking.DefaultCellStyle.ForeColor = Color.White;
+            dgvRanking.DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
+            dgvRanking.DefaultCellStyle.ForeColor = Color.Black;
             dgvRanking.DefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 70, 100);
             dgvRanking.DefaultCellStyle.SelectionForeColor = Color.White;
 
@@ -89,8 +89,8 @@ namespace caro.client.form
                 Text = "Quay lại",
                 Size = new Size(120, 45),
                 Location = new Point(650, 450),
-                ForeColor = Color.White,
-                BackColor = Color.FromArgb(42, 42, 60),
+                ForeColor = Color.Black,
+                BackColor = Color.FromArgb(128, 255, 255),
                 FlatStyle = FlatStyle.Flat,
                 UseVisualStyleBackColor = false
             };

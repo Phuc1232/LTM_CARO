@@ -37,10 +37,10 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.BackColor = Color.FromArgb(30, 30, 46);
+            label1.BackColor = Color.FromArgb(128, 255, 255);
             label1.Font = new Font("Segoe UI", 36F);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(518, 21);
+            label1.ForeColor = Color.Black;
+            label1.Location = new Point(309, 17);
             label1.Name = "label1";
             label1.Size = new Size(383, 65);
             label1.TabIndex = 6;
@@ -48,22 +48,22 @@
             // 
             // lstOnlinePlayers
             // 
-            lstOnlinePlayers.BackColor = Color.FromArgb(42, 42, 60);
+            lstOnlinePlayers.BackColor = Color.FromArgb(128, 255, 255);
             lstOnlinePlayers.Font = new Font("Segoe UI", 20F);
-            lstOnlinePlayers.ForeColor = Color.White;
+            lstOnlinePlayers.ForeColor = Color.Black;
             lstOnlinePlayers.FormattingEnabled = true;
-            lstOnlinePlayers.Location = new Point(559, 108);
+            lstOnlinePlayers.Location = new Point(356, 99);
             lstOnlinePlayers.Name = "lstOnlinePlayers";
-            lstOnlinePlayers.Size = new Size(300, 374);
+            lstOnlinePlayers.Size = new Size(297, 300);
             lstOnlinePlayers.TabIndex = 7;
             // 
             // btnChallenge
             // 
             btnChallenge.HoverBackColor = Color.DeepSkyBlue;
             btnChallenge.HoverForeColor = Color.White;
-            btnChallenge.Location = new Point(587, 521);
+            btnChallenge.Location = new Point(389, 419);
             btnChallenge.Name = "btnChallenge";
-            btnChallenge.Size = new Size(250, 60);
+            btnChallenge.Size = new Size(247, 60);
             btnChallenge.TabIndex = 8;
             btnChallenge.Text = "Thách đấu";
             btnChallenge.Click += btnChallenge_Click_1;
@@ -72,9 +72,9 @@
             // 
             btnBack.HoverBackColor = Color.DeepSkyBlue;
             btnBack.HoverForeColor = Color.White;
-            btnBack.Location = new Point(587, 601);
+            btnBack.Location = new Point(389, 497);
             btnBack.Name = "btnBack";
-            btnBack.Size = new Size(250, 60);
+            btnBack.Size = new Size(247, 60);
             btnBack.TabIndex = 9;
             btnBack.Text = "Quay lại";
             // 
@@ -82,8 +82,8 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(30, 30, 46);
-            ClientSize = new Size(1402, 690);
+            BackColor = Color.FromArgb(128, 255, 255);
+            ClientSize = new Size(979, 580);
             Controls.Add(btnBack);
             Controls.Add(btnChallenge);
             Controls.Add(lstOnlinePlayers);

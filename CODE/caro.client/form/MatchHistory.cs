@@ -16,7 +16,7 @@ namespace caro.client.form
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(30, 30, 46);
+            this.BackColor = Color.FromArgb(128, 255, 255);
 
             // Cấu hình cột hiển thị cho Grid
             SetupDataGridView();
@@ -37,17 +37,23 @@ namespace caro.client.form
             replayColumn.HeaderText = "Xem lại";
             replayColumn.Text = "Xem";
             replayColumn.UseColumnTextForButtonValue = true;
+            replayColumn.DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
+            replayColumn.DefaultCellStyle.ForeColor = Color.Black;
+            replayColumn.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 220, 220);
+            replayColumn.DefaultCellStyle.SelectionForeColor = Color.Black;
+            replayColumn.FlatStyle = FlatStyle.Flat;
             dgvHistory.Columns.Add(replayColumn);
             // Thiết lập phong cách tối (Dark theme) đồng bộ giao diện Caro
             dgvHistory.EnableHeadersVisualStyles = false;
-            dgvHistory.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(60, 60, 80);
-            dgvHistory.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvHistory.BackgroundColor = Color.FromArgb(128, 255, 255);
+            dgvHistory.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
+            dgvHistory.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
             dgvHistory.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
-            dgvHistory.DefaultCellStyle.BackColor = Color.FromArgb(42, 42, 60);
-            dgvHistory.DefaultCellStyle.ForeColor = Color.White;
-            dgvHistory.DefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 70, 95);
+            dgvHistory.DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
+            dgvHistory.DefaultCellStyle.ForeColor = Color.Black;
+            dgvHistory.DefaultCellStyle.SelectionBackColor = Color.FromArgb(128, 255, 255);
             dgvHistory.DefaultCellStyle.SelectionForeColor = Color.White;
-            dgvHistory.GridColor = Color.FromArgb(90, 90, 120);
+            dgvHistory.GridColor = Color.FromArgb(230, 160, 190);
         }
 
         private async void MatchHistory_Load(object sender, EventArgs e)
@@ -93,15 +99,15 @@ namespace caro.client.form
                 // Tô màu theo kết quả đấu
                 if (resultText == "Thắng")
                 {
-                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.LightGreen;
+                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Green;
                 }
                 else if (resultText == "Thua")
                 {
-                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Salmon;
+                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Red;
                 }
                 else
                 {
-                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Yellow;
+                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Orange;
                 }
             }
         }
