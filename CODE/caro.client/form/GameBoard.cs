@@ -374,5 +374,10 @@ namespace caro.client.form
         private void btnQuit_Load(object sender, EventArgs e) { }
         private void btnSurrender_Load(object sender, EventArgs e) { }
         private void btnNewGame_Load(object sender, EventArgs e) { }
+
+        private void chatBox1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
