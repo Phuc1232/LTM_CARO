@@ -199,7 +199,7 @@ namespace caro.server.network
                 };
 
                 // Tạo phòng đấu AI
-                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(this, aiHandle, timesecons: 15);
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(this, aiHandle, timesecons: 300);
 
                 var result = new ChallengeResultDTO
                 {
@@ -287,9 +287,32 @@ namespace caro.server.network
                 return;
             }
 
+            // Kiểm tra xem người thách đấu (Challenger) còn online hay không
+            if (!TCPServerManager.onlineplayer.TryGetValue(pending.Challenger.username, out var onlineChallenger) || onlineChallenger != pending.Challenger)
+            {
+                if (responseData.isAccepted)
+                {
+                    var errorResult = new ChallengeResultDTO
+                    {
+                        isAccepted = false,
+                        message = "Người thách đấu đã ngắt kết nối hoặc offline!",
+                        roomId = "",
+                        opponentName = pending.Challenger.username
+                    };
+                    var errorPacket = new BasePacket
+                    {
+                        Type = PacketType.ChallengeResult,
+                        payload = JsonSerializer.Serialize(errorResult)
+                    };
+                    await this.SendPacketAsync(errorPacket);
+                }
+                TCPServerManager.Log($"[Thách đấu] Lời mời từ '{pending.Challenger.username}' gửi tới '{username}' đã bị hủy vì người thách đấu đã offline.");
+                return;
+            }
+
             if (responseData.isAccepted)
             {
-                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(pending.Challenger, pending.Target, timesecons: 15);
+                var room = await GameRoomServices.Instance.CreateAndStartRoomAsync(pending.Challenger, pending.Target, timesecons: 300);
                 var result = new ChallengeResultDTO
                 {
                     isAccepted = true,
@@ -302,7 +325,14 @@ namespace caro.server.network
                     Type = PacketType.ChallengeResult,
                     payload = JsonSerializer.Serialize(result)
                 };
-                await pending.Challenger.SendPacketAsync(resultPacket);
+                try
+                {
+                    await pending.Challenger.SendPacketAsync(resultPacket);
+                }
+                catch (Exception ex)
+                {
+                    TCPServerManager.Log($"[Thách đấu] Lỗi khi gửi kết quả chấp nhận thách đấu tới '{pending.Challenger.username}': {ex.Message}");
+                }
                 TCPServerManager.Log($"[Thách đấu] '{username}' đã CHẤP NHẬN thách đấu từ '{pending.Challenger.username}' (Bắt đầu trận đấu!)");
             }
             else
@@ -319,7 +349,14 @@ namespace caro.server.network
                     Type = PacketType.ChallengeResult,
                     payload = JsonSerializer.Serialize(resultDTO)
                 };
-                await pending.Challenger.SendPacketAsync(resultPacket);
+                try
+                {
+                    await pending.Challenger.SendPacketAsync(resultPacket);
+                }
+                catch (Exception ex)
+                {
+                    TCPServerManager.Log($"[Thách đấu] Lỗi khi gửi kết quả từ chối thách đấu tới '{pending.Challenger.username}': {ex.Message}");
+                }
                 TCPServerManager.Log($"[Thách đấu] '{username}' đã TỪ CHỐI thách đấu từ '{pending.Challenger.username}'");
             }
         }
