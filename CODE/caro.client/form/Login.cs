@@ -1,4 +1,7 @@
-﻿using System;
+﻿using caro.client.network;
+using caro.share.DTOs;
+using caro.share.DTOs.Constants;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,9 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using caro.client.network;
-using caro.share.DTOs;
-using caro.share.DTOs.Constants;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace caro.client.form
 {
@@ -31,11 +32,9 @@ namespace caro.client.form
 
             if (response.isSuccess)
             {
-                
-
+                TCPClientManager.Instance.CurrentUsername = txtUsername.Text.Trim();
                 Home home = new Home();
                 home.Show();
-
                 this.Hide();
             }
             else

@@ -34,6 +34,7 @@ namespace caro.client
             btnMatchHistory = new caro.client.ui_components.MenuButton();
             btnLogOut = new caro.client.ui_components.MenuButton();
             btnRanking = new caro.client.ui_components.MenuButton();
+            lblUsername = new Label();
             SuspendLayout();
             // 
             // label1
@@ -106,20 +107,34 @@ namespace caro.client
             btnRanking.Text = "Ranking";
             btnRanking.Click += btnRanking_Click;
             // 
+            // lblUsername
+            // 
+            lblUsername.AutoSize = true;
+            lblUsername.BackColor = Color.FromArgb(0, 180, 180);
+            lblUsername.Font = new Font("Segoe UI", 16F);
+            lblUsername.Location = new Point(12, 9);
+            lblUsername.Name = "lblUsername";
+            lblUsername.Size = new Size(123, 30);
+            lblUsername.TabIndex = 7;
+            lblUsername.Text = "Ng??i Ch?i";
+            lblUsername.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(30, 30, 46);
+            BackColor = Color.Blue;
             BackgroundImage = Properties.Resources._596b5f16_70c9_49f3_a4c4_fb18db30178f;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(979, 580);
+            Controls.Add(lblUsername);
             Controls.Add(btnRanking);
             Controls.Add(label1);
             Controls.Add(btnLogOut);
             Controls.Add(btnMatchHistory);
             Controls.Add(btnPlayWithAI);
             Controls.Add(btnPlayOnline);
+            ForeColor = Color.White;
             Name = "Home";
             Text = "Play Online";
             Load += Home_Load;
@@ -135,5 +150,6 @@ namespace caro.client
         private ui_components.MenuButton btnMatchHistory;
         private ui_components.MenuButton btnLogOut;
         private ui_components.MenuButton btnRanking;
+        private Label lblUsername;
     }
 }

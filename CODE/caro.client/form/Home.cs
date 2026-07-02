@@ -15,6 +15,8 @@ namespace caro.client
         public Home()
         {
             InitializeComponent();
+            label1.Text = "Xin chào, " + TCPClientManager.Instance.CurrentUsername;
+            lblUsername.Text = "👤 " + TCPClientManager.Instance.CurrentUsername;
             this.Text = "Caro Game";
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(30, 30, 46);
