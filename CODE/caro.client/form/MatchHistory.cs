@@ -16,7 +16,6 @@ namespace caro.client.form
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(128, 255, 255);
 
             // Cấu hình cột hiển thị cho Grid
             SetupDataGridView();
@@ -24,36 +23,67 @@ namespace caro.client.form
             // Đăng ký sự kiện nhận lịch sử đấu từ Server
             TCPClientManager.Instance.OnMatchHistoryReceived += HandleMatchHistoryReceived;
             FormClosed += MatchHistory_FormClosed;
+
+            ApplyThemeColors();
+        }
+
+        private void ApplyThemeColors()
+        {
+            this.BackColor = UITheme.FormBackColor;
+            this.ForeColor = UITheme.TextForeColor;
+
+            if (lblTitle != null)
+            {
+                lblTitle.BackColor = Color.Transparent;
+                lblTitle.ForeColor = UITheme.TitleColor;
+                lblTitle.Font = new Font("Segoe UI Semibold", 24F, FontStyle.Bold);
+            }
+
+            if (btnBack != null)
+            {
+                btnBack.BackColor = UITheme.DangerButtonBackColor;
+                btnBack.ForeColor = UITheme.DangerButtonForeColor;
+                btnBack.FlatStyle = FlatStyle.Flat;
+                btnBack.FlatAppearance.BorderSize = 0;
+                btnBack.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            }
         }
 
         private void SetupDataGridView()
         {
+            dgvHistory.Columns.Clear();
             dgvHistory.Columns.Add("Opponent", "Đối thủ");
             dgvHistory.Columns.Add("Result", "Kết quả");
             dgvHistory.Columns.Add("Type", "Chế độ");
             dgvHistory.Columns.Add("Date", "Ngày chơi");
+            
             DataGridViewButtonColumn replayColumn = new DataGridViewButtonColumn();
             replayColumn.Name = "Replay";
             replayColumn.HeaderText = "Xem lại";
             replayColumn.Text = "Xem";
             replayColumn.UseColumnTextForButtonValue = true;
-            replayColumn.DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
-            replayColumn.DefaultCellStyle.ForeColor = Color.Black;
-            replayColumn.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 220, 220);
-            replayColumn.DefaultCellStyle.SelectionForeColor = Color.Black;
+            replayColumn.DefaultCellStyle.BackColor = UITheme.ButtonBackColor;
+            replayColumn.DefaultCellStyle.ForeColor = UITheme.ButtonForeColor;
+            replayColumn.DefaultCellStyle.SelectionBackColor = UITheme.ButtonHoverBackColor;
+            replayColumn.DefaultCellStyle.SelectionForeColor = UITheme.ButtonHoverForeColor;
             replayColumn.FlatStyle = FlatStyle.Flat;
             dgvHistory.Columns.Add(replayColumn);
+            
             // Thiết lập phong cách tối (Dark theme) đồng bộ giao diện Caro
             dgvHistory.EnableHeadersVisualStyles = false;
-            dgvHistory.BackgroundColor = Color.FromArgb(128, 255, 255);
-            dgvHistory.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
-            dgvHistory.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-            dgvHistory.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
-            dgvHistory.DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
-            dgvHistory.DefaultCellStyle.ForeColor = Color.Black;
-            dgvHistory.DefaultCellStyle.SelectionBackColor = Color.FromArgb(128, 255, 255);
-            dgvHistory.DefaultCellStyle.SelectionForeColor = Color.White;
-            dgvHistory.GridColor = Color.FromArgb(230, 160, 190);
+            dgvHistory.BackgroundColor = UITheme.CardBackColor;
+            dgvHistory.GridColor = UITheme.GridColor;
+            
+            dgvHistory.ColumnHeadersDefaultCellStyle.BackColor = UITheme.FormBackColor;
+            dgvHistory.ColumnHeadersDefaultCellStyle.ForeColor = UITheme.TextForeColor;
+            dgvHistory.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 11, FontStyle.Bold);
+            dgvHistory.ColumnHeadersDefaultCellStyle.SelectionBackColor = UITheme.FormBackColor;
+            dgvHistory.ColumnHeadersDefaultCellStyle.SelectionForeColor = UITheme.TextForeColor;
+
+            dgvHistory.DefaultCellStyle.BackColor = UITheme.CardBackColor;
+            dgvHistory.DefaultCellStyle.ForeColor = UITheme.TextForeColor;
+            dgvHistory.DefaultCellStyle.SelectionBackColor = UITheme.CellHoverColor;
+            dgvHistory.DefaultCellStyle.SelectionForeColor = UITheme.TextForeColor;
         }
 
         private async void MatchHistory_Load(object sender, EventArgs e)
@@ -99,15 +129,15 @@ namespace caro.client.form
                 // Tô màu theo kết quả đấu
                 if (resultText == "Thắng")
                 {
-                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Green;
+                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = UITheme.SubtitleColor;
                 }
                 else if (resultText == "Thua")
                 {
-                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Red;
+                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = UITheme.XColor;
                 }
                 else
                 {
-                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = Color.Orange;
+                    dgvHistory.Rows[rowIndex].Cells[1].Style.ForeColor = UITheme.WinningColor;
                 }
             }
         }

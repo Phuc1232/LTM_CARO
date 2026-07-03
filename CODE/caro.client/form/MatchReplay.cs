@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace caro.client.form
 
             Text = "Xem lại trận đấu";
             StartPosition = FormStartPosition.CenterScreen;
-            BackColor = Color.FromArgb(225, 255, 255);
+            BackColor = UITheme.FormBackColor;
             ClientSize = new Size(760, 760);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -68,10 +68,11 @@ namespace caro.client.form
             Label lblTitle = new Label
             {
                 Text = $"{_match.Player1} vs {_match.Player2}",
-                ForeColor = Color.Black,
-                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = UITheme.TitleColor,
+                Font = new Font("Segoe UI Semibold", 16, FontStyle.Bold),
                 AutoSize = true,
-                Location = new Point(30, 20)
+                Location = new Point(30, 20),
+                BackColor = Color.Transparent
             };
             Controls.Add(lblTitle);
 
@@ -79,10 +80,11 @@ namespace caro.client.form
             {
                 Name = "lblInfo",
                 Text = "",
-                ForeColor = Color.Black,
+                ForeColor = UITheme.TextForeColor,
                 Font = new Font("Segoe UI", 11, FontStyle.Regular),
                 AutoSize = true,
-                Location = new Point(30, 60)
+                Location = new Point(30, 60),
+                BackColor = Color.Transparent
             };
             Controls.Add(lblInfo);
 
@@ -105,15 +107,16 @@ namespace caro.client.form
                         Height = cellSize,
                         Left = col * cellSize,
                         Top = row * cellSize,
-                        Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                        BackColor = Color.FromArgb(128, 255, 255),
-                        ForeColor = Color.Black,
+                        Font = new Font("Segoe UI Semibold", 12, FontStyle.Bold),
+                        BackColor = UITheme.CellBackColor,
+                        ForeColor = UITheme.CellForeColor,
                         FlatStyle = FlatStyle.Flat,
                         Enabled = true
                     };
 
                     btn.FlatAppearance.BorderSize = 1;
-                    btn.FlatAppearance.BorderColor = Color.FromArgb(70, 210, 210);
+                    btn.FlatAppearance.BorderColor = UITheme.GridColor;
+                    btn.FlatAppearance.MouseOverBackColor = UITheme.CellHoverColor;
 
                     _cells[row, col] = btn;
                     boardPanel.Controls.Add(btn);
@@ -126,9 +129,11 @@ namespace caro.client.form
                 Size = new Size(90, 45),
                 Location = new Point(650, 180)
             };
-            btnPrev.BackColor = Color.FromArgb(0, 180, 180);
-            btnPrev.ForeColor = Color.White;
+            btnPrev.BackColor = UITheme.ButtonBackColor;
+            btnPrev.ForeColor = UITheme.ButtonForeColor;
             btnPrev.FlatStyle = FlatStyle.Flat;
+            btnPrev.FlatAppearance.BorderSize = 0;
+            btnPrev.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
             btnPrev.UseVisualStyleBackColor = false;
             btnPrev.Click += (s, e) =>
             {
@@ -154,9 +159,11 @@ namespace caro.client.form
                     RenderBoard();
                 }
             };
-            btnNext.BackColor = Color.FromArgb(0, 180, 180);
-            btnNext.ForeColor = Color.White;
+            btnNext.BackColor = UITheme.ButtonBackColor;
+            btnNext.ForeColor = UITheme.ButtonForeColor;
             btnNext.FlatStyle = FlatStyle.Flat;
+            btnNext.FlatAppearance.BorderSize = 0;
+            btnNext.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
             btnNext.UseVisualStyleBackColor = false;
             Controls.Add(btnNext);
 
@@ -166,9 +173,11 @@ namespace caro.client.form
                 Size = new Size(90, 45),
                 Location = new Point(650, 300)
             };
-            btnRestart.BackColor = Color.FromArgb(0, 180, 180);
-            btnRestart.ForeColor = Color.White;
+            btnRestart.BackColor = UITheme.ButtonBackColor;
+            btnRestart.ForeColor = UITheme.ButtonForeColor;
             btnRestart.FlatStyle = FlatStyle.Flat;
+            btnRestart.FlatAppearance.BorderSize = 0;
+            btnRestart.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
             btnRestart.UseVisualStyleBackColor = false;
             btnRestart.Click += (s, e) =>
             {
@@ -183,9 +192,11 @@ namespace caro.client.form
                 Size = new Size(90, 45),
                 Location = new Point(650, 360)
             };
-            btnClose.BackColor = Color.FromArgb(0, 180, 180);
-            btnClose.ForeColor = Color.White;
+            btnClose.BackColor = UITheme.DangerButtonBackColor;
+            btnClose.ForeColor = UITheme.DangerButtonForeColor;
             btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
             btnClose.UseVisualStyleBackColor = false;
             btnClose.Click += (s, e) => Close();
             Controls.Add(btnClose);
@@ -198,6 +209,8 @@ namespace caro.client.form
                 for (int col = 0; col < 15; col++)
                 {
                     _cells[row, col].Text = "";
+                    _cells[row, col].BackColor = UITheme.CellBackColor;
+                    _cells[row, col].ForeColor = UITheme.CellForeColor;
                 }
             }
 
@@ -208,10 +221,11 @@ namespace caro.client.form
                 if (move.Row < 0 || move.Row >= 15 || move.Col < 0 || move.Col >= 15)
                     continue;
 
+                bool isLastMove = (i == _currentStep - 1);
                 _cells[move.Row, move.Col].Text = i % 2 == 0 ? "X" : "O";
-                _cells[move.Row, move.Col].ForeColor = Color.Black;
+                _cells[move.Row, move.Col].ForeColor = i % 2 == 0 ? UITheme.XColor : UITheme.OColor;
                 _cells[move.Row, move.Col].Font = new Font("Segoe UI", 18, FontStyle.Bold);
-                _cells[move.Row, move.Col].BackColor = Color.FromArgb(128, 255, 255);
+                _cells[move.Row, move.Col].BackColor = isLastMove ? UITheme.LastMoveBackColor : UITheme.CellBackColor;
                 _cells[move.Row, move.Col].UseVisualStyleBackColor = false;
                 _cells[move.Row, move.Col].Enabled = true;
             }
@@ -221,8 +235,8 @@ namespace caro.client.form
 
                 foreach (Point p in winningCells)
                 {
-                    _cells[p.X, p.Y].BackColor = Color.Gold;
-                    _cells[p.X, p.Y].ForeColor = Color.Black;
+                    _cells[p.X, p.Y].BackColor = UITheme.WinningColor;
+                    _cells[p.X, p.Y].ForeColor = Color.FromArgb(17, 17, 27);
                     _cells[p.X, p.Y].UseVisualStyleBackColor = false;
                 }
             }

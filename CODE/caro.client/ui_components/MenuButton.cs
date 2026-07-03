@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
@@ -7,15 +7,30 @@ namespace caro.client.ui_components
 {
     public partial class MenuButton : UserControl
     {
-        [Browsable(true)]
-        [Category("Appearance")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public Color HoverBackColor { get; set; } = Color.DeepSkyBlue;
+        private bool _isDanger = false;
 
         [Browsable(true)]
         [Category("Appearance")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public Color HoverForeColor { get; set; } = Color.White;
+        public bool IsDanger
+        {
+            get => _isDanger;
+            set
+            {
+                _isDanger = value;
+                ApplyThemeColors();
+            }
+        }
+
+        [Browsable(true)]
+        [Category("Appearance")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public Color HoverBackColor { get; set; } = UITheme.ButtonHoverBackColor;
+
+        [Browsable(true)]
+        [Category("Appearance")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public Color HoverForeColor { get; set; } = UITheme.ButtonHoverForeColor;
 
         public MenuButton()
         {
@@ -33,7 +48,23 @@ namespace caro.client.ui_components
                 {
                     btnMenu.Text = base.Text;
                 }
+
+                ApplyThemeColors();
             }
+        }
+
+        public void ApplyThemeColors()
+        {
+            if (btnMenu == null) return;
+
+            Color defaultBg = _isDanger ? UITheme.DangerButtonBackColor : UITheme.ButtonBackColor;
+            Color defaultFg = _isDanger ? UITheme.DangerButtonForeColor : UITheme.ButtonForeColor;
+            HoverBackColor = _isDanger ? UITheme.DangerButtonHoverBackColor : UITheme.ButtonHoverBackColor;
+            HoverForeColor = _isDanger ? UITheme.DangerButtonForeColor : UITheme.ButtonHoverForeColor;
+
+            btnMenu.BackColor = defaultBg;
+            btnMenu.ForeColor = defaultFg;
+            btnMenu.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
         }
 
         private void BtnMenu_MouseEnter(object? sender, EventArgs e)
@@ -49,8 +80,8 @@ namespace caro.client.ui_components
         {
             if (btnMenu != null)
             {
-                btnMenu.BackColor = Color.FromArgb(0, 180, 180);
-                btnMenu.ForeColor = Color.White;
+                btnMenu.BackColor = _isDanger ? UITheme.DangerButtonBackColor : UITheme.ButtonBackColor;
+                btnMenu.ForeColor = _isDanger ? UITheme.DangerButtonForeColor : UITheme.ButtonForeColor;
             }
         }
 

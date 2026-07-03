@@ -41,14 +41,15 @@ namespace caro.client.ui_components
                     cell.Text = "";
                     cell.FlatStyle = FlatStyle.Flat;
                     cell.FlatAppearance.BorderSize = 1;
-                    cell.FlatAppearance.BorderColor = Color.FromArgb(90, 90, 120);
+                    cell.FlatAppearance.BorderColor = UITheme.GridColor;
 
                     cell.Tag = $"{row},{col}";
-                    cell.BackColor = Color.FromArgb(42, 42, 60);
-                    cell.ForeColor = Color.White;
+                    cell.BackColor = UITheme.CellBackColor;
+                    cell.ForeColor = UITheme.CellForeColor;
+                    cell.FlatAppearance.MouseOverBackColor = UITheme.CellHoverColor;
                     cell.UseVisualStyleBackColor = false;
 
-                    cell.Font = new Font("Segoe UI", 14, FontStyle.Bold);
+                    cell.Font = new Font("Segoe UI Semibold", 14, FontStyle.Bold);
                     cell.Margin = new Padding(0);
                     cell.Padding = new Padding(0);
 
@@ -83,23 +84,23 @@ namespace caro.client.ui_components
             {
                 if (control is Button btn && btn.Tag?.ToString() == $"{row},{col}")
                 {
-                    // X?a highlight c?a n??c ?i tr??c
+                    // Xóa highlight của nước đi trước
                     if (_lastMoveButton != null)
                     {
-                        _lastMoveButton.BackColor = Color.FromArgb(42, 42, 60);
-                        _lastMoveButton.ForeColor = Color.White;
+                        _lastMoveButton.BackColor = UITheme.CellBackColor;
+                        _lastMoveButton.ForeColor = _lastMoveButton.Text == "X" ? UITheme.XColor : UITheme.OColor;
                         _lastMoveButton.UseVisualStyleBackColor = false;
                     }
 
-                    // Set qu?n m?i
+                    // Set quân mới
                     btn.Text = text.ToUpper();
                     btn.Enabled = true;
-                    btn.ForeColor = Color.Black;
+                    btn.ForeColor = btn.Text == "X" ? UITheme.XColor : UITheme.OColor;
                     btn.Font = new Font("Segoe UI", 18, FontStyle.Bold);
                     btn.UseVisualStyleBackColor = false;
 
-                    // Highlight ? v?a ??nh
-                    btn.BackColor = Color.LightSkyBlue;
+                    // Highlight ô vừa đánh
+                    btn.BackColor = UITheme.LastMoveBackColor;
 
                     _lastMoveButton = btn;
 
@@ -117,8 +118,8 @@ namespace caro.client.ui_components
                 {
                     if (control is Button btn && btn.Tag?.ToString() == $"{winCell.X},{winCell.Y}")
                     {
-                        btn.BackColor = Color.Gold;
-                        btn.ForeColor = Color.Black;
+                        btn.BackColor = UITheme.WinningColor;
+                        btn.ForeColor = Color.FromArgb(17, 17, 27); // Chữ tối trên nền sáng vàng
                         btn.Font = new Font("Segoe UI", 18, FontStyle.Bold);
                         btn.UseVisualStyleBackColor = false;
                         btn.Enabled = true;
@@ -136,10 +137,10 @@ namespace caro.client.ui_components
                 {
                     btn.Text = "";
                     btn.Enabled = true;
-                    btn.ForeColor = Color.White;
+                    btn.ForeColor = UITheme.CellForeColor;
                     btn.Font = new Font("Segoe UI", 18, FontStyle.Bold);
                     btn.UseVisualStyleBackColor = false;
-                    btn.BackColor = Color.FromArgb(42, 42, 60);
+                    btn.BackColor = UITheme.CellBackColor;
                 }
             }
         }

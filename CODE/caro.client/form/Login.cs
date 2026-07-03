@@ -1,4 +1,4 @@
-﻿using caro.client.network;
+using caro.client.network;
 using caro.share.DTOs;
 using caro.share.DTOs.Constants;
 using System;
@@ -21,6 +21,40 @@ namespace caro.client.form
             InitializeComponent();
             TCPClientManager.Instance.OnLoginResponse += HandleLoginResponse;
             TCPClientManager.Instance.OnDisconnected += HandleDisconnected;
+            ApplyThemeColors();
+        }
+
+        private void ApplyThemeColors()
+        {
+            this.BackColor = UITheme.FormBackColor;
+            this.ForeColor = UITheme.TextForeColor;
+
+            label1.BackColor = Color.Transparent;
+            label1.ForeColor = UITheme.TitleColor;
+            label1.Font = new Font("Segoe UI Semibold", 24F, FontStyle.Bold);
+
+            Label2.BackColor = Color.Transparent;
+            Label2.ForeColor = UITheme.TextForeColor;
+            Label2.Font = new Font("Segoe UI", 12F);
+
+            Label3.BackColor = Color.Transparent;
+            Label3.ForeColor = UITheme.TextForeColor;
+            Label3.Font = new Font("Segoe UI", 12F);
+
+            txtUsername.BackColor = UITheme.InputBackColor;
+            txtUsername.ForeColor = UITheme.InputForeColor;
+            txtUsername.BorderStyle = BorderStyle.FixedSingle;
+            txtUsername.Font = new Font("Segoe UI", 12F);
+
+            txtIpAddress.BackColor = UITheme.InputBackColor;
+            txtIpAddress.ForeColor = UITheme.InputForeColor;
+            txtIpAddress.BorderStyle = BorderStyle.FixedSingle;
+            txtIpAddress.Font = new Font("Segoe UI", 12F);
+
+            if (btnLogin != null)
+            {
+                btnLogin.ApplyThemeColors();
+            }
         }
         private void HandleLoginResponse(LoginResponseDTO response)
         {

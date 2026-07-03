@@ -27,6 +27,30 @@ namespace caro.client.form
             {
                 UpdateOnlinePlayers(TCPClientManager.Instance.LastOnlinePlayers);
             }
+
+            ApplyThemeColors();
+        }
+
+        private void ApplyThemeColors()
+        {
+            this.BackColor = UITheme.FormBackColor;
+            this.ForeColor = UITheme.TextForeColor;
+
+            label1.BackColor = Color.Transparent;
+            label1.ForeColor = UITheme.TitleColor;
+            label1.Font = new Font("Segoe UI Semibold", 28F, FontStyle.Bold);
+
+            lstOnlinePlayers.BackColor = UITheme.InputBackColor;
+            lstOnlinePlayers.ForeColor = UITheme.InputForeColor;
+            lstOnlinePlayers.BorderStyle = BorderStyle.FixedSingle;
+            lstOnlinePlayers.Font = new Font("Segoe UI", 16F);
+
+            if (btnChallenge != null) btnChallenge.ApplyThemeColors();
+            if (btnBack != null)
+            {
+                btnBack.IsDanger = true;
+                btnBack.ApplyThemeColors();
+            }
         }
 
         private void MatchMaking_FormClosed(object? sender, FormClosedEventArgs e)

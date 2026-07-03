@@ -46,6 +46,32 @@ namespace caro.client.form
             // Setup thông tin người chơi
             gameInfo = dto;
             SetupPlayers(dto);
+
+            ApplyThemeColors();
+        }
+
+        private void ApplyThemeColors()
+        {
+            this.BackColor = UITheme.FormBackColor;
+            this.ForeColor = UITheme.TextForeColor;
+
+            if (panel1 != null)
+            {
+                panel1.BackColor = UITheme.CardBackColor;
+            }
+
+            if (btnSurrender != null)
+            {
+                btnSurrender.IsDanger = true;
+                btnSurrender.ApplyThemeColors();
+            }
+
+            if (BnNewGame != null) BnNewGame.ApplyThemeColors();
+            if (BnQuit != null) BnQuit.ApplyThemeColors();
+
+            if (playerCard1 != null) playerCard1.ApplyThemeColors();
+            if (playerCard2 != null) playerCard2.ApplyThemeColors();
+            if (chatBox1 != null) chatBox1.ApplyThemeColors();
         }
 
         // =============================================

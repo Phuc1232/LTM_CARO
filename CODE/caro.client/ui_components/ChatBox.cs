@@ -22,6 +22,30 @@ namespace caro.client.ui_components
             txtMessage.KeyDown += TxtMessage_KeyDown;
             txtMessage.Enter += TxtMessage_Enter;
             txtMessage.Leave += TxtMessage_Leave;
+
+            ApplyThemeColors();
+        }
+
+        public void ApplyThemeColors()
+        {
+            this.BackColor = UITheme.CardBackColor;
+
+            lblTitle.ForeColor = UITheme.TitleColor;
+            lblTitle.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+
+            rtbMessages.BackColor = UITheme.InputBackColor;
+            rtbMessages.ForeColor = UITheme.InputForeColor;
+            rtbMessages.Font = new Font("Segoe UI", 10F);
+
+            txtMessage.BackColor = UITheme.InputBackColor;
+            txtMessage.ForeColor = UITheme.InputForeColor;
+            txtMessage.Font = new Font("Segoe UI", 10F);
+
+            btnSend.BackColor = UITheme.ButtonBackColor;
+            btnSend.ForeColor = UITheme.ButtonForeColor;
+            btnSend.FlatStyle = FlatStyle.Flat;
+            btnSend.FlatAppearance.BorderSize = 0;
+            btnSend.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
         }
 
         private void BtnSend_Click(object? sender, EventArgs e)
@@ -43,13 +67,13 @@ namespace caro.client.ui_components
             if (txtMessage.Text == "Nhập Chat Ở Đây Lèeee")
             {
                 txtMessage.Text = "";
-                txtMessage.ForeColor = Color.Black;
+                txtMessage.ForeColor = UITheme.InputForeColor;
                 
             }
             txtMessage.SelectionStart = txtMessage.Text.Length;
             txtMessage.SelectionLength = 0;
-            txtMessage.BackColor = Color.FromArgb(128, 255, 255);
-            txtMessage.ForeColor = Color.Black;
+            txtMessage.BackColor = UITheme.InputBackColor;
+            txtMessage.ForeColor = UITheme.InputForeColor;
         }
 
         private void TxtMessage_Leave(object? sender, EventArgs e)

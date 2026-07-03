@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using caro.client.network;
 using caro.share.DTOs;
 using caro.share.DTOs.Constants;
+using caro.client.ui_components;
 
 namespace caro.client.form
 {
@@ -17,7 +18,7 @@ namespace caro.client.form
 
             Text = "Bảng xếp hạng";
             StartPosition = FormStartPosition.CenterScreen;
-            BackColor = Color.FromArgb(128, 255, 255);
+            BackColor = UITheme.FormBackColor;
             ClientSize = new Size(800, 520);
 
             BuildUI();
@@ -45,33 +46,35 @@ namespace caro.client.form
             Label lblTitle = new Label
             {
                 Text = "BẢNG XẾP HẠNG",
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = UITheme.TitleColor,
+                Font = new Font("Segoe UI Semibold", 20, FontStyle.Bold),
                 AutoSize = true,
-                Location = new Point(280, 20)
+                Location = new Point(280, 20),
+                BackColor = Color.Transparent
             };
             Controls.Add(lblTitle);
 
             dgvRanking.Location = new Point(30, 80);
             dgvRanking.Size = new Size(740, 350);
-            dgvRanking.BackgroundColor = Color.FromArgb(128, 255, 255);
-            dgvRanking.ForeColor = Color.Black;
-            dgvRanking.GridColor = Color.FromArgb(90, 90, 120);
+            dgvRanking.BackgroundColor = UITheme.CardBackColor;
+            dgvRanking.GridColor = UITheme.GridColor;
             dgvRanking.AllowUserToAddRows = false;
             dgvRanking.ReadOnly = true;
             dgvRanking.RowHeadersVisible = false;
             dgvRanking.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvRanking.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            dgvRanking.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
-            dgvRanking.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-            dgvRanking.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dgvRanking.ColumnHeadersDefaultCellStyle.BackColor = UITheme.FormBackColor;
+            dgvRanking.ColumnHeadersDefaultCellStyle.ForeColor = UITheme.TextForeColor;
+            dgvRanking.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10, FontStyle.Bold);
+            dgvRanking.ColumnHeadersDefaultCellStyle.SelectionBackColor = UITheme.FormBackColor;
+            dgvRanking.ColumnHeadersDefaultCellStyle.SelectionForeColor = UITheme.TextForeColor;
             dgvRanking.EnableHeadersVisualStyles = false;
 
-            dgvRanking.DefaultCellStyle.BackColor = Color.FromArgb(128, 255, 255);
-            dgvRanking.DefaultCellStyle.ForeColor = Color.Black;
-            dgvRanking.DefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 70, 100);
-            dgvRanking.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgvRanking.DefaultCellStyle.BackColor = UITheme.CardBackColor;
+            dgvRanking.DefaultCellStyle.ForeColor = UITheme.TextForeColor;
+            dgvRanking.DefaultCellStyle.SelectionBackColor = UITheme.CellHoverColor;
+            dgvRanking.DefaultCellStyle.SelectionForeColor = UITheme.TextForeColor;
 
             dgvRanking.Columns.Add("Rank", "Hạng");
             dgvRanking.Columns.Add("Username", "Người chơi");
@@ -80,22 +83,17 @@ namespace caro.client.form
             dgvRanking.Columns.Add("Draws", "Hòa");
             dgvRanking.Columns.Add("Losses", "Thua");
             dgvRanking.Columns.Add("MaxWinStreak", "Chuỗi thắng");
-            
 
             Controls.Add(dgvRanking);
 
-            Button btnBack = new Button
+            MenuButton btnBack = new MenuButton
             {
                 Text = "Quay lại",
                 Size = new Size(120, 45),
-                Location = new Point(650, 450),
-                ForeColor = Color.Black,
-                BackColor = Color.FromArgb(128, 255, 255),
-                FlatStyle = FlatStyle.Flat,
-                UseVisualStyleBackColor = false
+                Location = new Point(650, 450)
             };
-            btnBack.FlatAppearance.BorderColor = Color.White;
-            btnBack.FlatAppearance.BorderSize = 2;
+            btnBack.IsDanger = true;
+            btnBack.ApplyThemeColors();
             btnBack.Click += (s, e) => Close();
 
             Controls.Add(btnBack);

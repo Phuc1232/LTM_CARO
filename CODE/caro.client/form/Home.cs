@@ -16,10 +16,9 @@ namespace caro.client
         {
             InitializeComponent();
             label1.Text = "Xin chào, " + TCPClientManager.Instance.CurrentUsername;
-            lblUsername.Text = "👤 " + TCPClientManager.Instance.CurrentUsername;
+            lblUsername.Text = "  👤 " + TCPClientManager.Instance.CurrentUsername + "  ";
             this.Text = "Caro Game";
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(30, 30, 46);
 
             // Đăng ký sự kiện click cho các nút
             btnPlayWithAI.Click += btnPlayWithAI_Click; // Nút Play With AI
@@ -31,6 +30,34 @@ namespace caro.client
             if (this.Visible)
             {
                 SubscribeEvents();
+            }
+
+            ApplyThemeColors();
+        }
+
+        private void ApplyThemeColors()
+        {
+            this.BackColor = UITheme.FormBackColor;
+            this.BackgroundImage = null; // Loại bỏ ảnh nền cũ không hợp theme
+            this.ForeColor = UITheme.TextForeColor;
+
+            label1.BackColor = Color.Transparent;
+            label1.ForeColor = UITheme.TitleColor;
+            label1.Font = new Font("Segoe UI Semibold", 28F, FontStyle.Bold);
+
+            lblUsername.BackColor = UITheme.CardBackColor;
+            lblUsername.ForeColor = UITheme.SubtitleColor;
+            lblUsername.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+
+            if (btnPlayOnline != null) btnPlayOnline.ApplyThemeColors();
+            if (btnPlayWithAI != null) btnPlayWithAI.ApplyThemeColors();
+            if (btnMatchHistory != null) btnMatchHistory.ApplyThemeColors();
+            if (btnRanking != null) btnRanking.ApplyThemeColors();
+
+            if (btnLogOut != null)
+            {
+                btnLogOut.IsDanger = true;
+                btnLogOut.ApplyThemeColors();
             }
         }
 

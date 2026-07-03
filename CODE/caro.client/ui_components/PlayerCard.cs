@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,6 +19,22 @@ namespace caro.client.ui_components
 
             lblPlayerName.Location = new Point(10, 15);
             lblTime.Location = new Point(10, 42);
+
+            ApplyThemeColors();
+        }
+
+        public void ApplyThemeColors()
+        {
+            this.BackColor = UITheme.CardBackColor;
+            this.ForeColor = UITheme.CardForeColor;
+
+            lblPlayerName.ForeColor = UITheme.CardForeColor;
+            lblPlayerName.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+
+            lblTime.ForeColor = UITheme.SubtitleColor;
+            lblTime.Font = new Font("Segoe UI", 10F, FontStyle.Italic);
+
+            picAvatar.BackColor = UITheme.FormBackColor;
         }
         [Browsable(true)]
         [Category("Appearance")]
