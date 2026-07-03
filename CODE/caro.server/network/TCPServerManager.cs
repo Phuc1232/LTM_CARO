@@ -163,17 +163,22 @@ namespace caro.server.network
                 Type = PacketType.OnlinePlayerList,
                 payload = JsonSerializer.Serialize(listDTO)
             };
+            var tasks = new List<Task>();
             foreach (var client in onlineplayer.Values)
             {
-                try
+                tasks.Add(Task.Run(async () =>
                 {
-                    await client.SendPacketAsync(packet);
-                }
-                catch (Exception ex)
-                {
-                    Log($"[Lỗi mạng] Không thể gửi danh sách online tới '{client.username}': {ex.Message}");
-                }
+                    try
+                    {
+                        await client.SendPacketAsync(packet);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"[Lỗi mạng] Không thể gửi danh sách online tới '{client.username}': {ex.Message}");
+                    }
+                }));
             }
+            await Task.WhenAll(tasks);
         }
     }
 }
