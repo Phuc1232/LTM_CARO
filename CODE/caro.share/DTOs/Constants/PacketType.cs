@@ -32,6 +32,9 @@ namespace caro.share.DTOs.Constants
         MatchHistoryResponse = 61,
 
         BestRecordRequest = 70,
-        BestRecordResponse = 71
+        BestRecordResponse = 71,
+
+        Ping =90,
+        Pong =91
     }
 }

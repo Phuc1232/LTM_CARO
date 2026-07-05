@@ -19,6 +19,7 @@ namespace caro.server.network
         private NetworkStream? _stream;
         public string username { get; set; }
         public string CurrentRoomID { get; set; }
+        public DateTime LastHeartbeat { get; private set; } = DateTime.UtcNow;
 
         public static readonly ConcurrentDictionary<string, PendingChallenge> PendingChallenges = new();
 
@@ -55,6 +56,8 @@ namespace caro.server.network
 
         public async Task HandleClientAsync()
         {
+            using CancellationTokenSource localCts = new CancellationTokenSource();
+            _ = Task.Run(() => WatchdogAsync(localCts.Token), localCts.Token);
             try
             {
                 // Ghi nhận log khi Client vừa kết nối thô thành công
@@ -64,6 +67,7 @@ namespace caro.server.network
                 while (true)
                 {
                     var packet = await PacketHelper.ReceivePacketAsync<BasePacket>(_stream);
+                    LastHeartbeat = DateTime.UtcNow;
                     await ProccessPacketAsync(packet);
                 }
             }
@@ -77,6 +81,7 @@ namespace caro.server.network
             }
             finally
             {
+                localCts.Cancel();
                 // Xử lý khi người chơi offline (dọn dẹp danh sách và báo về UI)
                 if (!string.IsNullOrEmpty(username))
                 {
@@ -100,6 +105,9 @@ namespace caro.server.network
         {
             switch (packet.Type)
             {
+                case PacketType.Ping:
+                    await SendPacketAsync(packet);
+                    break;
                 case PacketType.LoginRequest:
                     await ProccessLoginAsync(packet.payload);
                     break;
@@ -126,7 +134,27 @@ namespace caro.server.network
                     break;
             }
         }
-
+        private async Task WatchdogAsync(CancellationToken token)
+        {
+            try
+            {
+                while (_client != null && _client.Connected && !token.IsCancellationRequested)
+                {
+                    await Task.Delay(5000, token);
+                    if (DateTime.UtcNow - LastHeartbeat > TimeSpan.FromSeconds(15))
+                    {
+                        TCPServerManager.Log($"[Mạng] Phát hiện mất kết nối quá 15s với '{(string.IsNullOrEmpty(username) ? "Người chơi ẩn danh" : username)}'");
+                        CloseConnection();
+                        break;
+                    }
+                }
+            }
+            catch (TaskCanceledException) { }
+            catch (Exception ex)
+            {
+                TCPServerManager.Log($"[Lỗi Watchdog] {ex.Message}");
+            }
+        }
         private async Task ProccessLoginAsync(string payload)
         {
             var loginRequest = JsonSerializer.Deserialize<LoginRequestDTO>(payload);

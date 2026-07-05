@@ -55,6 +55,7 @@ namespace caro.client.network
 
                 // Bắt đầu luồng lắng nghe nhận gói tin từ server
                 _ = Task.Run(() => ReceiveLoopAsync(_cts.Token));
+                _ = Task.Run(() => PingLoopAsync(_cts.Token));
                 return true;
             }
             catch (Exception)
@@ -111,6 +112,25 @@ namespace caro.client.network
                 Disconnect();
             }
         }
+        private async Task PingLoopAsync(CancellationToken token)
+        {
+            try
+            {
+                while (_isConnected && !token.IsCancellationRequested)
+                {
+                    await Task.Delay(5000, token);
+                    if (_isConnected && _stream != null)
+                    {
+                        await SendPacketAsync<object?>(PacketType.Ping, null);
+                    }
+                }
+            }
+            catch (TaskCanceledException) {}
+            catch (Exception)
+            {
+                Disconnect();
+            }
+        }
 
         /// <summary>
         /// Vòng lặp lắng nghe dữ liệu liên tục từ socket.
@@ -141,6 +161,8 @@ namespace caro.client.network
         {
             switch (packet.Type)
             {
+                case PacketType.Pong:
+                    break;
                 case PacketType.LoginResponse:
                     TriggerEvent<LoginResponseDTO>(packet.payload, OnLoginResponse);
                     break;
