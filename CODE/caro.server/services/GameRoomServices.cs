@@ -232,8 +232,14 @@ namespace caro.server.services
                     };
 
                     TCPServerManager.Log($"[Hệ thống phòng] Đang phát sóng gói tin kết thúc trận đấu (GameEndNotify) tới cả hai người chơi...");
-                    _ = SendToPlayerWithoutCleanupAsync(room.player1, packet);
-                    _ = SendToPlayerWithoutCleanupAsync(room.player2, packet);
+                    if (TCPServerManager.onlineplayer.TryGetValue(room.player1.username, out _))
+                    {
+                        _ = SendToPlayerWithoutCleanupAsync(room.player1, packet);
+                    }
+                    if (TCPServerManager.onlineplayer.TryGetValue(room.player2.username, out _))
+                    {
+                        _ = SendToPlayerWithoutCleanupAsync(room.player2, packet);
+                    }
                 }
                 
                 if (room.player1 != null) room.player1.CurrentRoomID = null;
@@ -287,7 +293,7 @@ namespace caro.server.services
                 int dcol = dir[1];
                 var winningcells = new List<WinCoordinate> { new WinCoordinate { X =row, Y=col} };
                 int r = row + drow;
-                int c = col + dcol; // Sửa lỗi index bug ở đây: đổi từ row + dcol thành col + dcol
+                int c = col + dcol;
 
                 while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r, c] == player)
                 {
